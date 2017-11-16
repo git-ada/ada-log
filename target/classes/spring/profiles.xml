@@ -16,7 +16,7 @@
 		<property name="driverUrl" value="${jdbc.url}"></property>
 		<property name="user" value="${jdbc.username}"></property>
 		<property name="password" value="${jdbc.password}"></property>
-		<property name="alias" value="jiandan"></property>
+		<property name="alias" value="ada-log"></property>
 		<property name="minimumConnectionCount" value="10"></property>
 		<property name="maximumConnectionCount" value="20"></property>
 		<property name="maximumActiveTime" value="300000"></property>
