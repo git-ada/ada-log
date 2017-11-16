@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/jee 
+        http://www.springframework.org/schema/jee/spring-jee-3.1.xsd"
+        default-lazy-init="false">
+    <context:property-placeholder location="classpath:config.properties" />
+	<bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver" value="${jdbc.driver}"></property>
+		<property name="driverUrl" value="${jdbc.url}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="alias" value="jiandan"></property>
+		<property name="minimumConnectionCount" value="10"></property>
+		<property name="maximumConnectionCount" value="20"></property>
+		<property name="maximumActiveTime" value="300000"></property>
+		<property name="simultaneousBuildThrottle" value="10"></property>
+		<property name="prototypeCount" value="3"></property>
+		<property name="trace" value="false"></property>
+		<property name="verbose" value="true"></property>
+		<property name="houseKeepingTestSql" value="select now()"></property>
+	</bean>
+	
+</beans>

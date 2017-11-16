@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ada</groupId>
+	<artifactId>ada-log</artifactId>
+	<version>1.0</version>
+	<packaging>war</packaging>
+	
+	<dependencies>
+	 	<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+		
+		<!-- Jedis -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.0.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.cloudhopper.proxool</groupId>
+		  <artifactId>proxool</artifactId>
+		  <version>0.9.1</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.cloudhopper.proxool</groupId>
+		  <artifactId>proxool-cglib</artifactId>
+		  <version>0.9.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.25</version>
+		</dependency>
+		
+				
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+	
+	</dependencies>
+	<build>
+		<finalName>ada-log</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<warName>${project.artifactId}</warName>
+					<webResources>
+						<resource>
+                            <directory>src/main/profile/${profiles.activation}</directory>
+                            <targetPath>WEB-INF/classes/spring</targetPath> 
+                            <includes>
+                            	<include>**/profiles.xml</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>src/main/profile/${profiles.activation}</directory>
+                            <targetPath>WEB-INF/classes</targetPath> 
+                            <includes>
+                            	<include>**/config.properties</include>
+                            </includes>
+                        </resource>
+						<resource>
+                            <directory>src/main/profile/${profiles.activation}</directory>
+                            <targetPath></targetPath> 
+                            <excludes>
+                            	<exclude>**/config.properties</exclude>
+                            	<exclude>**/profiles.xml</exclude>
+                            	<exclude>**/web.xml</exclude>
+                            </excludes>
+                        </resource>
+                        <resource>  
+			                <filtering>true</filtering>  
+			                <directory>src/main/profile/${profiles.activation}</directory>
+			                <targetPath>WEB-INF</targetPath> 
+			                <includes>  
+			                    <include>**/web.xml</include>  
+			                </includes>  
+			            </resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
