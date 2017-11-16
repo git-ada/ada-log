@@ -1,5 +1,7 @@
 package com.ada.log.dao;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import com.ada.log.bean.ChannelStat;
 import com.ada.log.bean.Site;
 import com.ada.log.bean.SiteStat;
 import com.ada.log.bean.TargetPage;
+import com.ada.log.service.SiteService;
 
 @ActiveProfiles("local")
 @ContextConfiguration(locations = "classpath:spring/context.xml")
@@ -40,7 +43,8 @@ public class ChannelStatDaoTest extends AbstractTransactionalJUnit4SpringContext
 	private SiteDao siteDao;
 	@Autowired
 	private TargetPageDao targetPageDao;
-
+	@Autowired
+	private SiteService siteService;
 	@Test
 	public void testSave(){
 		ChannelStat item = new ChannelStat();
@@ -116,6 +120,18 @@ public class ChannelStatDaoTest extends AbstractTransactionalJUnit4SpringContext
 			}
 			
 		}
+		
+	}
+	
+	@Test
+	public void SiteServiceImpl() throws UnsupportedEncodingException{
+		
+		String url = URLEncoder.encode("http://aadfad.com?asdfsdf","utf-8");
+		
+		//String url = URLEncoder.encode("http://ASDFADSF.com?asdfsdf","utf-8");
+		
+		System.out.println("------------------->"+siteService.matchTargetPage(1, url));
+		
 		
 	}
 	

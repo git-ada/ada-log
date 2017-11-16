@@ -1,5 +1,7 @@
 package com.ada.log.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,38 +27,45 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	
 	@Override
 	public Integer queryChannel(Integer siteId, String browsingPage) {
-		
-		List<Map> list = this.channelMap.get(siteId);
-		String str = browsingPage.substring(browsingPage.indexOf("?")+1);
-		String[] s = str.split("&");
-		if(list!=null && list.size()>0){
+		try {
+			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
+			List<Map> list = this.channelMap.get(siteId);
+			String str = browsingPage.substring(browsingPage.indexOf("?")+1);
+			String[] s = str.split("&");
+			if(list!=null && list.size()>0){
 
-			for(int i=0;i<list.size();i++){
-				Map map = list.get(i);
-				if(browsingPage.startsWith((String)map.get("url"))){//匹配url
-					if(s.length>=1){
-						//匹配参数parameter/
-						String parameter = (String) map.get("parameter");
-						for(int j=0;j<s.length;j++){
-							String type = s[j];
-							if(parameter!=null && parameter.equals(type)){
+				for(int i=0;i<list.size();i++){
+					Map map = list.get(i);
+					if(browsingPage.startsWith((String)map.get("url"))){//匹配url
+						if(s.length>=1){
+							//匹配参数parameter/
+							String parameter = (String) map.get("parameter");
+							for(int j=0;j<s.length;j++){
+								String type = s[j];
+								if(parameter!=null && parameter.equals(type)){
+									return (Integer) map.get("channelId");
+								}
+							}
+							if(map.get("parameter")==null || "".equals(map.get("parameter"))){
+								return (Integer) map.get("channelId");
+							}
+							
+						}else{
+							if(map.get("parameter")==null || "".equals(map.get("parameter"))){
 								return (Integer) map.get("channelId");
 							}
 						}
-						if(map.get("parameter")==null || "".equals(map.get("parameter"))){
-							return (Integer) map.get("channelId");
-						}
 						
-					}else{
-						if(map.get("parameter")==null || "".equals(map.get("parameter"))){
-							return (Integer) map.get("channelId");
-						}
+						
 					}
-					
-					
 				}
 			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
 		}
+		
 		return 0;
 	}
 
