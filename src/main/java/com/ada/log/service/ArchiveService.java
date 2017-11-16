@@ -1,60 +1,74 @@
 package com.ada.log.service;
 
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ada.log.bean.Channel;
+import com.ada.log.bean.ChannelStat;
+import com.ada.log.bean.Site;
+import com.ada.log.bean.SiteStat;
+import com.ada.log.dao.ChannelDao;
 import com.ada.log.dao.ChannelStatDao;
+import com.ada.log.dao.SiteDao;
 import com.ada.log.dao.SiteStatDao;
+import com.ada.log.util.Dates;
 
 @Service
 public class ArchiveService {
 	
+	private final static Log log = LogFactory.getLog(ArchiveService.class);
+	
 	@Autowired
 	private StatService statService;
 	
-//	@Autowired
+	@Autowired
 	private ChannelStatDao channelStatDao;
 	
-//	@Autowired
+	@Autowired
 	private SiteStatDao siteStatDao;
 	
-	/**
-	 * 将每日的Redis中统计数据持续化保存到数据库
-	 */
-	public void execute(Date date) {
-		archiveSite();
-		archiveChannel();
-		cleanYestodyRedisData();
-	}
+	@Autowired
+	private ChannelDao channelDao;
+	
+	@Autowired
+	private SiteDao siteDao;
 	
 	/**
 	 * 归档昨日站点统计数据
 	 */
-	protected void archiveSite() {
-//		for(){ //遍历每个站点数据保存结果
-//			SiteStat item = statService.statYestodySite(site);
-//			siteStatDao.save(item);
-//		}
-	}
 	
-	
-	/**
-	 * 归档昨日渠道统计数据
-	 */
-	protected void archiveChannel() {
-
-//		for(){ //遍历每个渠道数据保存结果
-//			ChannelStat item = statService.statYestodyChannel(channelId);
-//			channelStatDao.save(item);
-//		}
-	}
-	
-	/**
-	 * 清除昨日REDIS数据
-	 */
-	protected void cleanYestodyRedisData(){
+	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
+	public void archive() {
+		Date yestoday = Dates.yestoday();
 		
+		List<Site> sites = siteDao.findAll();
+		for(Site site:sites){
+			try {
+			    SiteStat stat = statService.statSite(site.getId(), yestoday);
+			    siteStatDao.save(stat);
+			    log.info("站点 "+site.getId()+":"+site.getSiteName() +" 归档成功");
+			} catch (Exception e) {
+				log.error("站点 "+site.getId()+":"+site.getSiteName() +" 归档错误");
+			}
+			
+			 List<Channel> channels = channelDao.findBySiteId(site.getId());
+			 for(Channel channel:channels){
+				try {
+				    ChannelStat channelStat =  statService.statChannel(site.getId(), channel.getId(), yestoday);
+				    channelStatDao.save(channelStat);
+				    log.info("渠道 "+channel.getId()+":"+channel.getChannelName()+" 归档成功");
+				} catch (Exception e) {
+					log.info("渠道 "+channel.getId()+":"+channel.getChannelName()+" 归档失败");
+				}
+			 }
+		}
 	}
+
 }

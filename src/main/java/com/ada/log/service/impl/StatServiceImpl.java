@@ -12,10 +12,14 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import com.ada.log.bean.ChannelStat;
 import com.ada.log.bean.SiteStat;
+import com.ada.log.service.JedisPools;
 import com.ada.log.service.StatService;
 
 @Service
 public class StatServiceImpl implements StatService{
+	
+	@Autowired
+    private  JedisPools jedisPools;//自动切库,周一至周日每天一库
 	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
@@ -43,7 +47,7 @@ public class StatServiceImpl implements StatService{
 	}
 
 	public SiteStat statSite(Integer site, Date date) {
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		//取出站点PV
 		Integer sitePV = Integer.valueOf(jedis.get("SitePV_"+site+""));
 		//取出站点IPSet集合
@@ -54,7 +58,7 @@ public class StatServiceImpl implements StatService{
 	}
 	
 	public ChannelStat statChannel(Integer siteId, Integer channelId, Date date) {
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		//取出渠道IPSet集合
 		Set<String> channelIPSet = jedis.smembers("ChannelIP_"+channelId+"");
 		int channelIP = channelIPSet.size();
@@ -72,4 +76,8 @@ public class StatServiceImpl implements StatService{
 //		return new ChannelStat(siteId, channelId, channelIP, sitePV, clickip1, clickip2, clickip3, clickip4, targetpageIP, date);
 	}
 
+	
+	protected Jedis getJedis(){
+		return jedisPools.getResource();
+	}
 }

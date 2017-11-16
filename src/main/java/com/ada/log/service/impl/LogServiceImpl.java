@@ -1,14 +1,16 @@
 package com.ada.log.service.impl;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import com.ada.log.constant.RedisKeys;
+import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
+import com.ada.log.service.SiteService;
 
 /**
  * 核心实现
@@ -17,6 +19,10 @@ import com.ada.log.service.LogService;
 @Service
 
 public class LogServiceImpl implements LogService{
+	
+	@Autowired
+    private  JedisPools jedisPools;
+	
 	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
@@ -26,6 +32,9 @@ public class LogServiceImpl implements LogService{
 	public void setJedisPool(JedisPool jedisPool) {
 		this.jedisPool = jedisPool;
 	}
+	
+	@Autowired
+	private SiteService siteService;
 
 	/**
 	 * 记录日志
@@ -52,7 +61,9 @@ public class LogServiceImpl implements LogService{
 		/** 6) 更新渠道点击IP数 **/
 		updateChannelClickIP(channelId, newClickNum, oldClickNum);
 		/** 7) 保存渠道进入目标页IPSet**/
-		putChannelTIPSet(channelId, ipAddress);
+		if(siteService.matchTargetPage(siteId, browsingPage)){
+			putChannelTIPSet(channelId, ipAddress);
+		}
 	}
 
 	/**
@@ -61,7 +72,7 @@ public class LogServiceImpl implements LogService{
 	 * @param ipAddress    IP地址
 	 */
 	protected void putSiteIPSet(Integer siteId,String ipAddress) {
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		jedis.sadd("SiteIP_"+siteId+"", ipAddress);
 	}
 	
@@ -71,7 +82,7 @@ public class LogServiceImpl implements LogService{
 	 * @param ipAddress
 	 */
 	protected void increSitePV(Integer siteId) {
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		jedis.incr("SitePV_"+siteId+"");
 	}
 	
@@ -81,7 +92,7 @@ public class LogServiceImpl implements LogService{
 	 * @param ipAddress    IP地址
 	 */
 	protected void putChannelIPSet(Integer channelId,String ipAddress){
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		jedis.sadd("ChannelIP_"+channelId+"", ipAddress);
 	}
 	
@@ -91,7 +102,7 @@ public class LogServiceImpl implements LogService{
 	 * @param ipAddress    IP地址
 	 */
 	protected void increChannelPV(Integer channelId) {
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		jedis.incr("ChannelPV_"+channelId+"");	
 	}
 	
@@ -102,7 +113,7 @@ public class LogServiceImpl implements LogService{
 	 * @return
 	 */
 	protected Integer increIPClickNum(String ipAddress,Integer pageClickNum){
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		Long pageClickTotal = jedis.incrBy("CIPNum_"+ipAddress, pageClickNum);
 		int pageClickTotal2 = Integer.parseInt(String.valueOf(pageClickTotal)); 
 		return pageClickTotal2;
@@ -114,7 +125,7 @@ public class LogServiceImpl implements LogService{
 	 * @param ipClickNum  IP累计点击次数
 	 */
 	protected void updateChannelMultipleRangeClickIP(Integer channelId,Integer ipClickNum){
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		
 	}
 	
@@ -156,13 +167,46 @@ public class LogServiceImpl implements LogService{
 	 * @param channelId
 	 */
 	protected void putChannelTIPSet(Integer channelId,String ipAddress){
-		Jedis jedis = jedisPool.getResource();
+		Jedis jedis = getJedis();
 		jedis.sadd("ChannelTIP_"+channelId, ipAddress);
 	}
 	
+	/**
+	 * 更新渠道点击IP数
+	 * @param channelId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
 	protected void updateChannelClickIP(Integer channelId,Integer newClickNum,Integer oldClickNum){
+		/** 拿到上次点击数区间 **/
+		Jedis jedis = getJedis();
+		String lastClickIPKey = matchClickRangeKey(oldClickNum);
+		String currentClickIPKey =  matchClickRangeKey(newClickNum);
 		
+		if(lastClickIPKey!=null){
+			Long pageClickTotal = jedis.decr(lastClickIPKey+channelId);
+		}
+		Long pageClickTotal = jedis.incr(currentClickIPKey+channelId);
 	}
+	
+	protected Jedis getJedis(){
+		return jedisPools.getResource();
+	}
+	
+	protected String matchClickRangeKey(Integer clickNum){
+		if(clickNum >=1 && clickNum <= 2){
+			return RedisKeys.ChannelC1IP.getKey();
+		}else if (clickNum >=3 && clickNum <= 5){
+			return RedisKeys.ChannelC2IP.getKey();
+		}else if (clickNum >=6 && clickNum <= 10){
+			return RedisKeys.ChannelC3IP.getKey();
+		}else if (clickNum > 10){
+			return RedisKeys.ChannelC4IP.getKey();
+		}else {
+			return null;
+		}
+	}
+	
 	
 
 }

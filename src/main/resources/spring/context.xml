@@ -18,6 +18,13 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 	
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+        <property name="maxIdle" value="${redis.maxIdle}" />  
+        <property name="maxActive" value="${redis.maxActive}" />  
+        <property name="maxWait" value="${redis.maxWait}" />  
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />  
+    </bean>
+	
 	<task:annotation-driven scheduler="qbScheduler" mode="proxy"/>  
     <task:scheduler id="qbScheduler" pool-size="10"/>
 	
