@@ -20,7 +20,7 @@ public class StatServiceImpl implements StatService{
 	
 	@Autowired
     private  JedisPools jedisPools;//自动切库,周一至周日每天一库
-	@Autowired
+//	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
 	public JedisPool getJedisPool() {

@@ -31,9 +31,9 @@ public class JedisPools implements InitializingBean{
 	@Value("${redis.pass:}")
 	private String pass;
 	
+	@Autowired
 	private JedisPoolConfig jedisPoolConfig;
 	
-	@Autowired
     private  Map<Integer,JedisPool> jedisPools;  /** <星期1-7,JedisPool>,数据库的索引表示星期天（0）-星期（6）的数据, **/
 	private Integer defualtDBindex; /** 默认库 **/
 	

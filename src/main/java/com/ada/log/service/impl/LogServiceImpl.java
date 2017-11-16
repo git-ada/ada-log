@@ -23,7 +23,7 @@ public class LogServiceImpl implements LogService{
 	@Autowired
     private  JedisPools jedisPools;
 	
-	@Autowired
+//	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
 	public JedisPool getJedisPool() {
