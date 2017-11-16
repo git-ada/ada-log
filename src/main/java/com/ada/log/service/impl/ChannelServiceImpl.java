@@ -29,7 +29,6 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 		List<Map> list = this.channelMap.get(siteId);
 		String str = browsingPage.substring(browsingPage.indexOf("?")+1);
 		String[] s = str.split("&");
-		System.out.println();
 		if(list!=null && list.size()>0){
 
 			for(int i=0;i<list.size();i++){
@@ -86,7 +85,6 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 			}
 			
 		}
-		System.out.println();
 	}
 
 
