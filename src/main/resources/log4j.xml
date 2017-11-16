@@ -105,8 +105,13 @@
 	<logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper">
 		<level value="ERROR" />
 	</logger>
+	
+	<logger name="com.ada.log.service">
+		<level value="ERROR" />
+	</logger>
+	
 	<root>
-		<level value="INFO" /> 
+		<level value="DUBUG" /> 
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />

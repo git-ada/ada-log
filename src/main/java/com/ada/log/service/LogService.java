@@ -22,8 +22,8 @@ public interface LogService {
 			  String uuid,
 	          Integer siteId,
 	          Integer channelId,
-	          String clickNum,
-	          String browsingTime,
+	          Integer clickNum,
+	          Integer browsingTime,
 	          String browsingPage);
 
 }

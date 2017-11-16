@@ -1,5 +1,7 @@
 package com.ada.log.dao;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import com.ada.log.bean.ChannelStat;
+import com.ada.log.bean.SiteStat;
 
 @ActiveProfiles("local")
 @ContextConfiguration(locations = "classpath:spring/context.xml")
@@ -20,6 +23,9 @@ public class ChannelStatDaoTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Autowired
 	private ChannelStatDao channelStatDao;
+	
+	@Autowired
+	private SiteStatDao siteStatDao;
 
 	@Test
 	public void testSave(){
@@ -27,6 +33,16 @@ public class ChannelStatDaoTest extends AbstractTransactionalJUnit4SpringContext
 		item.setChannelId(1);
 		item.setClickip1(1);
 		channelStatDao.save(item);
+	}
+	
+	@Test
+	public void testSavesite(){
+		SiteStat item = new SiteStat();
+		item.setSiteId(1);
+		item.setDate(new Date());
+		item.setIp(10);
+		item.setPv(200);
+		siteStatDao.save(item);
 	}
 
 }
