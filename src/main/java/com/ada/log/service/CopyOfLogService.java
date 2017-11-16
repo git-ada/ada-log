@@ -5,7 +5,7 @@ package com.ada.log.service;
  * 核心日志服务
  * @author wanghl
  */
-public interface LogService {
+public interface CopyOfLogService {
 
 	/**
 	 * 记录日志

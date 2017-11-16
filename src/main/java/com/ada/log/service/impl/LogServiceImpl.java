@@ -37,10 +37,22 @@ public class LogServiceImpl implements LogService{
 	 * @param browsingTime  浏览时间,精确到毫秒
 	 * @param browsingPage  当前页面链接
 	 */
-	public void log(String ipAddress,String uuid, Integer siteId, Integer channelId,String clickNum, String browsingTime, String browsingPage) {
-		
-		
-		
+	public void log(String ipAddress,String uuid, Integer siteId, Integer channelId,Integer clickNum, Integer browsingTime, String browsingPage) {
+		/** 1）保存站点IP Set **/
+		putSiteIPSet(siteId, ipAddress);
+		/** 2）保存站点PV **/
+		increSitePV(siteId);
+		/** 3) 保存渠道IP Set **/
+		putChannelIPSet(channelId, ipAddress);
+		/** 5) 保存渠道PV Set **/
+		increChannelPV(channelId);
+		/** 5) 保存IP鼠标点击次数 **/
+		Integer newClickNum = increIPClickNum(ipAddress, clickNum);
+		Integer oldClickNum = newClickNum - clickNum;
+		/** 6) 更新渠道点击IP数 **/
+		updateChannelClickIP(channelId, newClickNum, oldClickNum);
+		/** 7) 保存渠道进入目标页IPSet**/
+		putChannelTIPSet(channelId, ipAddress);
 	}
 
 	/**
@@ -148,7 +160,9 @@ public class LogServiceImpl implements LogService{
 		jedis.sadd("ChannelTIP_"+channelId, ipAddress);
 	}
 	
-	
+	protected void updateChannelClickIP(Integer channelId,Integer newClickNum,Integer oldClickNum){
+		
+	}
 	
 
 }
