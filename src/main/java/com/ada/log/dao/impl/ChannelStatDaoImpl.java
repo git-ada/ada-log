@@ -22,13 +22,20 @@ public class ChannelStatDaoImpl implements ChannelStatDao {
 	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void save(ChannelStat item) {
-		jdbcTemplate.update("insert into ada_channel_stat(channelId,clickip1,clickip2) values(?,?,?)", 
+		jdbcTemplate.update("insert into ada_channel_stat(siteId,channelId,ip,pv,clickip1,clickip2,clickip3,clickip4,targetpagepv,date,createTime) values(?,?,?,?,?,?,?,?,?,?,now())", 
+				item.getSiteId(),
 				item.getChannelId(),
+				item.getIp(),
+				item.getPv(),
 				item.getClickip1(),
-				item.getClickip2());
+				item.getClickip2(),
+				item.getClickip3(),
+				item.getClickip4(),
+				item.getTargetpageip(),
+				item.getDate());
 		
 		if(log.isDebugEnabled()){
-			log.info("保存统计结果成功");
+			log.info("保存渠道统计结果成功");
 		}
 	}
 
