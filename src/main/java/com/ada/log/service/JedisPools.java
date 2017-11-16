@@ -27,21 +27,23 @@ public class JedisPools implements InitializingBean{
 	@Value("${redis.host:}")
 	private String host;
 	@Value("${redis.port:}")
-	private Integer port;
+	private String port;
 	@Value("${redis.pass:}")
 	private String pass;
 	
 	private JedisPoolConfig jedisPoolConfig;
 	
 	@Autowired
-    private  Map<Integer,JedisPool> jedisPools = new HashMap<Integer,JedisPool>();  /** <星期1-7,JedisPool>,数据库的索引表示星期天（0）-星期（6）的数据, **/
-	private Integer defualtDBindex = null; /** 默认库 **/
+    private  Map<Integer,JedisPool> jedisPools;  /** <星期1-7,JedisPool>,数据库的索引表示星期天（0）-星期（6）的数据, **/
+	private Integer defualtDBindex; /** 默认库 **/
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		
+		jedisPools = new HashMap<Integer,JedisPool>();
 		JedisPoolConfig config = new JedisPoolConfig();
 		for(int dbindex=0;dbindex<7;dbindex++){
-			JedisPool jedisPool = new JedisPool(jedisPoolConfig,host, port, 20000, pass, dbindex);
+			JedisPool jedisPool = new JedisPool(jedisPoolConfig,host, Integer.valueOf(port), 1000, pass, dbindex);
 			jedisPools.put(dbindex, jedisPool);
 		}
 		

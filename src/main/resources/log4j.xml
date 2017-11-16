@@ -106,12 +106,12 @@
 		<level value="ERROR" />
 	</logger>
 	
-	<logger name="com.ada.log.service">
-		<level value="ERROR" />
+	<logger name="com.ada.log">
+		<level value="DEBUG" />
 	</logger>
 	
 	<root>
-		<level value="DUBUG" /> 
+		<level value="INFO" /> 
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />
