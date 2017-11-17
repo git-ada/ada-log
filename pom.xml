@@ -154,5 +154,11 @@
 				<profiles.activation>online</profiles.activation>
 			</properties>
 		</profile>
+		<profile>
+			<id>usa</id>
+			<properties>
+				<profiles.activation>usa</profiles.activation>
+			</properties>
+		</profile>
 	</profiles>
 </project>
