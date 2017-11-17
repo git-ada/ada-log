@@ -17,6 +17,27 @@ public class ChannelStat {
 	private Integer clickip4;
 	private Integer targetpageip;
 	private Date date;
+	
+
+	public ChannelStat() {
+		super();
+	}
+
+	public ChannelStat(Integer siteId, Integer channelId, Integer ip,
+			Integer pv, Integer clickip1, Integer clickip2, Integer clickip3,
+			Integer clickip4, Integer targetpageip, Date date) {
+		super();
+		this.siteId = siteId;
+		this.channelId = channelId;
+		this.ip = ip;
+		this.pv = pv;
+		this.clickip1 = clickip1;
+		this.clickip2 = clickip2;
+		this.clickip3 = clickip3;
+		this.clickip4 = clickip4;
+		this.targetpageip = targetpageip;
+		this.date = date;
+	}
 
 	public Integer getSiteId() {
 		return siteId;

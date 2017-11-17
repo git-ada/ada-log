@@ -19,19 +19,9 @@ import com.ada.log.service.SiteService;
 @Service
 
 public class LogServiceImpl implements LogService{
-	
+
 	@Autowired
     private  JedisPools jedisPools;
-	
-//	@Autowired
-    private  JedisPool jedisPool;//非切片连接池
-    
-	public JedisPool getJedisPool() {
-		return jedisPool;
-	}
-	public void setJedisPool(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
-	}
 	
 	@Autowired
 	private SiteService siteService;
@@ -130,10 +120,10 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	/**
-	 * 匹配是否目标页
-	 * @param siteId
-	 * @param browsingPage 
-	 * @return
+	 * 匹配是否目标页 
+	 * @param siteId 
+	 * @param browsingPage  
+	 * @return 
 	 */
 	protected boolean matchTargetPage(Integer siteId,String browsingPage){
 		String[] split = browsingPage.split("\\?");
@@ -151,7 +141,7 @@ public class LogServiceImpl implements LogService{
 		
 		JedisPool jedisPool = new JedisPool(config, "127.0.0.1", 6379, 20000, "g^h*123T", 2);
 		LogServiceImpl logServiceImpl = new LogServiceImpl();
-		logServiceImpl.setJedisPool(jedisPool);
+//		logServiceImpl.setJedisPool(jedisPool);
 		
 		String s= "http://sss.com?t=9";
 		String[] split = s.split("\\?");

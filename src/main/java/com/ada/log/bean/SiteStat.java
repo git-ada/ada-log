@@ -12,6 +12,18 @@ public class SiteStat {
 	private Integer pv;
 	private Date date;
 
+	public SiteStat(Integer siteId, Integer ip, Integer pv, Date date) {
+		super();
+		this.siteId = siteId;
+		this.ip = ip;
+		this.pv = pv;
+		this.date = date;
+	}
+
+	public SiteStat() {
+		super();
+	}
+
 	public Integer getSiteId() {
 		return siteId;
 	}

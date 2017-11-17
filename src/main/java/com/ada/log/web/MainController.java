@@ -72,7 +72,6 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "l")
-	@ResponseBody
 	public String log(@RequestParam("u")String uuid,
 			          @RequestParam("s")Integer siteId,
 			          @RequestParam("c")Integer channelId,
@@ -88,8 +87,6 @@ public class MainController {
 			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage);
 		}
 		
-		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
-		
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
@@ -97,7 +94,10 @@ public class MainController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
+		
+	
 		return "ok";
 	}
 }
