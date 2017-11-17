@@ -48,8 +48,9 @@ public class MainController {
 			                   HttpServletRequest request,
 			                   HttpServletResponse response
 			                   ){
+		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug("u->"+uuid+",s->"+siteId+",p->"+browsingPage);
+			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage);
 		}
 		
 		try {
