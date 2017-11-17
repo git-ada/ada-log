@@ -41,26 +41,62 @@ public class StatServiceImpl implements StatService{
 
 	public SiteStat statSite(Integer site, Date date) {
 		Jedis jedis = getJedis(date);
+		Integer sitePV = 0;
+		int siteIP = 0;
 		//取出站点PV
-		Integer sitePV = Integer.valueOf(jedis.get("SitePV_"+site+""));
+		Boolean CHCKSitePVExists = jedis.exists("SitePV_"+site+"");
+		if(true == CHCKSitePVExists){
+			sitePV = Integer.valueOf(jedis.get("SitePV_"+site+""));
+		}
 		//取出站点IPSet集合
-		int siteIP = jedis.scard("SiteIP_"+site+"").intValue();
+		Boolean checkSiteIPExists = jedis.exists("SiteIP_"+site+"");
+		if(true == checkSiteIPExists){
+			siteIP = jedis.scard("SiteIP_"+site+"").intValue();
+		}
 		return new SiteStat(site, siteIP, sitePV, date);
 	}
 	
 	public ChannelStat statChannel(Integer siteId, Integer channelId, Date date) {
 		Jedis jedis = getJedis(date);
+		Integer sitePV = 0;
+		int channelIP = 0;
+		int targetpageIP = 0;
+		Integer clickip1 = 0;
+		Integer clickip2 = 0;
+		Integer clickip3 = 0;
+		Integer clickip4 = 0;
 		//取出渠道IPSet集合
-		int channelIP = jedis.scard("ChannelIP_"+channelId+"").intValue();
+		Boolean checkChannelTIPExists = jedis.exists("ChannelIP_"+channelId+"");
+		if(true == checkChannelTIPExists){
+			channelIP = jedis.scard("ChannelIP_"+channelId+"").intValue();
+		}
 		//取出渠道PV 
-		Integer sitePV = Integer.valueOf(jedis.get("ChannelPV_"+channelId+""));
+		Boolean checkChannelPVExists = jedis.exists("ChannelPV_"+channelId+"");
+		if(true == checkChannelPVExists){
+			sitePV = Integer.valueOf(jedis.get("ChannelPV_"+channelId+""));
+		}
 		//取出渠道进入目标页IP集合
-		int targetpageIP = jedis.scard("ChannelTIP_"+channelId+"").intValue();
+		Boolean checkTargetpageIPExists = jedis.exists("ChannelTIP_"+channelId+"");
+		if(true == checkTargetpageIPExists){
+			targetpageIP = jedis.scard("ChannelTIP_"+channelId+"").intValue();
+		}
 		//取出渠道多个点击区间次数
-		Integer clickip1 = Integer.valueOf(jedis.get("ChannelC1IP_"+channelId+""));
-		Integer clickip2 = Integer.valueOf(jedis.get("ChannelC2IP_"+channelId+""));
-		Integer clickip3 = Integer.valueOf(jedis.get("ChannelC3IP_"+channelId+""));
-		Integer clickip4 = Integer.valueOf(jedis.get("ChannelC4IP_"+channelId+""));
+		Boolean checkclickip1Exists = jedis.exists("ChannelC1IP_"+channelId+"");
+		if(true == checkclickip1Exists){
+			clickip1 = Integer.valueOf(jedis.get("ChannelC1IP_"+channelId+""));
+		}
+		Boolean checkclickip2Exists = jedis.exists("ChannelC2IP_"+channelId+"");
+		if(true == checkclickip2Exists){
+			clickip1 = Integer.valueOf(jedis.get("ChannelC2IP_"+channelId+""));
+		}
+		Boolean checkclickip3Exists = jedis.exists("ChannelC3IP_"+channelId+"");
+		if(true == checkclickip3Exists){
+			clickip1 = Integer.valueOf(jedis.get("ChannelC3IP_"+channelId+""));
+		}
+		Boolean checkclickip4Exists = jedis.exists("ChanneLC4IP_"+channelId+"");
+		if(true == checkclickip4Exists){
+			clickip1 = Integer.valueOf(jedis.get("ChannelC4IP_"+channelId+""));
+		}
 		return new ChannelStat(siteId, channelId, channelIP, sitePV, clickip1, clickip2, clickip3, clickip4, targetpageIP, date);
 	}
 
