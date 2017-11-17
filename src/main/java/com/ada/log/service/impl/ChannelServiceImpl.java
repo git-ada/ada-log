@@ -7,12 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.ada.log.job.ArchiveJob;
 import com.ada.log.service.ChannelService;
 
 /**
@@ -20,6 +23,8 @@ import com.ada.log.service.ChannelService;
  */
 @Service
 public class ChannelServiceImpl implements ChannelService,InitializingBean {
+	
+	private final static Log log = LogFactory.getLog(ChannelServiceImpl.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
