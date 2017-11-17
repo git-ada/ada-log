@@ -66,18 +66,16 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return 0;
+			return null;
 		}
 		
-		return 0;
+		return null;
 	}
 
 	@Scheduled(cron="0 0/5 * * * ?")   //每5分钟执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
 		channelMap= new HashMap<Integer, List<Map>>();
 		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select channelId,url,parameter,siteId  from ada_channel_link");

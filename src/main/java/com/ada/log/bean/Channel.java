@@ -8,12 +8,12 @@ package com.ada.log.bean;
 public class Channel {
 
     /** 渠道ID */
-	private Integer id;
-	/** 站点ID */
+	private Integer id;                    
+    /** 站点ID */
 	private Integer siteId;
-	/** 渠道名称 */
+	/** 渠道名称*/
 	private String channelName;
-   
+	
 	public Integer getId() {
 		return id;
 	}
