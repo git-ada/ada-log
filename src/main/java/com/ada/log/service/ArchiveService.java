@@ -11,7 +11,7 @@ import com.ada.log.dao.SiteStatDao;
 @Service
 public class ArchiveService {
 	
-	@Autowired
+//	@Autowired
 	private StatService statService;
 	
 //	@Autowired

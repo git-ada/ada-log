@@ -1,5 +1,10 @@
 package com.ada.log.web;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ada.log.service.ChannelService;
+import com.ada.log.service.LogService;
+import com.ada.log.util.IpUtils;
 
 /**
  * 主控制器
@@ -22,6 +29,9 @@ public class MainController {
 	@Autowired
 	private ChannelService channelService;
 	
+	@Autowired
+	private LogService logService;
+	
 	/**
 	 * 查询渠道
 	 * @param uuid            客户端UUID
@@ -30,19 +40,27 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "q")
-	@ResponseBody
-	public Integer queryChannel(@RequestParam("u")String uuid,
+	public void queryChannel(@RequestParam("u")String uuid,
 			                   @RequestParam("s")Integer siteId,
-			                   @RequestParam("p")String browsingPage
+			                   @RequestParam("p")String browsingPage,
+			                   HttpServletRequest request,
+			                   HttpServletResponse response
 			                   ){
 		if(log.isDebugEnabled()){
 			log.debug("u->"+uuid+",s->"+siteId+",p->"+browsingPage);
 		}
 		
 		Integer channelId = channelService.queryChannel(siteId, browsingPage);
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+//			response.getWriter().println(channelId.toString());
+			response.getWriter().println("1");
 
-		/** 返回渠道Id **/
-		return channelId;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -56,16 +74,31 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "l")
-	@ResponseBody
+//	@ResponseBody
 	public String log(@RequestParam("u")String uuid,
-			          @RequestParam("s")String siteId,
-			          @RequestParam("c")String channelId,
-			          @RequestParam("n")String clickNum,
-			          @RequestParam("t")String browsingTime,
-			          @RequestParam("p")String browsingPage
+			          @RequestParam("s")Integer siteId,
+			          @RequestParam("c")Integer channelId,
+			          @RequestParam("n")Integer clickNum,
+			          @RequestParam("t")Integer browsingTime,
+			          @RequestParam("p")String browsingPage,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
 			          ) {
+
+		String ipAddress = IpUtils.getIpAddr(request);
+		System.out.println("==================================");
 		if(log.isDebugEnabled()){
-			log.debug("u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage);
+			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage);
+		}
+		
+//		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return "ok";

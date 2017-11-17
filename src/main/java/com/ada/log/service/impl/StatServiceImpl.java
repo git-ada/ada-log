@@ -16,7 +16,7 @@ import com.ada.log.service.StatService;
 
 @Service
 public class StatServiceImpl implements StatService{
-	@Autowired
+//	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
 	public JedisPool getJedisPool() {

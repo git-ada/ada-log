@@ -17,7 +17,7 @@ import com.ada.log.service.LogService;
 @Service
 
 public class LogServiceImpl implements LogService{
-	@Autowired
+//	@Autowired
     private  JedisPool jedisPool;//非切片连接池
     
 	public JedisPool getJedisPool() {
@@ -107,10 +107,10 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	/**
-	 * 匹配是否目标页
-	 * @param siteId
-	 * @param browsingPage 
-	 * @return
+	 * 匹配是否目标页 
+	 * @param siteId 
+	 * @param browsingPage  
+	 * @return 
 	 */
 	protected boolean matchTargetPage(Integer siteId,String browsingPage){
 		String[] split = browsingPage.split("\\?");
