@@ -41,8 +41,10 @@ public class StatServiceImpl implements StatService{
 
 	public SiteStat statSite(Integer site, Date date) {
 		Jedis jedis = getJedis(date);
+		Integer sitePV = 0;
 		//取出站点PV
-		Integer sitePV = Integer.valueOf(jedis.get("SitePV_"+site+""));
+		String _SitePV = jedis.get("SitePV_"+site+"");
+		if(_SitePV != null) sitePV = Integer.valueOf(_SitePV);
 		//取出站点IPSet集合
 		int siteIP = jedis.scard("SiteIP_"+site+"").intValue();
 		return new SiteStat(site, siteIP, sitePV, date);
@@ -50,17 +52,32 @@ public class StatServiceImpl implements StatService{
 	
 	public ChannelStat statChannel(Integer siteId, Integer channelId, Date date) {
 		Jedis jedis = getJedis(date);
+		Integer sitePV = 0;
+		Integer clickip1 = 0;
+		Integer clickip2 = 0;
+		Integer clickip3 = 0;
+		Integer clickip4 = 0;
+		
 		//取出渠道IPSet集合
 		int channelIP = jedis.scard("ChannelIP_"+channelId+"").intValue();
 		//取出渠道PV 
-		Integer sitePV = Integer.valueOf(jedis.get("ChannelPV_"+channelId+""));
+		String ChannelPV = jedis.get("ChannelPV_"+channelId+"");
+		if(ChannelPV != null) sitePV = Integer.valueOf(ChannelPV);
 		//取出渠道进入目标页IP集合
-		int targetpageIP = jedis.scard("ChannelTIP_"+channelId+"").intValue();
+		int targetpageIP  = jedis.scard("ChannelTIP_"+channelId+"").intValue();
 		//取出渠道多个点击区间次数
-		Integer clickip1 = Integer.valueOf(jedis.get("ChannelC1IP_"+channelId+""));
-		Integer clickip2 = Integer.valueOf(jedis.get("ChannelC2IP_"+channelId+""));
-		Integer clickip3 = Integer.valueOf(jedis.get("ChannelC3IP_"+channelId+""));
-		Integer clickip4 = Integer.valueOf(jedis.get("ChannelC4IP_"+channelId+""));
+		String ChannelC1IP = jedis.get("ChannelC1IP_"+channelId+"");
+		if(ChannelC1IP != null) clickip1 = Integer.valueOf(ChannelC1IP);
+		
+		String ChannelC2IP = jedis.get("ChannelC2IP_"+channelId+"");
+		if(ChannelC2IP != null) clickip2 = Integer.valueOf(ChannelC2IP);
+		
+		String ChannelC3IP = jedis.get("ChannelC3IP_"+channelId+"");
+		if(ChannelC3IP != null) clickip3 = Integer.valueOf(ChannelC3IP);
+		
+		String ChannelC4IP = jedis.get("ChannelC4IP_"+channelId+"");
+		if(ChannelC4IP != null) clickip4 = Integer.valueOf(ChannelC4IP);
+		
 		return new ChannelStat(siteId, channelId, channelIP, sitePV, clickip1, clickip2, clickip3, clickip4, targetpageIP, date);
 	}
 
