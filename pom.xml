@@ -147,4 +147,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>online</id>
+			<properties>
+				<profiles.activation>online</profiles.activation>
+			</properties>
+		</profile>
+	</profiles>
 </project>
