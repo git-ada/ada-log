@@ -39,7 +39,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 			if(list!=null && list.size()>0){
 				for(int i=0;i<list.size();i++){
 					String url = list.get(i);
-					if(browsingPage.startsWith(url)){
+					if(browsingPage.trim().startsWith(url.trim())){
 						return true;
 					}
 				}
