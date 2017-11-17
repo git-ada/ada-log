@@ -17,7 +17,6 @@
 		<param-value>30000</param-value>
 	</context-param>
 	
-
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -25,6 +24,10 @@
 	<listener>
 	  	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
+	
+	<listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
     
 	<servlet>
 		<servlet-name>LogServlet</servlet-name>
@@ -37,7 +40,7 @@
 		    <param-name>detectAllHandlerExceptionResolvers</param-name>
 			<param-value>false</param-value>
 		</init-param>
-		<load-on-startup>3</load-on-startup>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
 	<servlet-mapping>
@@ -45,9 +48,4 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 	
-    <listener>
-        <listener-class>
-            org.springframework.web.util.IntrospectorCleanupListener
-        </listener-class>
-    </listener>
 </web-app>
