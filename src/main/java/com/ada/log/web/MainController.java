@@ -1,6 +1,8 @@
 package com.ada.log.web;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,12 +52,18 @@ public class MainController {
 			log.debug("u->"+uuid+",s->"+siteId+",p->"+browsingPage);
 		}
 		
+		try {
+			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+		}
 		Integer channelId = channelService.queryChannel(siteId, browsingPage);
 		
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.getWriter().println(channelId.toString());
+			if(channelId!=null){
+				response.getWriter().println(channelId.toString());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -72,9 +80,9 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "l")
-	public String log(@RequestParam("u")String uuid,
+	public void log(@RequestParam("u")String uuid,
 			          @RequestParam("s")Integer siteId,
-			          @RequestParam("c")Integer channelId,
+			          @RequestParam(value="c",required=false)Integer channelId,
 			          @RequestParam("n")Integer clickNum,
 			          @RequestParam("t")Integer browsingTime,
 			          @RequestParam("p")String browsingPage,
@@ -95,9 +103,11 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
+		try {
+			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+		}
 		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
 		
-	
-		return "ok";
 	}
 }

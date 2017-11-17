@@ -41,18 +41,20 @@ public class LogServiceImpl implements LogService{
 		putSiteIPSet(siteId, ipAddress);
 		/** 2）保存站点PV **/
 		increSitePV(siteId);
-		/** 3) 保存渠道IP Set **/
-		putChannelIPSet(channelId, ipAddress);
-		/** 5) 保存渠道PV Set **/
-		increChannelPV(channelId);
-		/** 5) 保存IP鼠标点击次数 **/
-		Integer newClickNum = increIPClickNum(ipAddress, clickNum);
-		Integer oldClickNum = newClickNum - clickNum;
-		/** 6) 更新渠道点击IP数 **/
-		updateChannelClickIP(channelId, newClickNum, oldClickNum);
-		/** 7) 保存渠道进入目标页IPSet**/
-		if(siteService.matchTargetPage(siteId, browsingPage)){
-			putChannelTIPSet(channelId, ipAddress);
+		if(channelId!=null){
+			/** 3) 保存渠道IP Set **/
+			putChannelIPSet(channelId, ipAddress);
+			/** 4) 保存渠道PV Set **/
+			increChannelPV(channelId);
+			/** 5) 保存IP鼠标点击次数 **/
+			Integer newClickNum = increIPClickNum(ipAddress, clickNum);
+			Integer oldClickNum = newClickNum - clickNum;
+			/** 6) 更新渠道点击IP数 **/
+			updateChannelClickIP(channelId, newClickNum, oldClickNum);
+			/** 7) 保存渠道进入目标页IPSet**/
+			if(siteService.matchTargetPage(siteId, browsingPage)){
+				putChannelTIPSet(channelId, ipAddress);
+			}
 		}
 	}
 
@@ -168,15 +170,17 @@ public class LogServiceImpl implements LogService{
 	 * @param oldClickNum
 	 */
 	protected void updateChannelClickIP(Integer channelId,Integer newClickNum,Integer oldClickNum){
-		/** 拿到上次点击数区间 **/
-		Jedis jedis = getJedis();
-		String lastClickIPKey = matchClickRangeKey(oldClickNum);
-		String currentClickIPKey =  matchClickRangeKey(newClickNum);
-		
-		if(lastClickIPKey!=null){
-			Long pageClickTotal = jedis.decr(lastClickIPKey+channelId);
+		if(oldClickNum <= 10 ){
+			/** 拿到上次点击数区间 **/
+			Jedis jedis = getJedis();
+			String lastClickIPKey = matchClickRangeKey(oldClickNum);
+			String currentClickIPKey =  matchClickRangeKey(newClickNum);
+			
+			if(lastClickIPKey!=null){
+				jedis.decr(lastClickIPKey+channelId);
+			}
+			jedis.incr(currentClickIPKey+channelId);
 		}
-		Long pageClickTotal = jedis.incr(currentClickIPKey+channelId);
 	}
 	
 	protected Jedis getJedis(){

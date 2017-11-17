@@ -111,7 +111,7 @@
 	</logger>
 	
 	<root>
-		<level value="STDOUT" /> 
+		<level value="INFO" /> 
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />

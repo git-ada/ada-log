@@ -1,7 +1,5 @@
 package com.ada.log.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.ada.log.job.ArchiveJob;
 import com.ada.log.service.ChannelService;
 
 /**
@@ -33,7 +30,6 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	@Override
 	public Integer queryChannel(Integer siteId, String browsingPage) {
 		try {
-			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 			List<Map> list = this.channelMap.get(siteId);
 			String str = browsingPage.substring(browsingPage.indexOf("?")+1);
 			String[] s = str.split("&");
@@ -65,7 +61,7 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 					}
 				}
 			}
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -76,6 +72,7 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	@Scheduled(cron="0 0/5 * * * ?")   //每5分钟执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		log.info("重新加载渠道数据");
 		channelMap= new HashMap<Integer, List<Map>>();
 		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select channelId,url,parameter,siteId  from ada_channel_link");
