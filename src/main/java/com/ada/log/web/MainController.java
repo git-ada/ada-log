@@ -42,15 +42,16 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "q")
-	public void queryChannel(@RequestParam("u")String uuid,
-			                   @RequestParam("s")Integer siteId,
-			                   @RequestParam("p")String browsingPage,
+	public void queryChannel(@RequestParam(value="u",required=false)String uuid,
+			                   @RequestParam(value="s",required=false)Integer siteId,
+			                   @RequestParam(value="p",required=false)String browsingPage,
+			                   @RequestParam(value="t1",required=false)String timestamp,
 			                   HttpServletRequest request,
 			                   HttpServletResponse response
 			                   ){
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage);
+			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp);
 		}
 		
 		try {
@@ -64,6 +65,9 @@ public class MainController {
 			response.setHeader("Access-Control-Allow-Origin", "*");
 			if(channelId!=null){
 				response.getWriter().println(channelId.toString());
+				if(log.isDebugEnabled()){
+					log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -87,13 +91,14 @@ public class MainController {
 			          @RequestParam("n")Integer clickNum,
 			          @RequestParam("t")Integer browsingTime,
 			          @RequestParam("p")String browsingPage,
+			          @RequestParam(value="t1",required=false)String timestamp,
 			          HttpServletRequest request,
 	                  HttpServletResponse response
 			          ) {
 
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage);
+			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp);
 		}
 		
 		/** 允许跨域访问 **/
