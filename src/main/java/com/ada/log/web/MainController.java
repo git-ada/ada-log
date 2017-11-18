@@ -65,7 +65,7 @@ public class MainController {
 			                   ){
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug("Q"+ ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		try {
