@@ -55,7 +55,7 @@ public class ArchiveService {
 			    siteStatDao.save(stat);
 			    log.info("站点 "+site.getId()+":"+site.getSiteName() +" 归档成功");
 			} catch (Exception e) {
-				log.error("站点 "+site.getId()+":"+site.getSiteName() +" 归档错误");
+				log.error("站点 "+site.getId()+":"+site.getSiteName() +" 归档失败,Msg->"+e.getMessage(),e);
 			}
 			
 			 List<Channel> channels = channelDao.findBySiteId(site.getId());
@@ -65,7 +65,7 @@ public class ArchiveService {
 				    channelStatDao.save(channelStat);
 				    log.info("渠道 "+channel.getId()+":"+channel.getChannelName()+" 归档成功");
 				} catch (Exception e) {
-					log.info("渠道 "+channel.getId()+":"+channel.getChannelName()+" 归档失败");
+					log.info("渠道 "+channel.getId()+":"+channel.getChannelName()+" 归档失败,Msg->"+e.getMessage(),e);
 				}
 			 }
 		}
