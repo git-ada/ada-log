@@ -136,7 +136,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L2 u->"+uuid+",s->"+siteId+",c->"+channelId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L2 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
