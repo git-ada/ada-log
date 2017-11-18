@@ -37,13 +37,13 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 
 				for(int i=0;i<list.size();i++){
 					Map map = list.get(i);
-					if(browsingPage.trim().startsWith(((String)map.get("url")).trim())){//匹配url
+					if(browsingPage!=null && browsingPage.trim().startsWith(((String)map.get("url")).trim())){//匹配url
 						if(s.length>=1){
 							//匹配参数parameter/
-							String parameter = ((String) map.get("parameter")).trim();
+							String parameter = (String) map.get("parameter");
 							for(int j=0;j<s.length;j++){
 								String type = s[j].trim();
-								if(parameter!=null && parameter.equals(type)){
+								if(parameter!=null && parameter.trim().equals(type)){
 									return (Integer) map.get("channelId");
 								}
 							}
