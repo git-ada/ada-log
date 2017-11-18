@@ -25,5 +25,18 @@ public interface LogService {
 	          Integer clickNum,
 	          Integer browsingTime,
 	          String browsingPage);
+	
+	
+	public void log1(String ipAddress,
+				  String uuid,
+		          Integer siteId,
+		          Integer channelId, String browsingPage);
+	
+	public void log2(
+			  String ipAddress,
+			  String uuid,
+	          Integer siteId,
+	          Integer channelId,
+	          Integer clickNum);
 
 }

@@ -57,6 +57,33 @@ public class LogServiceImpl implements LogService{
 			}
 		}
 	}
+	
+	@Override
+	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId, String browsingPage) {
+		/** 1）保存站点IP Set **/
+		putSiteIPSet(siteId, ipAddress);
+		/** 2）保存站点PV **/
+		increSitePV(siteId);
+		if(channelId!=null){
+			/** 3) 保存渠道IP Set **/
+			putChannelIPSet(channelId, ipAddress);
+			/** 4) 保存渠道PV Set **/
+			increChannelPV(channelId);
+			/** 7) 保存渠道进入目标页IPSet**/
+			if(siteService.matchTargetPage(siteId, browsingPage)){
+				putChannelTIPSet(channelId, ipAddress);
+			}
+		}
+	}
+
+	@Override
+	public void log2(String ipAddress, String uuid, Integer siteId,Integer channelId, Integer clickNum) {
+		if(channelId!=null){
+			/** 6) 更新渠道点击IP数 **/
+			Integer oldClickNum = getAndSetIPClickNum(ipAddress,clickNum);
+			updateChannelClickIP(channelId, clickNum, oldClickNum);
+		}
+	}
 
 	/**
 	 * 保存站点IPSet集合
@@ -109,6 +136,17 @@ public class LogServiceImpl implements LogService{
 		Long pageClickTotal = jedis.incrBy("CIPNum_"+ipAddress, pageClickNum);
 		int pageClickTotal2 = Integer.parseInt(String.valueOf(pageClickTotal)); 
 		return pageClickTotal2;
+	}
+	
+	
+	protected Integer getAndSetIPClickNum(String ipAddress,Integer pageClickNum){
+		Jedis jedis = getJedis();
+		String value = jedis.getSet(ipAddress, pageClickNum.toString());
+		if(value != null){
+			return Integer.valueOf(pageClickNum);
+		}else{
+			return null;
+		}
 	}
 	
 	/**
@@ -190,7 +228,9 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	protected String matchClickRangeKey(Integer clickNum){
-		if(clickNum >=1 && clickNum <= 2){
+		if(clickNum==null){
+			return null;
+		}else if(clickNum >=1 && clickNum <= 2){
 			return RedisKeys.ChannelC1IP.getKey();
 		}else if (clickNum >=3 && clickNum <= 5){
 			return RedisKeys.ChannelC2IP.getKey();
@@ -202,5 +242,7 @@ public class LogServiceImpl implements LogService{
 			return null;
 		}
 	}
+
+
 	
 }

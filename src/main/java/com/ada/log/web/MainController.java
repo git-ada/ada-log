@@ -90,6 +90,73 @@ public class MainController {
 		}
 	}
 	
+	@RequestMapping(value = "l1")
+	public void log1(@RequestParam(value="u",required=false)String uuid,
+	          @RequestParam(value="s",required=false)Integer siteId,
+	          @RequestParam(value="c",required=false)Integer channelId,
+	          @RequestParam(value="t",required=false)Integer browsingTime,
+	          @RequestParam(value="p",required=false)String browsingPage,
+	          @RequestParam(value="t1",required=false)String timestamp,
+	          @RequestHeader(value="User-Agent",required=false)String useragent,
+	          @RequestHeader(value="Referer",required=false)String referer,
+	          @RequestHeader(value="Cookie",required=false)String cookie,
+		      HttpServletRequest request,
+	          HttpServletResponse response){
+		
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug("L1" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
+		} catch (Exception e1) {
+		}
+		logService.log1(ipAddress, uuid, siteId, channelId,browsingPage);
+	}
+	
+	@RequestMapping(value = "l2")
+	public void log2(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
+			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="n",required=false)Integer clickNum,
+			          @RequestParam(value="t",required=false)Integer browsingTime,
+			          @RequestParam(value="p",required=false)String browsingPage,
+			          @RequestParam(value="t1",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
+			          ) {
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug("L1" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
+		} catch (Exception e1) {
+		}
+		logService.log2(ipAddress, uuid, siteId, channelId, clickNum);
+	}
+	
 	/**
 	 * 提交日志
 	 * @param uuid          客户端UUID
