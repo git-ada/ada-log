@@ -93,7 +93,6 @@ public class MainController {
 	public void log1(@RequestParam(value="u",required=false)String uuid,
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="c",required=false)Integer channelId,
-	          @RequestParam(value="t",required=false)Integer browsingTime,
 	          @RequestParam(value="p",required=false)String browsingPage,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
@@ -104,7 +103,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug("L1" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",t->"+browsingTime+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug("L1" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -127,7 +126,6 @@ public class MainController {
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
 			          @RequestParam(value="n",required=false)Integer clickNum,
-			          @RequestParam(value="t",required=false)Integer browsingTime,
 			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t",required=false)String timestamp,
 			          @RequestHeader(value="User-Agent",required=false)String useragent,
@@ -138,7 +136,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug("L2" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",t->"+browsingTime+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug("L2" + ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
