@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,31 +47,40 @@ public class MainController {
 			                   @RequestParam(value="s",required=false)Integer siteId,
 			                   @RequestParam(value="p",required=false)String browsingPage,
 			                   @RequestParam(value="t1",required=false)String timestamp,
+			                   
+			                   @RequestHeader(value="User-Agent",required=false)String useragent,
+			                   @RequestHeader(value="Referer",required=false)String referer,
+			                   @RequestHeader(value="Cookie",required=false)String cookie,
+			                   
 			                   HttpServletRequest request,
 			                   HttpServletResponse response
 			                   ){
+		request.getHeader("cookies");
+		request.getHeader("cookies");
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp);
+			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
+		} catch (Exception e1) {
 		}
-		Integer channelId = channelService.queryChannel(siteId, browsingPage);
-		
-		/** 允许跨域访问 **/
-		try {
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			if(channelId!=null){
-				response.getWriter().println(channelId.toString());
-				if(log.isDebugEnabled()){
-					log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
+		if(siteId!=null && browsingPage!=null){
+			Integer channelId = channelService.queryChannel(siteId, browsingPage);
+			
+			/** 允许跨域访问 **/
+			try {
+				response.setHeader("Access-Control-Allow-Origin", "*");
+				if(channelId!=null){
+					response.getWriter().println(channelId.toString());
+					if(log.isDebugEnabled()){
+						log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
+					}
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -85,20 +95,23 @@ public class MainController {
 	 * @return
 	 */
 	@RequestMapping(value = "l")
-	public void log(@RequestParam("u")String uuid,
-			          @RequestParam("s")Integer siteId,
+	public void log(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
-			          @RequestParam("n")Integer clickNum,
-			          @RequestParam("t")Integer browsingTime,
-			          @RequestParam("p")String browsingPage,
+			          @RequestParam(value="n",required=false)Integer clickNum,
+			          @RequestParam(value="t",required=false)Integer browsingTime,
+			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t1",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
 			          HttpServletRequest request,
 	                  HttpServletResponse response
 			          ) {
 
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp);
+			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -111,7 +124,7 @@ public class MainController {
 		
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
+		} catch (Exception e1) {
 		}
 		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
 		
