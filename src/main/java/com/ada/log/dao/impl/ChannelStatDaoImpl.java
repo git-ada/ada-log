@@ -22,7 +22,7 @@ public class ChannelStatDaoImpl implements ChannelStatDao {
 	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void save(ChannelStat item) {
-		jdbcTemplate.update("insert into ada_channel_stat(siteId,channelId,ip,pv,clickip1,clickip2,clickip3,clickip4,targetpagepv,date,createTime) values(?,?,?,?,?,?,?,?,?,?,now())", 
+		jdbcTemplate.update("insert into ada_channel_stat(siteId,channelId,ip,pv,clickip1,clickip2,clickip3,clickip4,targetpageip,date,createTime) values(?,?,?,?,?,?,?,?,?,?,now())", 
 				item.getSiteId(),
 				item.getChannelId(),
 				item.getIp(),
