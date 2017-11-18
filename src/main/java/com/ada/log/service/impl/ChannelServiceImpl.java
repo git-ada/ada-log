@@ -72,7 +72,7 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	@Scheduled(cron="0 0/5 * * * ?")   //每5分钟执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		log.info("重新加载渠道数据");
+		log.debug("重新加载渠道数据");
 		channelMap= new HashMap<Integer, List<Map>>();
 		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select channelId,url,parameter,siteId  from ada_channel_link");
