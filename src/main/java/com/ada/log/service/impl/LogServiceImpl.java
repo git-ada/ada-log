@@ -179,7 +179,9 @@ public class LogServiceImpl implements LogService{
 			if(lastClickIPKey!=null){
 				jedis.decr(lastClickIPKey+channelId);
 			}
-			jedis.incr(currentClickIPKey+channelId);
+			if(currentClickIPKey!=null){
+				jedis.incr(currentClickIPKey+channelId);
+			}
 		}
 	}
 	
