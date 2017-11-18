@@ -35,6 +35,14 @@ public class MainController {
 	@Autowired
 	private LogService logService;
 	
+	@RequestMapping(value = "track")
+	public void queryChannel( HttpServletRequest request,
+            HttpServletResponse response) {
+		
+		log.info(request.getRequestURL().append(request.getQueryString()));
+	}
+	
+	
 	/**
 	 * 查询渠道
 	 * @param uuid            客户端UUID
