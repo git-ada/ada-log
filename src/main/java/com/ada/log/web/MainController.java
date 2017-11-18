@@ -54,8 +54,7 @@ public class MainController {
 	public void queryChannel(@RequestParam(value="u",required=false)String uuid,
 			                   @RequestParam(value="s",required=false)Integer siteId,
 			                   @RequestParam(value="p",required=false)String browsingPage,
-			                   @RequestParam(value="t1",required=false)String timestamp,
-			                   
+			                   @RequestParam(value="t",required=false)String timestamp,
 			                   @RequestHeader(value="User-Agent",required=false)String useragent,
 			                   @RequestHeader(value="Referer",required=false)String referer,
 			                   @RequestHeader(value="Cookie",required=false)String cookie,
@@ -65,7 +64,7 @@ public class MainController {
 			                   ){
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug("Q "+ ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug("Q "+ ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		try {
