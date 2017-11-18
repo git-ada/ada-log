@@ -55,8 +55,6 @@ public class MainController {
 			                   HttpServletRequest request,
 			                   HttpServletResponse response
 			                   ){
-		request.getHeader("cookies");
-		request.getHeader("cookies");
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
 			log.debug(ipAddress+ " u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
