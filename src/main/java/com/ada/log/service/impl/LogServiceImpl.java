@@ -141,7 +141,7 @@ public class LogServiceImpl implements LogService{
 	
 	protected Integer getAndSetIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
-		String value = jedis.getSet(ipAddress, pageClickNum.toString());
+		String value = jedis.getSet("CIPNum_"+ipAddress, pageClickNum.toString());
 		if(value != null){
 			return Integer.valueOf(pageClickNum);
 		}else{
