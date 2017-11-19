@@ -62,7 +62,7 @@ public class JedisPools implements InitializingBean{
 		
 		log.info("开始清库 ");
 		for(int i=-3;i>=-5;i--){
-			Date lastDay = Dates.add(today, Calendar.DAY_OF_WEEK, -3);
+			Date lastDay = Dates.add(today, Calendar.DAY_OF_WEEK, -1*i);
 			log.info("清库 "+Dates.toString(lastDay, "yyyy-MM-dd")+":"+lastDay.getDay());
 			cleanDb(lastDay.getDay());
 		}
