@@ -215,24 +215,22 @@ public class LogServiceImpl implements LogService{
 	 * @param oldClickNum
 	 */
 	protected void updateChannelClickIP(Integer channelId,Integer newClickNum,Integer oldClickNum){
-		if(oldClickNum <= 10 ){
-			/** 拿到上次点击数区间 **/
-			Jedis jedis = getJedis();
-			String lastClickIPKey = null;
-			if(oldClickNum!=null){
-				lastClickIPKey = matchClickRangeKey(oldClickNum);
-			}
-			String currentClickIPKey =  matchClickRangeKey(newClickNum);
-			
-			if(lastClickIPKey!=null){
-				jedis.decr(lastClickIPKey+channelId);
-			}
-			if(currentClickIPKey!=null){
-				jedis.incr(currentClickIPKey+channelId);
-			}
-			
-			returnResource(jedis);
+		/** 拿到上次点击数区间 **/
+		Jedis jedis = getJedis();
+		String lastClickIPKey = null;
+		if(oldClickNum!=null){
+			lastClickIPKey = matchClickRangeKey(oldClickNum);
 		}
+		String currentClickIPKey =  matchClickRangeKey(newClickNum);
+		
+		if(lastClickIPKey!=null){
+			jedis.decr(lastClickIPKey+channelId);
+		}
+		if(currentClickIPKey!=null){
+			jedis.incr(currentClickIPKey+channelId);
+		}
+		
+		returnResource(jedis);
 	}
 	
 	protected Jedis getJedis(){
