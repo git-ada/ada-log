@@ -10,7 +10,7 @@
 	<appender class="org.apache.log4j.DailyRollingFileAppender"
 		name="ROLLINGFILE">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile.log" />
+		<param name="File" value="${catalina.home}/logs/app.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -21,7 +21,7 @@
 	<!--设定级别为debug的配置信息-->
 	<appender name="DEBUG" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile_debug.log" />
+		<param name="File" value="${catalina.home}/logs/app_debug.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -38,7 +38,7 @@
 	<!--设定级别为info的配置信息-->
 	<appender name="INFO" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile_info.log" />
+		<param name="File" value="${catalina.home}/logs/app_info.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -53,7 +53,7 @@
 	<!--设定级别为warn的配置信息-->
 	<appender name="WARN" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile_warn.log" />
+		<param name="File" value="${catalina.home}/logs/app_warn.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -68,7 +68,7 @@
 	<!--设定级别为error的配置信息-->
 	<appender name="ERROR" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile_error.log" />
+		<param name="File" value="${catalina.home}/logs/app_error.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -83,7 +83,7 @@
 	<!--设定级别为fatal的配置信息-->
 	<appender name="FATAL" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/jst-mobile_fatal.log" />
+		<param name="File" value="${catalina.home}/logs/app_fatal.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="utf-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -112,7 +112,7 @@
 	
 	<root>
 		<level value="INFO" /> 
-		<appender-ref ref="STDOUT" />
+		<!-- appender-ref ref="STDOUT" /-->
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />
 		<appender-ref ref="INFO" />
