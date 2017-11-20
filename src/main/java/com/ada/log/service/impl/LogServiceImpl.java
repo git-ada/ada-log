@@ -161,7 +161,7 @@ public class LogServiceImpl implements LogService{
 		String value = jedis.getSet("CIPNum_"+ipAddress, pageClickNum.toString());
 		returnResource(jedis);
 		if(value != null){
-			return Integer.valueOf(pageClickNum);
+			return Integer.valueOf(value);
 		}else{
 			return null;
 		}
