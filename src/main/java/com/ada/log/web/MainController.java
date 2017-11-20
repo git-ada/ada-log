@@ -199,4 +199,15 @@ public class MainController {
 		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
 		
 	}
+	
+	@RequestMapping(value = "ping")
+	public void ping(HttpServletRequest request,HttpServletResponse response) {
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
