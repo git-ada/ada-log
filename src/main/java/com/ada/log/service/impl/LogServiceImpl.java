@@ -218,7 +218,10 @@ public class LogServiceImpl implements LogService{
 		if(oldClickNum <= 10 ){
 			/** 拿到上次点击数区间 **/
 			Jedis jedis = getJedis();
-			String lastClickIPKey = matchClickRangeKey(oldClickNum);
+			String lastClickIPKey = null;
+			if(oldClickNum!=null){
+				matchClickRangeKey(oldClickNum);
+			}
 			String currentClickIPKey =  matchClickRangeKey(newClickNum);
 			
 			if(lastClickIPKey!=null){
