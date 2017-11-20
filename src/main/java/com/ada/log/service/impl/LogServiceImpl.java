@@ -232,7 +232,6 @@ public class LogServiceImpl implements LogService{
 		String lastClickIPKey = null;
 		if(oldClickNum!=null){
 			lastClickIPKey = matchClickRangeKey(oldClickNum);
-			log.info("lastClickIPKey"+lastClickIPKey);
 		}
 		
 		String currentClickIPKey =  matchClickRangeKey(newClickNum);
