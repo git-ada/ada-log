@@ -220,7 +220,7 @@ public class LogServiceImpl implements LogService{
 			Jedis jedis = getJedis();
 			String lastClickIPKey = null;
 			if(oldClickNum!=null){
-				matchClickRangeKey(oldClickNum);
+				lastClickIPKey = matchClickRangeKey(oldClickNum);
 			}
 			String currentClickIPKey =  matchClickRangeKey(newClickNum);
 			
