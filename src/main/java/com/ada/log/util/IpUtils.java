@@ -15,22 +15,22 @@ public class IpUtils {
 	 * @return
 	 */
     public static String getIpAddr(HttpServletRequest request) {  
-        String ip = request.getHeader("X-Forwarded-For");  
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getRemoteAddr();  
-        }else if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("Proxy-Client-IP");  
-        }else if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("WL-Proxy-Client-IP");  
-        }else if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("HTTP_CLIENT_IP");  
-        } else if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
-        } else if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
-            ip = request.getHeader("X-real-ip");  
-        }else {
-        	 ip = request.getRemoteAddr();  
+        String [] headeNames = new String[]{"X-real-ip","X-REAL-IP","X-Forwarded-For","HTTP_X_FORWARDED_FOR","Proxy-Client-IP","WL-Proxy-Client-IP"};
+        for(String headerName:headeNames){
+        	String ip = get(request,headerName);
+        	if(ip!=null){
+        		return ip;
+        	}
         }
-        return ip;  
+		return request.getRemoteAddr();
     }  
+    
+    protected static String get(HttpServletRequest request,String headerName){
+    	 String ip = request.getHeader(headerName);
+    	 if(ip!=null && !ip.isEmpty() && !ip.equals("unknown")){
+    		 return ip;
+    	 }
+    	 
+    	 return null;
+    }
 }
