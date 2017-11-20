@@ -201,7 +201,15 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "ping")
-	public void ping(HttpServletRequest request,HttpServletResponse response) {
+	public void ping(
+			@RequestHeader(value="User-Agent",required=false)String useragent,
+            @RequestHeader(value="Referer",required=false)String referer,
+            @RequestHeader(value="Cookie",required=false)String cookie,
+			HttpServletRequest request,HttpServletResponse response) {
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug(ipAddress +" ping "+ useragent+ " "+ cookie+ " "+ referer);
+		}
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
