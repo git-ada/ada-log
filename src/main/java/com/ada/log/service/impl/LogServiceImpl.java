@@ -93,6 +93,7 @@ public class LogServiceImpl implements LogService{
 	protected void putSiteIPSet(Integer siteId,String ipAddress) {
 		Jedis jedis = getJedis();
 		jedis.sadd("SiteIP_"+siteId+"", ipAddress);
+		returnResource(jedis);
 	}
 	
 	/**
@@ -103,6 +104,7 @@ public class LogServiceImpl implements LogService{
 	protected void increSitePV(Integer siteId) {
 		Jedis jedis = getJedis();
 		jedis.incr("SitePV_"+siteId+"");
+		returnResource(jedis);
 	}
 	
 	/**
@@ -113,6 +115,7 @@ public class LogServiceImpl implements LogService{
 	protected void putChannelIPSet(Integer channelId,String ipAddress){
 		Jedis jedis = getJedis();
 		jedis.sadd("ChannelIP_"+channelId+"", ipAddress);
+		returnResource(jedis);
 	}
 	
 	/**
@@ -123,6 +126,7 @@ public class LogServiceImpl implements LogService{
 	protected void increChannelPV(Integer channelId) {
 		Jedis jedis = getJedis();
 		jedis.incr("ChannelPV_"+channelId+"");	
+		returnResource(jedis);
 	}
 	
 	/**
@@ -134,6 +138,7 @@ public class LogServiceImpl implements LogService{
 	protected Integer increIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
 		Long pageClickTotal = jedis.incrBy("CIPNum_"+ipAddress, pageClickNum);
+		returnResource(jedis);
 		int pageClickTotal2 = Integer.parseInt(String.valueOf(pageClickTotal)); 
 		return pageClickTotal2;
 	}
@@ -142,6 +147,7 @@ public class LogServiceImpl implements LogService{
 	protected Integer getAndSetIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
 		String value = jedis.getSet("CIPNum_"+ipAddress, pageClickNum.toString());
+		returnResource(jedis);
 		if(value != null){
 			return Integer.valueOf(pageClickNum);
 		}else{
@@ -199,6 +205,7 @@ public class LogServiceImpl implements LogService{
 	protected void putChannelTIPSet(Integer channelId,String ipAddress){
 		Jedis jedis = getJedis();
 		jedis.sadd("ChannelTIP_"+channelId, ipAddress);
+		returnResource(jedis);
 	}
 	
 	/**
@@ -220,11 +227,17 @@ public class LogServiceImpl implements LogService{
 			if(currentClickIPKey!=null){
 				jedis.incr(currentClickIPKey+channelId);
 			}
+			
+			returnResource(jedis);
 		}
 	}
 	
 	protected Jedis getJedis(){
 		return jedisPools.getResource();
+	}
+	
+	protected void returnResource(Jedis jedis){
+		jedisPools.returnResource(jedis);
 	}
 	
 	protected String matchClickRangeKey(Integer clickNum){

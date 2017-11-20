@@ -72,6 +72,7 @@ public class JedisPools implements InitializingBean{
 	public void cleanDb(Integer dbindex){
 		Jedis jedis = getResource(dbindex);
 		jedis.flushDB();
+		returnResource(dbindex,jedis);
 		log.info("已清库 DBIndex:"+dbindex);
 	}
 	
@@ -90,4 +91,12 @@ public class JedisPools implements InitializingBean{
 	public Jedis getResource(Integer dbindex){
 		return jedisPools.get(dbindex).getResource();
 	}
+	
+	public void returnResource(Jedis jedis) {
+		jedisPools.get(defualtDBindex).returnResource(jedis);
+    }
+
+	public void returnResource(Integer dbindex,Jedis jedis) {
+		jedisPools.get(dbindex).returnResource(jedis);
+    }
 }

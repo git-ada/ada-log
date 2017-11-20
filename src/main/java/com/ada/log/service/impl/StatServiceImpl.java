@@ -84,4 +84,8 @@ public class StatServiceImpl implements StatService{
 	protected Jedis getJedis(Date date){	
 		return jedisPools.getResource(date.getDay());
 	}
+	
+	public void returnResource(Date date,Jedis jedis) {
+		jedisPools.returnResource(date.getDay(),jedis);
+    }
 }
