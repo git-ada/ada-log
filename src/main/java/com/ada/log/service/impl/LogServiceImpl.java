@@ -239,11 +239,11 @@ public class LogServiceImpl implements LogService{
 		
 		if(lastClickIPKey!=null){
 			jedis.decr(lastClickIPKey+channelId);
-			log.info(lastClickIPKey+channelId+"--");
+			log.debug(lastClickIPKey+channelId+"--");
 		}
 		if(currentClickIPKey!=null){
 			jedis.incr(currentClickIPKey+channelId);
-			log.info(currentClickIPKey+channelId+"++");
+			log.debug(currentClickIPKey+channelId+"++");
 		}
 		
 		returnResource(jedis);
