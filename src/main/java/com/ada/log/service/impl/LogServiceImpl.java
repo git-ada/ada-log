@@ -1,5 +1,7 @@
 package com.ada.log.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class LogServiceImpl implements LogService{
 	
 	@Autowired
 	private SiteService siteService;
+	
+	private final static Log log = LogFactory.getLog(LogServiceImpl.class);
 
 	/**
 	 * 记录日志
@@ -78,9 +82,17 @@ public class LogServiceImpl implements LogService{
 
 	@Override
 	public void log2(String ipAddress, String uuid, Integer siteId,Integer channelId, Integer clickNum) {
+		if(log.isDebugEnabled()){
+			log.debug("ip->"+ipAddress+",siteId->"+siteId+",channelId->"+channelId+",clickNum->"+clickNum);
+		}
+		
+		
 		if(channelId!=null){
 			/** 6) 更新渠道点击IP数 **/
 			Integer oldClickNum = getAndSetIPClickNum(ipAddress,clickNum);
+			if(log.isDebugEnabled()){
+				log.debug("oldClickNum->"+clickNum);
+			}
 			updateChannelClickIP(channelId, clickNum, oldClickNum);
 		}
 	}
@@ -220,14 +232,18 @@ public class LogServiceImpl implements LogService{
 		String lastClickIPKey = null;
 		if(oldClickNum!=null){
 			lastClickIPKey = matchClickRangeKey(oldClickNum);
+			log.info("lastClickIPKey"+lastClickIPKey);
 		}
+		
 		String currentClickIPKey =  matchClickRangeKey(newClickNum);
 		
 		if(lastClickIPKey!=null){
 			jedis.decr(lastClickIPKey+channelId);
+			log.info(lastClickIPKey+channelId+"--");
 		}
 		if(currentClickIPKey!=null){
 			jedis.incr(currentClickIPKey+channelId);
+			log.info(currentClickIPKey+channelId+"++");
 		}
 		
 		returnResource(jedis);
