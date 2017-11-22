@@ -39,11 +39,22 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 			for(int i=0;i<list.size();i++){
 				Map map = list.get(i);
 				if(domain!=null && domain.equals((String)map.get("domain"))){
+					//System.out.println("加载内存");
 					return (Integer) map.get("id");
 				}else{
-					Integer resloutID = jdbcTemplate.queryForObject("select id from ada_domain where siteId=? and domain=?", 
-							new Object[] {siteId,domain }, Integer.class); 
-					return resloutID;
+					//System.out.println(domain+"============");
+					//Integer resloutID = jdbcTemplate.update("select id from ada_domain where siteId=? and domain=?", siteId,"'"+domain+"'");
+					try{
+						Integer resulotID = jdbcTemplate.queryForObject("select id from ada_domain where siteId=? and domain=?", 
+								Integer.class , new Object[] {siteId ,domain}); 
+						//System.out.println(resulotID+"******");
+						if(resulotID != null){
+							return resulotID;
+						}
+					}catch(Exception e){
+						return null;
+					}
+					
 				}
 			}
 		}
@@ -51,7 +62,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 		return null;
 	}
 
-//	@Scheduled(cron="0 0/5 * * * ?")  
+//	@Scheduled(cron="0 0/5 * * * ?") //每5分钟执行一次
 	@Scheduled(cron="0/5 * * * * ?") //每5秒执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -80,7 +91,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 	
 	@Override
 	public void addDomain(Integer siteId, String domain) {
-//		domain="www.baidu.com";
+		
 		jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
 //		jdbcTemplate.update("insert into ada_domain values(?,?,now())", siteId,domain);
 	}

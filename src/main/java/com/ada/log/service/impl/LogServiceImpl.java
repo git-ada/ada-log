@@ -120,7 +120,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void putSiteIPSet(Integer siteId,String ipAddress) {
 		Jedis jedis = getJedis();
-		jedis.sadd("SiteIP_"+siteId+"", ipAddress);
+		jedis.sadd(RedisKeys.SiteIP.getKey()+siteId+"", ipAddress);
 		returnResource(jedis);
 	}
 	
@@ -131,7 +131,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void increSitePV(Integer siteId) {
 		Jedis jedis = getJedis();
-		jedis.incr("SitePV_"+siteId+"");
+		jedis.incr(RedisKeys.SitePV.getKey()+siteId+"");
 		returnResource(jedis);
 	}
 	
@@ -142,7 +142,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void putChannelIPSet(Integer channelId,String ipAddress){
 		Jedis jedis = getJedis();
-		jedis.sadd("ChannelIP_"+channelId+"", ipAddress);
+		jedis.sadd(RedisKeys.ChannelIP.getKey()+channelId+"", ipAddress);
 		returnResource(jedis);
 	}
 	
@@ -153,7 +153,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void increChannelPV(Integer channelId) {
 		Jedis jedis = getJedis();
-		jedis.incr("ChannelPV_"+channelId+"");	
+		jedis.incr(RedisKeys.ChannelPV.getKey()+channelId+"");	
 		returnResource(jedis);
 	}
 	
@@ -164,7 +164,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void putDomainIPSet(Integer domainId,String ipAddress){
 		Jedis jedis = getJedis();
-		jedis.sadd("DomainIP_"+domainId+"", ipAddress);
+		jedis.sadd(RedisKeys.DomainIP.getKey()+domainId+"", ipAddress);
 		returnResource(jedis);
 	}
 	
@@ -174,7 +174,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void increDomainPV(Integer domainId) {
 		Jedis jedis = getJedis();
-		jedis.incr("DomainPV_"+domainId+"");	
+		jedis.incr(RedisKeys.DomainPV.getKey()+domainId+"");	
 		returnResource(jedis);
 	}
 	
@@ -186,7 +186,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected Integer increIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
-		Long pageClickTotal = jedis.incrBy("CIPNum_"+ipAddress, pageClickNum);
+		Long pageClickTotal = jedis.incrBy(RedisKeys.CIPNum.getKey()+ipAddress, pageClickNum);
 		returnResource(jedis);
 		int pageClickTotal2 = Integer.parseInt(String.valueOf(pageClickTotal)); 
 		return pageClickTotal2;
@@ -194,7 +194,7 @@ public class LogServiceImpl implements LogService{
 	
 	protected Integer getAndSetIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
-		String value = jedis.getSet("CIPNum_"+ipAddress, pageClickNum.toString());
+		String value = jedis.getSet(RedisKeys.CIPNum.getKey()+ipAddress, pageClickNum.toString());
 		returnResource(jedis);
 		if(value != null){
 			return Integer.valueOf(value);
@@ -250,7 +250,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void putChannelTIPSet(Integer channelId,String ipAddress){
 		Jedis jedis = getJedis();
-		jedis.sadd("ChannelTIP_"+channelId, ipAddress);
+		jedis.sadd(RedisKeys.ChannelTIP.getKey()+channelId, ipAddress);
 		returnResource(jedis);
 	}
 	
@@ -262,7 +262,7 @@ public class LogServiceImpl implements LogService{
 	 */
 	protected void putDomainTIPSet(Integer domainId,String ipAddress){
 		Jedis jedis = getJedis();
-		jedis.sadd("DomainTIP_"+domainId, ipAddress);
+		jedis.sadd(RedisKeys.DomainTIP.getKey()+domainId, ipAddress);
 		returnResource(jedis);
 	}	
 	

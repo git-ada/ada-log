@@ -234,6 +234,7 @@ public class MainController {
 	 * @return
 	 */
 	public String getDomain(String browsingPage) {
+		
 		String domain = null;
 		try {
 			domain = new URL(browsingPage).getHost();
@@ -248,6 +249,11 @@ public class MainController {
 		} catch (Exception e) {
 			return null;
 		}
+//		try {
+//			return new URL(browsingPage).getHost();
+//		} catch (MalformedURLException e) {
+//			return null;
+//		}
 	}
 	
 	/** 测试*/
