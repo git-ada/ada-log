@@ -44,6 +44,7 @@ public class StatServiceImpl implements StatService{
 		if(_SitePV != null) sitePV = Integer.valueOf(_SitePV);
 		//取出站点IPSet集合
 		int siteIP = jedis.scard("SiteIP_"+site+"").intValue();
+		returnResource(date,jedis);
 		return new SiteStat(site, siteIP, sitePV, date);
 	}
 	
@@ -74,7 +75,7 @@ public class StatServiceImpl implements StatService{
 		
 		String ChannelC4IP = jedis.get("ChannelC4IP_"+channelId+"");
 		if(ChannelC4IP != null) clickip4 = Integer.valueOf(ChannelC4IP);
-		
+		returnResource(date,jedis);
 		return new ChannelStat(siteId, channelId, channelIP, site_ChannelPV, clickip1, clickip2, clickip3, clickip4, targetpageIP, date);
 	}
 	
@@ -105,7 +106,7 @@ public class StatServiceImpl implements StatService{
 		
 		String domainC4IP = jedis.get("DomainC4IP_"+domainId+"");
 		if(domainC4IP != null) clickip4 = Integer.valueOf(domainC4IP);
-		
+		returnResource(date,jedis);
 		return new DomainStat(siteId, domainId, domainIP, site_domainPV, clickip1, clickip2, clickip3, clickip4, targetpageIP, date);
 	}
 

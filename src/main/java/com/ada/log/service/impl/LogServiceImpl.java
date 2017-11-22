@@ -80,7 +80,7 @@ public class LogServiceImpl implements LogService{
 		increSitePV(siteId);
 		/** 3) 保存域名IP Set **/
 		putDomainIPSet(domainId, ipAddress);
-		/** 4) 保存域名PV Set **/
+		/** 4) 保存域名PV  **/
 		increDomainPV(domainId);
 		/** 5) 保存域名进入目标页IPSet**/
 		if(siteService.matchTargetPage(siteId, browsingPage)){
@@ -89,7 +89,7 @@ public class LogServiceImpl implements LogService{
 		if(channelId!=null){
 			/** 6) 保存渠道IP Set **/
 			putChannelIPSet(channelId, ipAddress);
-			/** 7) 保存渠道PV Set **/
+			/** 7) 保存渠道PV  **/
 			increChannelPV(channelId);
 			/** 8) 保存渠道进入目标页IPSet**/
 			if(siteService.matchTargetPage(siteId, browsingPage)){
