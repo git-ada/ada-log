@@ -52,7 +52,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 	}
 
 //	@Scheduled(cron="0 0/5 * * * ?")  
-	@Scheduled(cron="0/5 * * * * ?") //每1秒执行一次  
+	@Scheduled(cron="0/5 * * * * ?") //每5秒执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		log.debug("重新加载域名数据");
