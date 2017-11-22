@@ -69,7 +69,7 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 		return null;
 	}
 
-	@Scheduled(cron="0 0/5 * * * ?")   //每5分钟执行一次  
+	@Scheduled(cron="0/10 0 * * * ?")   //每5分钟执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		log.debug("重新加载渠道数据");
