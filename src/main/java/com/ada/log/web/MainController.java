@@ -127,10 +127,7 @@ public class MainController {
 		}
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		if(domainId == null){
-			domainService.addDomain(siteId, domain);
-			domainId = domainService.queryDomain(siteId, domain);
-		}
+		
 		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage);
 	}
 	
@@ -166,10 +163,7 @@ public class MainController {
 		}
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		if(domainId == null){
-			domainService.addDomain(siteId, domain);
-			domainId = domainService.queryDomain(siteId, domain);
-		}
+		
 		logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
 	}
 	
@@ -220,10 +214,6 @@ public class MainController {
 		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		if(domainId == null){
-			domainService.addDomain(siteId, domain);
-			domainId = domainService.queryDomain(siteId, domain);
-		}
 		logService.log(ipAddress, uuid, siteId, channelId,domainId, clickNum, browsingTime, browsingPage);
 		
 	}
@@ -234,7 +224,6 @@ public class MainController {
 	 * @return
 	 */
 	public String getDomain(String browsingPage) {
-		
 		String domain = null;
 		try {
 			domain = new URL(browsingPage).getHost();
@@ -249,22 +238,6 @@ public class MainController {
 		} catch (Exception e) {
 			return null;
 		}
-//		try {
-//			return new URL(browsingPage).getHost();
-//		} catch (MalformedURLException e) {
-//			return null;
-//		}
-	}
-	
-	/** 测试*/
-	public static void main(String[] args) {
-		
-//		MainController mainController = new MainController();
-//		String str = "http://sojson.com/blog/210.html";
-//		
-//		String domain = mainController.getDomain(str);
-//		System.out.println(domain);
-		
 	}
 	
 	@RequestMapping(value = "ping")

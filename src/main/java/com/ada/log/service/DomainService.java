@@ -16,14 +16,7 @@ public interface DomainService {
 	 */
 	public Integer queryDomain(Integer siteId,String domain);
 	
-	/**
-	 * 添加域名
-	 * @param siteId        站点ID
-	 * @param domain        domain
-	 * @return       
-	 *        
-	 */
-	public void addDomain(Integer siteId,String domain);
+
 	
 	
 }

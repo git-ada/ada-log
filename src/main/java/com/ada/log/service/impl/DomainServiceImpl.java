@@ -5,6 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -12,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
 
@@ -39,31 +49,49 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 			for(int i=0;i<list.size();i++){
 				Map map = list.get(i);
 				if(domain!=null && domain.equals((String)map.get("domain"))){
-					//System.out.println("加载内存");
 					return (Integer) map.get("id");
 				}else{
-					//System.out.println(domain+"============");
-					//Integer resloutID = jdbcTemplate.update("select id from ada_domain where siteId=? and domain=?", siteId,"'"+domain+"'");
 					try{
-						Integer resulotID = jdbcTemplate.queryForObject("select id from ada_domain where siteId=? and domain=?", 
-								Integer.class , new Object[] {siteId ,domain}); 
-						//System.out.println(resulotID+"******");
-						if(resulotID != null){
-							return resulotID;
+						List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select * from ada_domain  where siteId=? and domain=? ",siteId,domain);
+						if(queryForList != null&& queryForList.size()>0){
+							return (Integer)queryForList.get(0).get("id");
+						}else{
+							jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
+							List<Map<String, Object>> queryForList2 = jdbcTemplate.queryForList("select * from ada_domain where siteId=? and domain=? ",siteId,domain);
+							if(queryForList2 != null&& queryForList2.size()>0){
+								Map newMap = new HashMap();
+								List newList = new ArrayList();
+								newMap.put("id", (Integer)queryForList2.get(0).get("id"));
+								newMap.put("domain", domain);
+								newMap.put("siteId", siteId);
+								newList.add(newMap);
+								domainMap.put(siteId, newList);
+								return (Integer)queryForList2.get(0).get("id");
+							}
 						}
 					}catch(Exception e){
-						return null;
+						log.error("查询域名ID错误 "+ siteId+"-->>"+domain);
 					}
 					
 				}
 			}
+		}else{
+			jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
+			List<Map<String, Object>> queryForList3 = jdbcTemplate.queryForList("select * from ada_domain where siteId=? and domain=? ",siteId,domain);
+			if(queryForList3 != null && queryForList3.size()>0){
+				Map newMap = new HashMap();
+				List newList = new ArrayList();
+				newMap.put("id", (Integer)queryForList3.get(0).get("id"));
+				newMap.put("domain", domain);
+				newMap.put("siteId", siteId);
+				newList.add(newMap);
+				domainMap.put(siteId, newList);
+				return (Integer)queryForList3.get(0).get("id");
+			}
 		}
-		
 		return null;
 	}
 
-//	@Scheduled(cron="0 0/5 * * * ?") //每5分钟执行一次
-	@Scheduled(cron="0/5 * * * * ?") //每5秒执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		log.debug("重新加载域名数据");
@@ -89,12 +117,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 	}
 	
 	
-	@Override
-	public void addDomain(Integer siteId, String domain) {
-		
-		jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
-//		jdbcTemplate.update("insert into ada_domain values(?,?,now())", siteId,domain);
-	}
+	
 
 
 }
