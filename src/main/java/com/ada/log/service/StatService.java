@@ -3,6 +3,7 @@ package com.ada.log.service;
 import java.util.Date;
 
 import com.ada.log.bean.ChannelStat;
+import com.ada.log.bean.DomainStat;
 import com.ada.log.bean.SiteStat;
 
 /**
@@ -18,7 +19,12 @@ public interface StatService {
 	 */
 	public SiteStat statSite(Integer site,Date date);
 	
-	
+	/**
+	 * 统计域名
+	 * @param channelId
+	 * @return
+	 */
+	public DomainStat statDomain(Integer siteId,Integer domainId,Date date);
 
 	/**
 	 * 统计渠道
