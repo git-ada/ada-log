@@ -22,7 +22,7 @@ public class DomainDaoImpl implements DomainlDao {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
+	
 	
 	public List<Domain> findBySiteId(Integer siteId) {
 		// TODO Auto-generated method stub
