@@ -2,6 +2,8 @@ package com.ada.log.web;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ada.log.service.ChannelService;
+import com.ada.log.service.DomainService;
 import com.ada.log.service.LogService;
 import com.ada.log.util.IpUtils;
 
@@ -25,12 +28,16 @@ import com.ada.log.util.IpUtils;
  * @author wanghl
  */
 @Controller
+@SuppressWarnings("all")
 public class MainController {
 
 	private final static Log log = LogFactory.getLog(MainController.class);
 	
 	@Autowired
 	private ChannelService channelService;
+	
+	@Autowired
+	private DomainService domainService;
 	
 	@Autowired
 	private LogService logService;
@@ -49,6 +56,7 @@ public class MainController {
 	 * @param siteId          站点ID
 	 * @param browsingPage    用户当前访问地址
 	 * @return
+	 * @throws Exception 
 	 */
 	@RequestMapping(value = "q")
 	public void queryChannel(@RequestParam(value="u",required=false)String uuid,
@@ -61,7 +69,7 @@ public class MainController {
 			                   
 			                   HttpServletRequest request,
 			                   HttpServletResponse response
-			                   ){
+			                   ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
 			log.debug(ipAddress+ " Q u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
@@ -73,7 +81,6 @@ public class MainController {
 		}
 		if(siteId!=null && browsingPage!=null){
 			Integer channelId = channelService.queryChannel(siteId, browsingPage);
-			
 			/** 允许跨域访问 **/
 			try {
 				response.setHeader("Access-Control-Allow-Origin", "*");
@@ -118,7 +125,13 @@ public class MainController {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
 		}
-		logService.log1(ipAddress, uuid, siteId, channelId,browsingPage);
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		if(domainId == null){
+			domainService.addDomain(siteId, domain);
+			domainId = domainService.queryDomain(siteId, domain);
+		}
+		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage);
 	}
 	
 	@RequestMapping(value = "l2")
@@ -151,8 +164,16 @@ public class MainController {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
 		}
-		logService.log2(ipAddress, uuid, siteId, channelId, clickNum);
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		if(domainId == null){
+			domainService.addDomain(siteId, domain);
+			domainId = domainService.queryDomain(siteId, domain);
+		}
+		logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
 	}
+	
+	
 	
 	/**
 	 * 提交日志
@@ -196,8 +217,37 @@ public class MainController {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
 		}
-		logService.log(ipAddress, uuid, siteId, channelId, clickNum, browsingTime, browsingPage);
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		if(domainId == null){
+			domainService.addDomain(siteId, domain);
+			domainId = domainService.queryDomain(siteId, domain);
+		}
+		logService.log(ipAddress, uuid, siteId, channelId,domainId, clickNum, browsingTime, browsingPage);
+		
+	}
+	
+	/**
+	 * 获取域名
+	 * @param browsingPage
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDomain(String browsingPage) {
+		try {
+			return new URL(browsingPage).getHost();
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+	
+	/** 测试*/
+	public static void main(String[] args) {
+//		MainController mainController = new MainController();
+//		String str = "http://sojson.com/blog/210.html";
+//		String domain = mainController.getDomain(str);
+//		System.out.println(domain);
 	}
 	
 	@RequestMapping(value = "ping")

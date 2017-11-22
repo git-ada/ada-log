@@ -1,5 +1,8 @@
 package com.ada.log.service.impl;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +20,7 @@ import com.ada.log.service.SiteService;
  *
  */
 @Service
-
+@SuppressWarnings("all")
 public class LogServiceImpl implements LogService{
 
 	@Autowired
@@ -32,23 +35,34 @@ public class LogServiceImpl implements LogService{
 	 * @param uuid          客户端UUID
 	 * @param siteId        站点ID
 	 * @param channelId     渠道ID
+	 * @param domainId      域名ID
 	 * @param clickNum      点击次数
 	 * @param browsingTime  浏览时间,精确到毫秒
 	 * @param browsingPage  当前页面链接
 	 */
-	public void log(String ipAddress,String uuid, Integer siteId, Integer channelId,Integer clickNum, Integer browsingTime, String browsingPage) {
+	public void log(String ipAddress,String uuid, Integer siteId, Integer channelId,Integer domainId,Integer clickNum, Integer browsingTime, String browsingPage) {
 		/** 1）保存站点IP Set **/
 		putSiteIPSet(siteId, ipAddress);
 		/** 2）保存站点PV **/
 		increSitePV(siteId);
+		/** 3) 保存域名IP Set **/
+		putDomainIPSet(domainId, ipAddress);
+		/** 4) 保存域名PV  **/
+		increDomainPV(domainId);
+		/** 5) 保存IP鼠标点击次数 **/
+		Integer newClickNum = increIPClickNum(ipAddress, clickNum);
+		Integer oldClickNum = newClickNum - clickNum;
+		/** 6) 更新域名点击IP数 **/
+		updateDomainClickIP(domainId, newClickNum, oldClickNum);
+		/** 7) 保存域名进入目标页IPSet**/
+		if(siteService.matchTargetPage(siteId, browsingPage)){
+			putDomainTIPSet(domainId, ipAddress);
+		}
 		if(channelId!=null){
 			/** 3) 保存渠道IP Set **/
 			putChannelIPSet(channelId, ipAddress);
-			/** 4) 保存渠道PV Set **/
+			/** 4) 保存渠道PV **/
 			increChannelPV(channelId);
-			/** 5) 保存IP鼠标点击次数 **/
-			Integer newClickNum = increIPClickNum(ipAddress, clickNum);
-			Integer oldClickNum = newClickNum - clickNum;
 			/** 6) 更新渠道点击IP数 **/
 			updateChannelClickIP(channelId, newClickNum, oldClickNum);
 			/** 7) 保存渠道进入目标页IPSet**/
@@ -59,30 +73,44 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	@Override
-	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId, String browsingPage) {
+	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage) {
 		/** 1）保存站点IP Set **/
 		putSiteIPSet(siteId, ipAddress);
 		/** 2）保存站点PV **/
 		increSitePV(siteId);
+		/** 3) 保存域名IP Set **/
+		putDomainIPSet(domainId, ipAddress);
+		/** 4) 保存域名PV Set **/
+		increDomainPV(domainId);
+		/** 5) 保存域名进入目标页IPSet**/
+		if(siteService.matchTargetPage(siteId, browsingPage)){
+			putDomainTIPSet(domainId, ipAddress);
+		}
 		if(channelId!=null){
-			/** 3) 保存渠道IP Set **/
+			/** 6) 保存渠道IP Set **/
 			putChannelIPSet(channelId, ipAddress);
-			/** 4) 保存渠道PV Set **/
+			/** 7) 保存渠道PV Set **/
 			increChannelPV(channelId);
-			/** 7) 保存渠道进入目标页IPSet**/
+			/** 8) 保存渠道进入目标页IPSet**/
 			if(siteService.matchTargetPage(siteId, browsingPage)){
 				putChannelTIPSet(channelId, ipAddress);
 			}
 		}
+		
 	}
 
 	@Override
-	public void log2(String ipAddress, String uuid, Integer siteId,Integer channelId, Integer clickNum) {
+	public void log2(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, Integer clickNum) {
+		Integer oldClickNum = getAndSetIPClickNum(ipAddress,clickNum);
+		if(oldClickNum == null){
+			oldClickNum= 0;
+		}
 		if(channelId!=null){
-			/** 6) 更新渠道点击IP数 **/
-			Integer oldClickNum = getAndSetIPClickNum(ipAddress,clickNum);
+			/** 1) 更新渠道点击IP数 **/
 			updateChannelClickIP(channelId, clickNum, oldClickNum);
 		}
+		/** 2) 更新域名点击IP数 **/
+		updateDomainClickIP(domainId, clickNum, oldClickNum);
 	}
 
 	/**
@@ -130,6 +158,27 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	/**
+	 * 保存域名IPSet集合
+	 * @param domainId     域名ID
+	 * @param ipAddress    IP地址
+	 */
+	protected void putDomainIPSet(Integer domainId,String ipAddress){
+		Jedis jedis = getJedis();
+		jedis.sadd("DomainIP_"+domainId+"", ipAddress);
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存域名PV +1
+	 * @param domainId       域名ID
+	 */
+	protected void increDomainPV(Integer domainId) {
+		Jedis jedis = getJedis();
+		jedis.incr("DomainPV_"+domainId+"");	
+		returnResource(jedis);
+	}
+	
+	/**
 	 * 
 	 * @param ipAddress   IP地址
 	 * @param clickNum    页面点击次数
@@ -143,13 +192,12 @@ public class LogServiceImpl implements LogService{
 		return pageClickTotal2;
 	}
 	
-	
 	protected Integer getAndSetIPClickNum(String ipAddress,Integer pageClickNum){
 		Jedis jedis = getJedis();
 		String value = jedis.getSet("CIPNum_"+ipAddress, pageClickNum.toString());
 		returnResource(jedis);
 		if(value != null){
-			return Integer.valueOf(pageClickNum);
+			return Integer.valueOf(value);
 		}else{
 			return null;
 		}
@@ -181,18 +229,16 @@ public class LogServiceImpl implements LogService{
 		
 		return false;
 	}
+	
 	/*测试*/
-	public static void main(String[] args) {
-		JedisPoolConfig config = new JedisPoolConfig();
-		
-		JedisPool jedisPool = new JedisPool(config, "127.0.0.1", 6379, 20000, "g^h*123T", 2);
-		LogServiceImpl logServiceImpl = new LogServiceImpl();
+	public static void main(String[] args) throws Exception {
+//		JedisPoolConfig config = new JedisPoolConfig();
+//		
+//		JedisPool jedisPool = new JedisPool(config, "127.0.0.1", 6379, 20000, "g^h*123T", 2);
+//		LogServiceImpl logServiceImpl = new LogServiceImpl();
 //		logServiceImpl.setJedisPool(jedisPool);
 		
-		String s= "http://sss.com?t=9";
-		String[] split = s.split("\\?");
-		String string = split[0];
-		System.out.println(string);
+		
 		
 	}
 	
@@ -209,6 +255,18 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	/**
+	 * 
+	 * 域名进入目标页IP集合
+	 * @param domainId
+	 * @param ipAddress
+	 */
+	protected void putDomainTIPSet(Integer domainId,String ipAddress){
+		Jedis jedis = getJedis();
+		jedis.sadd("DomainTIP_"+domainId, ipAddress);
+		returnResource(jedis);
+	}	
+	
+	/**
 	 * 更新渠道点击IP数
 	 * @param channelId
 	 * @param newClickNum
@@ -218,16 +276,36 @@ public class LogServiceImpl implements LogService{
 		if(oldClickNum <= 10 ){
 			/** 拿到上次点击数区间 **/
 			Jedis jedis = getJedis();
-			String lastClickIPKey = matchClickRangeKey(oldClickNum);
-			String currentClickIPKey =  matchClickRangeKey(newClickNum);
-			
-			if(lastClickIPKey!=null){
+			String lastClickIPKey = matchChannelClickRangeKey(oldClickNum);
+			String currentClickIPKey =  matchChannelClickRangeKey(newClickNum);
+			if(lastClickIPKey != null){
 				jedis.decr(lastClickIPKey+channelId);
 			}
-			if(currentClickIPKey!=null){
+			if(currentClickIPKey != null){
 				jedis.incr(currentClickIPKey+channelId);
 			}
-			
+			returnResource(jedis);
+		}
+	}
+	
+	/**
+	 * 更新域名点击IP数
+	 * @param domainId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
+	protected void updateDomainClickIP(Integer domainId,Integer newClickNum,Integer oldClickNum){
+		if(oldClickNum <= 10 ){
+			/** 拿到上次点击数区间 **/
+			Jedis jedis = getJedis();
+			String lastClickIPKey = matchDomainClickRangeKey(oldClickNum);
+			String currentClickIPKey =  matchDomainClickRangeKey(newClickNum);
+			if(lastClickIPKey != null){
+				jedis.decr(lastClickIPKey+domainId);
+			}
+			if(currentClickIPKey != null){
+				jedis.incr(currentClickIPKey+domainId);
+			}
 			returnResource(jedis);
 		}
 	}
@@ -240,8 +318,24 @@ public class LogServiceImpl implements LogService{
 		jedisPools.returnResource(jedis);
 	}
 	
-	protected String matchClickRangeKey(Integer clickNum){
-		if(clickNum==null){
+	protected String matchDomainClickRangeKey(Integer clickNum){
+		if(clickNum == null){
+			return null;
+		}else if(clickNum >=1 && clickNum <= 2){
+			return RedisKeys.DomainC1IP.getKey();
+		}else if (clickNum >=3 && clickNum <= 5){
+			return RedisKeys.DomainC2IP.getKey();
+		}else if (clickNum >=6 && clickNum <= 10){
+			return RedisKeys.DomainC3IP.getKey();
+		}else if (clickNum > 10){
+			return RedisKeys.DomainC4IP.getKey();
+		}else {
+			return null;
+		}
+	}
+	
+	protected String matchChannelClickRangeKey(Integer clickNum){
+		if(clickNum == null){
 			return null;
 		}else if(clickNum >=1 && clickNum <= 2){
 			return RedisKeys.ChannelC1IP.getKey();
