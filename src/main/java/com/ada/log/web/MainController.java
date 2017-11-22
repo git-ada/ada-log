@@ -235,10 +235,17 @@ public class MainController {
 	 * @throws Exception
 	 */
 	public String getDomain(String browsingPage) {
-		
-		
+		String domain = null;
 		try {
-			return new URL(browsingPage).getHost();
+			domain = new URL(browsingPage).getHost();
+			String domain2=domain+":";
+			if(browsingPage.contains(domain2)){
+				int  port = new URL(browsingPage).getPort();
+				domain2=domain2 + port;
+				return domain2;
+			}else{
+				return domain;
+			}
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -246,10 +253,13 @@ public class MainController {
 	
 	/** 测试*/
 	public static void main(String[] args) {
+		
 //		MainController mainController = new MainController();
 //		String str = "http://sojson.com/blog/210.html";
+//		
 //		String domain = mainController.getDomain(str);
 //		System.out.println(domain);
+		
 	}
 	
 	@RequestMapping(value = "ping")
