@@ -235,6 +235,8 @@ public class MainController {
 	 * @throws Exception
 	 */
 	public String getDomain(String browsingPage) {
+		
+		
 		try {
 			return new URL(browsingPage).getHost();
 		} catch (MalformedURLException e) {

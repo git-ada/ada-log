@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import com.ada.log.bean.Channel;
 import com.ada.log.bean.Domain;
-import com.ada.log.dao.DomainlDao;
+import com.ada.log.dao.DomainDao;
 /**
  * 
  * @author zhao xiang
@@ -18,7 +18,7 @@ import com.ada.log.dao.DomainlDao;
 
 @Service
 @SuppressWarnings("all")
-public class DomainDaoImpl implements DomainlDao {
+public class DomainDaoImpl implements DomainDao {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

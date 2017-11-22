@@ -77,6 +77,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 		}
 	}
 	
+	
 	@Override
 	public void addDomain(Integer siteId, String domain) {
 //		domain="www.baidu.com";
