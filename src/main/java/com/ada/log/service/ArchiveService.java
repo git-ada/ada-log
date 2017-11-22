@@ -77,6 +77,7 @@ public class ArchiveService {
 				}
 			 }
 			 
+			 
 			 List<Domain> domains = domainDao.findBySiteId(site.getId());
 			 for(Domain domain:domains){
 				try {
