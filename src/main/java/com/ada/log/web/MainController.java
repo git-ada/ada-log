@@ -232,7 +232,6 @@ public class MainController {
 	 * 获取域名
 	 * @param browsingPage
 	 * @return
-	 * @throws Exception
 	 */
 	public String getDomain(String browsingPage) {
 		String domain = null;
@@ -246,7 +245,7 @@ public class MainController {
 			}else{
 				return domain;
 			}
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
