@@ -1,8 +1,6 @@
 package com.ada.log.web;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -16,8 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ada.log.event.MouseMoveEventHandle;
+import com.ada.log.event.ScrollEventHandle;
+import com.ada.log.event.StayTimeEventHandle;
 import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
 import com.ada.log.service.LogService;
@@ -41,6 +41,15 @@ public class MainController {
 	
 	@Autowired
 	private LogService logService;
+	
+	@Autowired
+	private MouseMoveEventHandle mouseMoveEventHandle;
+	
+	@Autowired
+	private ScrollEventHandle scrollEventHandle;
+	
+	@Autowired
+	private StayTimeEventHandle stayTimeEventHandle;
 	
 	@RequestMapping(value = "track")
 	public void queryChannel( HttpServletRequest request,
@@ -132,7 +141,7 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "l2")
-	public void log2(@RequestParam(value="u",required=false)String uuid,
+	public void onClick(@RequestParam(value="u",required=false)String uuid,
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
 			          @RequestParam(value="n",required=false)Integer clickNum,
@@ -167,7 +176,99 @@ public class MainController {
 		logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
 	}
 	
+	@RequestMapping(value = "l3")
+	public void onStayTime(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
+			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="n",required=false)Integer number,
+			          @RequestParam(value="p",required=false)String browsingPage,
+			          @RequestParam(value="t",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
+			          ) {
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		stayTimeEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+	}
 	
+	@RequestMapping(value = "l4")
+	public void onMouseMove(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
+			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="n",required=false)Integer number,
+			          @RequestParam(value="p",required=false)String browsingPage,
+			          @RequestParam(value="t",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
+			          ) {
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		mouseMoveEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+	}
+	
+	
+	@RequestMapping(value = "l5")
+	public void onScroll(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
+			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="n",required=false)Integer number,
+			          @RequestParam(value="p",required=false)String browsingPage,
+			          @RequestParam(value="t",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
+			          ) {
+		String ipAddress = IpUtils.getIpAddr(request);
+		if(log.isDebugEnabled()){
+			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		scrollEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+	}
 	
 	/**
 	 * 提交日志
