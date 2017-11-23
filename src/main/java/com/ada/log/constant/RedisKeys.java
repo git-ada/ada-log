@@ -23,9 +23,39 @@ public enum RedisKeys {
 	DomainC4IP("域名鼠标点击10次以上IP数","DomainC4IP_",""),
 	CIPNum("页面鼠标点击次数","CIPNum_",""),
 	ChannelTIP("渠道进入目标页IP集合","ChannelTIP_",""),
-	DomainTIP("域名进入目标页IP集合","DomainTIP_","");
+	DomainTIP("域名进入目标页IP集合","DomainTIP_",""),
 	
+	ChannelStayTime1IP("","ChannelStayTime1IP_",""),
+	ChannelStayTime2IP("","ChannelStayTime2IP_",""),
+	ChannelStayTime3IP("","ChannelStayTime3IP_",""),
+	ChannelStayTime4IP("","ChannelStayTime4IP_",""),
+	
+	DomainStayTime1IP("","DomainStayTime1IP_",""),
+	DomainStayTime2IP("","DomainStayTime2IP_",""),
+	DomainStayTime3IP("","DomainStayTime3IP_",""),
+	DomainStayTime4IP("","DomainStayTime4IP_",""),
+	
+	ChannelMouseMove1IP("","ChannelMouseMove1IP_",""),
+	ChannelMouseMove2IP("","ChannelMouseMove2IP_",""),
+	ChannelMouseMove3IP("","ChannelMouseMove3IP_",""),
+	ChannelMouseMove4IP("","ChannelMouseMove4IP_",""),
+	
+	DomainMouseMove1IP("","DomainMouseMove1IP_",""),
+	DomainMouseMove2IP("","DomainMouseMove2IP_",""),
+	DomainMouseMove3IP("","DomainMouseMove3IP_",""),
+	DomainMouseMove4IP("","DomainMouseMove4IP_",""),
+	
+	ChannelScroll1IP("","ChannelScroll1IP_",""),
+	ChannelScroll2IP("","ChannelScroll2IP_",""),
+	ChannelScroll3IP("","ChannelScroll3IP_",""),
+	ChannelScroll4IP("","ChannelScroll4IP_",""),
+	
+	DomainScroll1IP("","DomainScroll1IP_",""),
+	DomainScroll2IP("","DomainScroll2IP_",""),
+	DomainScroll3IP("","DomainScroll3IP_",""),
+	DomainScroll4IP("","DomainScroll4IP_","")
 	;
+	
 	private String title;
 	private String key;
 	private String desc;
