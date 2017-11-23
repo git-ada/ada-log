@@ -24,7 +24,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	private Map<Integer, List<String>> targetMap;//map<站点id,目标页面list<map>>
+	private Map<Integer, List<Map>> targetMap;//map<站点id,目标页面list<map>>
 	/**
 	 * 匹配是否目标页
 	 * @param siteId
@@ -34,14 +34,21 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 	public boolean matchTargetPage(Integer siteId,String browsingPage){
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-			List<String> list = targetMap.get(siteId);
+			List<Map> list = targetMap.get(siteId);
 			
 			if(list!=null && list.size()>0){
 				for(int i=0;i<list.size();i++){
-					String url = list.get(i);
-					if(browsingPage!=null && browsingPage.trim().startsWith(url.trim())){
+					Integer matchModel = (Integer) list.get(i).get("matchMode");
+					String url = (String) list.get(i).get("url");
+					
+					if(browsingPage!=null && matchModel==1 && browsingPage.trim().equals(url.trim())){/**全匹配**/
+						return true;
+					}else if(browsingPage!=null && matchModel==2 && browsingPage.trim().startsWith(url.trim())){/**前缀匹配**/
+						return true;
+					}else if(browsingPage!=null && matchModel==3 && browsingPage.trim().indexOf(url.trim())!=-1){/**模糊匹配**/
 						return true;
 					}
+					
 				}
 				
 			}
@@ -56,11 +63,10 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 		return false;
 	}
 
-	@Scheduled(cron="0 0/5 * * * ?")   //每5分钟执行一次  
+	@Scheduled(cron="0/10 * * * * ?")   //每5分钟执行一次  
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
-		targetMap = new HashMap<Integer, List<String>>();
+		Map newtargetMap = new HashMap<Integer, List<Map>>();
 		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select siteId,url from ada_target_page");
 		List<Map<String, Object>> siteList = jdbcTemplate.queryForList("select id from ada_site");
@@ -68,17 +74,18 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 		if(queryForList!=null && queryForList.size()>0 && siteList!=null && siteList.size()>0){
 			for(int i=0;i<siteList.size();i++){//循环所有站点
 				Integer siteId = (Integer) siteList.get(i).get("id");
-				List<String> maps = new ArrayList<String>();
+				List<Map> maps = new ArrayList<Map>();
 				for(int j=0;j<queryForList.size();j++){//循环所有目标页
 					Map tMap = queryForList.get(j);
 					if(siteId.toString().equals(tMap.get("siteId").toString())){
-						maps.add((String) tMap.get("url"));
+						maps.add(tMap);
 					}
 				}
 				
-				targetMap.put(siteId, maps);
+				newtargetMap.put(siteId, maps);
 			}
 		}
+		this.targetMap = newtargetMap;
 	}
 
 }

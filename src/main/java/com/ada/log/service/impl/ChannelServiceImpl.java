@@ -73,7 +73,7 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		log.debug("重新加载渠道数据");
-		channelMap= new HashMap<Integer, List<Map>>();
+		Map channelMap= new HashMap<Integer, List<Map>>();
 		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select channelId,url,parameter,siteId  from ada_channel_link");
 		List<Map<String, Object>> siteList = jdbcTemplate.queryForList("select id from ada_site");
@@ -94,6 +94,8 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 			}
 			
 		}
+		
+		this.channelMap = channelMap;
 	}
 
 
