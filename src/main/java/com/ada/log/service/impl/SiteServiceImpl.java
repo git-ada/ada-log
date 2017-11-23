@@ -73,7 +73,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		Map newtargetMap = new HashMap<Integer, List<Map>>();
 		
-		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select siteId,url from ada_target_page");
+		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select siteId,url,matchMode from ada_target_page");
 		List<Map<String, Object>> siteList = jdbcTemplate.queryForList("select id from ada_site");
 		
 		if(queryForList!=null && queryForList.size()>0 && siteList!=null && siteList.size()>0){
@@ -90,6 +90,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 				newtargetMap.put(siteId, maps);
 			}
 		}
+		System.out.println();
 		this.targetMap = newtargetMap;
 	}
 
