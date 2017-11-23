@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.ada.log.service.SiteService;
+import com.alibaba.fastjson.JSON;
 /**
  * 
  *站点服务实现类
@@ -86,7 +87,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 						maps.add(tMap);
 					}
 				}
-				
+				log.debug("加载目标页配置,siteId->"+siteId+"data->"+JSON.toJSONString(maps));
 				newtargetMap.put(siteId, maps);
 			}
 		}
