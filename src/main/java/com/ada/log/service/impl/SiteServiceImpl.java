@@ -87,7 +87,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 						maps.add(tMap);
 					}
 				}
-				log.debug("加载目标页配置,siteId->"+siteId+"data->"+JSON.toJSONString(maps));
+				log.debug("加载目标页配置,siteId->"+siteId+",data->"+JSON.toJSONString(maps));
 				newtargetMap.put(siteId, maps);
 			}
 		}
