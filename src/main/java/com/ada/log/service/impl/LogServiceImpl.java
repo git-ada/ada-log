@@ -86,7 +86,11 @@ public class LogServiceImpl implements LogService{
 		/** 4) 保存域名PV  **/
 		increDomainPV(domainId);
 		/** 5) 保存域名进入目标页IPSet**/
-		if(siteService.matchTargetPage(siteId, browsingPage)){
+		
+		Boolean match = matchTargetPage(siteId, browsingPage);
+		log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
+		
+		if(match){
 			putDomainTIPSet(domainId, ipAddress);
 		}
 		if(channelId!=null){

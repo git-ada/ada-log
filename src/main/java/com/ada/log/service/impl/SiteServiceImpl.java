@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +22,8 @@ import com.ada.log.service.SiteService;
  */
 @Service
 public class SiteServiceImpl implements SiteService,InitializingBean{
+	
+	private final static Log log = LogFactory.getLog(SiteServiceImpl.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -32,6 +36,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 	 * @return
 	 */
 	public boolean matchTargetPage(Integer siteId,String browsingPage){
+		
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 			List<Map> list = targetMap.get(siteId);
