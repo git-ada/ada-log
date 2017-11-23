@@ -32,6 +32,7 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 	private  Map<Integer,Map<String,Integer>> domainMap;//map<站点id,域名list<域名id,<字段名，字段值>>>
 	
 	private Object lock = new Object();
+	private Map<String,Object> domainLocks = new HashMap();
 	
 	protected Integer getDomianIdCache(Integer siteId,String domain) {
 		Map<String,Integer> site = domainMap.get(siteId);
@@ -52,6 +53,24 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 		site.put(domain, domainId);
 	}
 	
+	protected Object getDomainLock(String domain){
+		synchronized (domainLocks) {
+			Object domainLock = domainLocks.get(domain);
+			if(domainLock==null){
+				domainLock = new Object();
+				domainLocks.put(domain, domainLock);
+			}
+			return domainLock;
+		}
+	}
+	
+	@Scheduled(cron="0 0 0 * * ?")
+	public void cleanDomainLock(){
+		synchronized (domainLocks) {
+			domainLocks.clear();
+		}
+	}
+	
 	@Override
 	public Integer queryDomain(Integer siteId,String domain) {
 		Integer domainId = getDomianIdCache(siteId,domain);
@@ -59,7 +78,8 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 			return domainId;
 		}
 		
-		synchronized (lock) {
+		Object domainLock = getDomainLock(domain);
+		synchronized (domainLock) {
 			domainId = getDomianIdCache(siteId,domain);
 			if(domainId!=null){
 				return domainId;
