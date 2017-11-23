@@ -87,7 +87,7 @@ public class LogServiceImpl implements LogService{
 		increDomainPV(domainId);
 		/** 5) 保存域名进入目标页IPSet**/
 		
-		Boolean match = matchTargetPage(siteId, browsingPage);
+		Boolean match = siteService.matchTargetPage(siteId, browsingPage);
 		log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
 		
 		if(match){
@@ -99,7 +99,7 @@ public class LogServiceImpl implements LogService{
 			/** 7) 保存渠道PV  **/
 			increChannelPV(channelId);
 			/** 8) 保存渠道进入目标页IPSet**/
-			if(siteService.matchTargetPage(siteId, browsingPage)){
+			if(match){
 				putChannelTIPSet(channelId, ipAddress);
 			}
 		}
