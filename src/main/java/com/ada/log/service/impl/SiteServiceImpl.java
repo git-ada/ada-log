@@ -38,7 +38,7 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 			
 			if(list!=null && list.size()>0){
 				for(int i=0;i<list.size();i++){
-					Integer matchModel = (Integer) list.get(i).get("matchModel");
+					Integer matchModel = (Integer) list.get(i).get("matchMode");
 					String url = (String) list.get(i).get("url");
 					
 					if(browsingPage!=null && matchModel==1 && browsingPage.trim().equals(url.trim())){/**全匹配**/
