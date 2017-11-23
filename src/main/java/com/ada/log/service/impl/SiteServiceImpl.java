@@ -61,7 +61,6 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		// TODO Auto-generated method stub
 		targetMap = new HashMap<Integer, List<String>>();
-		
 		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("select siteId,url from ada_target_page");
 		List<Map<String, Object>> siteList = jdbcTemplate.queryForList("select id from ada_site");
 		

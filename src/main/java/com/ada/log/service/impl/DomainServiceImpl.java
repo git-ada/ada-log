@@ -77,10 +77,11 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 		}
 	}
 	
+	
 	@Override
 	public void addDomain(Integer siteId, String domain) {
 //		domain="www.baidu.com";
-		jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+1000+",'"+domain+"',now())");
+		jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
 //		jdbcTemplate.update("insert into ada_domain values(?,?,now())", siteId,domain);
 	}
 

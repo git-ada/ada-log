@@ -9,7 +9,7 @@ import com.ada.log.bean.Domain;
  * @since  2017/11/21
  * 
  */
-public interface DomainlDao {
+public interface DomainDao {
 
 	/**
 	 * 通过站点ID查询下属所有域名
