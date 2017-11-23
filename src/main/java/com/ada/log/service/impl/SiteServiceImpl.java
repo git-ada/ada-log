@@ -47,11 +47,19 @@ public class SiteServiceImpl implements SiteService,InitializingBean{
 					Integer matchModel = (Integer) list.get(i).get("matchMode");
 					String url = (String) list.get(i).get("url");
 					
+					log.debug("browsingPage->"+browsingPage+",url->"+url+",matchModel->"+matchModel);
+					
 					if(browsingPage!=null && matchModel==1 && browsingPage.trim().equals(url.trim())){/**全匹配**/
+						
+						log.debug("browsingPage->"+browsingPage+",url->"+url+",matchModel->"+matchModel);
 						return true;
 					}else if(browsingPage!=null && matchModel==2 && browsingPage.trim().startsWith(url.trim())){/**前缀匹配**/
+						
+						log.debug("browsingPage->"+browsingPage+",url->"+url+",matchModel->"+matchModel);
 						return true;
 					}else if(browsingPage!=null && matchModel==3 && browsingPage.trim().indexOf(url.trim())!=-1){/**模糊匹配**/
+						
+						log.debug("browsingPage->"+browsingPage+",url->"+url+",matchModel->"+matchModel);
 						return true;
 					}
 					
