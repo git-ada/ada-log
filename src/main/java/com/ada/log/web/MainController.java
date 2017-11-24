@@ -72,7 +72,7 @@ public class MainController {
             HttpServletResponse response){
 		if(log.isDebugEnabled()){
 			String ipAddress = IpUtils.getIpAddr(request);
-			log.debug(ipAddress+ " Debug u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+ " DEBUG m->"+message+",u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 	}
 	
