@@ -9,6 +9,6 @@ import com.ada.log.event.base.PageEventHandle;
 public class StayTimeEventHandle extends AbstractPageEventHandle implements PageEventHandle{
 
 	public StayTimeEventHandle() {
-		super(new Integer[]{5,10,15,30}, "StayTime");
+		super(new Integer[]{5,30,120,300}, "StayTime");
 	}
 }
