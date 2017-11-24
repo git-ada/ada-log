@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ada.log.event.MouseClickEventHandle;
 import com.ada.log.event.MouseMoveEventHandle;
 import com.ada.log.event.ScrollEventHandle;
 import com.ada.log.event.StayTimeEventHandle;
@@ -50,6 +51,9 @@ public class MainController {
 	
 	@Autowired
 	private StayTimeEventHandle stayTimeEventHandle;
+	
+	@Autowired
+	private MouseClickEventHandle mouseClickEventHandle;
 	
 	@RequestMapping(value = "track")
 	public void queryChannel( HttpServletRequest request,
@@ -191,7 +195,8 @@ public class MainController {
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
-		logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
+		//logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
+		mouseClickEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, clickNum, browsingPage);
 	}
 	
 	@RequestMapping(value = "l3")

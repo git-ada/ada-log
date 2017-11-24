@@ -88,7 +88,9 @@ public class LogServiceImpl implements LogService{
 		/** 5) 保存域名进入目标页IPSet**/
 		
 		Boolean match = siteService.matchTargetPage(siteId, browsingPage);
-		log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
+		if(log.isDebugEnabled()){
+			log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
+		}
 		
 		if(match){
 			putDomainTIPSet(domainId, ipAddress);
