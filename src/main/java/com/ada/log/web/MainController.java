@@ -58,6 +58,24 @@ public class MainController {
 		log.info(request.getRequestURL().append(request.getQueryString()));
 	}
 	
+	@RequestMapping(value = "d")
+	public void debug(
+			@RequestParam(value="u",required=false)String uuid,
+			@RequestParam(value="s",required=false)Integer siteId,
+			@RequestParam(value="m",required=false)String message,
+			@RequestParam(value="t",required=false)String timestamp,
+			@RequestParam(value="p",required=false)String browsingPage,
+            @RequestHeader(value="User-Agent",required=false)String useragent,
+            @RequestHeader(value="Referer",required=false)String referer,
+            @RequestHeader(value="Cookie",required=false)String cookie,
+            HttpServletRequest request,
+            HttpServletResponse response){
+		if(log.isDebugEnabled()){
+			String ipAddress = IpUtils.getIpAddr(request);
+			log.debug(ipAddress+ " Debug u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+	}
+	
 	
 	/**
 	 * 查询渠道
