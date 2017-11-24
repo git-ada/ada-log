@@ -92,9 +92,9 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		Integer oldrange = matchRange(oldNumber);
 		Integer newrange = matchRange(newNumber);
 		
-		if(oldrange!=null && newrange != null && oldrange == newrange){
+		if(oldrange!=null && newrange != null && oldrange >= newrange){
 			/** 同样请求 **/
-			log.warn("意料之外出现同数据,channelId->"+channelId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
+			log.warn("意料之外数据,channelId->"+channelId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
 			return ;
 		}
 		
