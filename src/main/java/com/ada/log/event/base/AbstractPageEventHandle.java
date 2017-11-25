@@ -147,10 +147,10 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		returnResource(jedis);
 	}
 	
-	protected Integer matchRange(Integer clickNum){
+	protected Integer matchRange(Integer number){
 		for(int i=1;i<=pageEventThresholds.length;i++){
 			Integer threshold = pageEventThresholds[i-1];
-			if(threshold == clickNum){
+			if(threshold.equals(number)){
 				return i;
 			}
 		}
