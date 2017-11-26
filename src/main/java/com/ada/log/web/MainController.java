@@ -131,7 +131,7 @@ public class MainController {
 	public void log1(@RequestParam(value="u",required=false)String uuid,
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="p",required=false)String browsingPage,
-	          @RequestParam(value="c",required=false)Integer isOldUser,
+	          @RequestParam(value="c",required=false)Integer oldUser,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
@@ -141,7 +141,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",p->"+browsingPage+",uu->"+isOldUser+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",p->"+browsingPage+",uu->"+oldUser+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -167,7 +167,7 @@ public class MainController {
 		}
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
+		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,oldUser);
 	}
 	
 	@RequestMapping(value = "l2")

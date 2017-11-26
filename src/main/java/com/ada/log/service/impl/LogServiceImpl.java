@@ -199,9 +199,9 @@ public class LogServiceImpl implements LogService{
 	 * 保存站点老用户IP数 +1
 	 * @param domainId       域名ID
 	 */
-	protected void increSiteOldUserIP(Integer siteId ,Integer isOldUser) {
+	protected void increSiteOldUserIP(Integer siteId ,Integer oldUser) {
 		Jedis jedis = getJedis();
-		if(isOldUser == 1){
+		if(oldUser == 1){
 			jedis.incr(RedisKeys.SiteOldUserIP.getKey()+siteId+"");	
 		}
 		returnResource(jedis);
@@ -211,9 +211,9 @@ public class LogServiceImpl implements LogService{
 	 * 保存渠道老用户IP数 +1
 	 * @param domainId       域名ID
 	 */
-	protected void increChannelOldUserIP(Integer channelId,Integer isOldUser) {
+	protected void increChannelOldUserIP(Integer channelId,Integer oldUser) {
 		Jedis jedis = getJedis();
-		if(isOldUser == 1 && channelId != null){
+		if(oldUser == 1 && channelId != null){
 			jedis.incr(RedisKeys.ChannelOldUserIP.getKey()+channelId+"");
 		}
 		returnResource(jedis);
@@ -223,9 +223,9 @@ public class LogServiceImpl implements LogService{
 	 * 保存域名老用户IP数 +1
 	 * @param domainId       域名ID
 	 */
-	protected void increDomainOldUserIP(Integer domainId,Integer isOldUser) {
+	protected void increDomainOldUserIP(Integer domainId,Integer oldUser) {
 		Jedis jedis = getJedis();
-		if(isOldUser == 1){
+		if(oldUser == 1){
 			jedis.incr(RedisKeys.DomainOldUserIP.getKey()+domainId+"");
 		}
 		returnResource(jedis);
