@@ -22,7 +22,7 @@ import com.ada.log.service.StatService;
 @Service
 @SuppressWarnings("all")
 public class StatServiceImpl implements StatService{
-
+	
 	@Autowired
     private  JedisPools jedisPools;//自动切库,周一至周日每天一库
 

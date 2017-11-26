@@ -25,6 +25,10 @@ public enum RedisKeys {
 	ChannelTIP("渠道进入目标页IP集合","ChannelTIP_",""),
 	DomainTIP("域名进入目标页IP集合","DomainTIP_",""),
 	
+	SiteOldUserIP("站点老用户IP数","SiteOldUserIP_",""),
+	ChannelOldUserIP("渠道老用户IP数","ChannelOldUserIP_",""),
+	DomainOldUserIP("域名老用户IP数","DomainOldUserIP_",""),
+	
 	ChannelStayTime1IP("","ChannelStayTime1IP_",""),
 	ChannelStayTime2IP("","ChannelStayTime2IP_",""),
 	ChannelStayTime3IP("","ChannelStayTime3IP_",""),

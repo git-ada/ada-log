@@ -76,7 +76,7 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	@Override
-	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage) {
+	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage,Integer isOldUser) {
 		/** 1）保存站点IP Set **/
 		putSiteIPSet(siteId, ipAddress);
 		/** 2）保存站点PV **/
@@ -85,8 +85,13 @@ public class LogServiceImpl implements LogService{
 		putDomainIPSet(domainId, ipAddress);
 		/** 4) 保存域名PV  **/
 		increDomainPV(domainId);
+		/** 6) 保存站点老用户IP数  **/
+		increSiteOldUserIP(siteId, isOldUser);
+		/** 7) 保存渠道老用户IP数  **/
+		increChannelOldUserIP(channelId, isOldUser);
+		/** 8) 保存域名老用户IP数  **/
+		increDomainOldUserIP(domainId, isOldUser);
 		/** 5) 保存域名进入目标页IPSet**/
-		
 		Boolean match = siteService.matchTargetPage(siteId, browsingPage);
 		if(log.isDebugEnabled()){
 			log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
@@ -187,6 +192,42 @@ public class LogServiceImpl implements LogService{
 	protected void increDomainPV(Integer domainId) {
 		Jedis jedis = getJedis();
 		jedis.incr(RedisKeys.DomainPV.getKey()+domainId+"");	
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存站点老用户IP数 +1
+	 * @param domainId       域名ID
+	 */
+	protected void increSiteOldUserIP(Integer siteId ,Integer isOldUser) {
+		Jedis jedis = getJedis();
+		if(isOldUser == 1){
+			jedis.incr(RedisKeys.SiteOldUserIP.getKey()+siteId+"");	
+		}
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存渠道老用户IP数 +1
+	 * @param domainId       域名ID
+	 */
+	protected void increChannelOldUserIP(Integer channelId,Integer isOldUser) {
+		Jedis jedis = getJedis();
+		if(isOldUser == 1 && channelId != null){
+			jedis.incr(RedisKeys.ChannelOldUserIP.getKey()+channelId+"");
+		}
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存域名老用户IP数 +1
+	 * @param domainId       域名ID
+	 */
+	protected void increDomainOldUserIP(Integer domainId,Integer isOldUser) {
+		Jedis jedis = getJedis();
+		if(isOldUser == 1){
+			jedis.incr(RedisKeys.DomainOldUserIP.getKey()+domainId+"");
+		}
 		returnResource(jedis);
 	}
 	

@@ -30,7 +30,7 @@ public interface LogService {
 	public void log1(String ipAddress,
 				  String uuid,
 		          Integer siteId,
-		          Integer channelId,Integer domainId, String browsingPage);
+		          Integer channelId,Integer domainId, String browsingPage,Integer isOldUser);
 	
 	public void log2(
 			  String ipAddress,
