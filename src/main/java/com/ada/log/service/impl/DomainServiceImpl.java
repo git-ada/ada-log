@@ -111,9 +111,15 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 				Map<String,Integer> maps = new HashMap<String,Integer>();
 				for(int j=0;j<queryForList.size();j++){//循环所有域名
 					Map cMap = queryForList.get(j);
-					if(siteId.toString().equals(cMap.get("siteId").toString())){
-						maps.put(cMap.get("domain").toString(),Integer.valueOf(cMap.get("id").toString()));
+					try {
+						if(siteId.toString().equals(cMap.get("siteId").toString())){
+							maps.put(cMap.get("domain").toString(),Integer.valueOf(cMap.get("id").toString()));
+						}
+					} catch (Exception e) {
+						//TODO
+						continue;
 					}
+					
 				}
 				domainMap.put(siteId, maps);
 			}
