@@ -353,6 +353,7 @@ public class MainController {
 			domain = new URL(browsingPage).getHost();
 			String domain2=domain+":";
 			if(browsingPage.contains(domain2)){
+				//如果browsingPage带有端口，则加上端口
 				int  port = new URL(browsingPage).getPort();
 				domain2=domain2 + port;
 				return domain2;
@@ -360,8 +361,9 @@ public class MainController {
 				return domain;
 			}
 		} catch (Exception e) {
-			return null;
+			log.error("域名解析错误：---> "+browsingPage);
 		}
+		return null;
 	}
 	
 	@RequestMapping(value = "ping")
