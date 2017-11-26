@@ -136,7 +136,7 @@ public class MainController {
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="c",required=false)Integer channelId,
 	          @RequestParam(value="p",required=false)String browsingPage,
-	          @RequestParam(value="o",required=false)Integer isOldUser,
+	          @RequestParam(value="o",required=false,defaultValue="0")Integer isOldUser,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
