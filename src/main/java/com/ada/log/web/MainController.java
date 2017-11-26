@@ -131,7 +131,8 @@ public class MainController {
 	public void log1(@RequestParam(value="u",required=false)String uuid,
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="p",required=false)String browsingPage,
-	          @RequestParam(value="c",required=false)Integer oldUser,
+	          @RequestParam(value="c",required=false)Integer channelId,
+	          @RequestParam(value="uu",required=false)Integer oldUser,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
@@ -146,25 +147,17 @@ public class MainController {
 		
 		/** 允许跨域访问 **/
 		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
 		}
-		Integer channelId =null;
-		if(siteId!=null && browsingPage!=null){
-			channelId = channelService.queryChannel(siteId, browsingPage);
-			/** 允许跨域访问 **/
-			try {
-				response.setHeader("Access-Control-Allow-Origin", "*");
-				if(channelId!=null){
-					response.getWriter().println(channelId.toString());
-					if(log.isDebugEnabled()){
-						log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,oldUser);
