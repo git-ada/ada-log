@@ -9,10 +9,13 @@ public enum RedisKeys {
 	
 	SitePV("站点PV","SitePV_",""),
 	SiteIP("站点IP","SiteIP_",""),
+	SiteOldUserIP("站点IP","SiteOldUserIP_",""),
 	ChannelPV("渠道PV","ChannelPV_",""),
 	ChannelIP("渠道IP","ChannelIP_",""),
+	ChannelOldUserIP("渠道IP","ChannelOldUserIP_",""),
 	DomainPV("域名PV","DomainPV_",""),
 	DomainIP("域名IP","DomainIP_",""),
+	DomainOldUserIP("渠道IP","DomainOldUserIP_",""),
 	ChannelC1IP("渠道鼠标点击1-2次IP数","ChannelC1IP_",""),
 	ChannelC2IP("渠道鼠标点击3-5次IP数","ChannelC2IP_",""),
 	ChannelC3IP("渠道鼠标点击6-10次IP数","ChannelC3IP_",""),

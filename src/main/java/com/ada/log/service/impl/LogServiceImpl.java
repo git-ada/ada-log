@@ -76,7 +76,7 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	@Override
-	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage) {
+	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage,Boolean isOldUser) {
 		/** 1）保存站点IP Set **/
 		putSiteIPSet(siteId, ipAddress);
 		/** 2）保存站点PV **/
@@ -87,12 +87,17 @@ public class LogServiceImpl implements LogService{
 		increDomainPV(domainId);
 		/** 5) 保存域名进入目标页IPSet**/
 		
-		Boolean match = siteService.matchTargetPage(siteId, browsingPage);
-		if(log.isDebugEnabled()){
-			log.debug("匹配目标页 ->"+match +",browsingPage->"+browsingPage);
+		if(isOldUser){
+			putSiteOlduserIPSet(siteId,ipAddress);
+			putDomainOlduserIPSet(domainId,ipAddress);
 		}
 		
-		if(match){
+		Boolean matchTarget = siteService.matchTargetPage(siteId, browsingPage);
+		if(log.isDebugEnabled()){
+			log.debug("匹配目标页 ->"+matchTarget +",browsingPage->"+browsingPage);
+		}
+		
+		if(matchTarget){
 			putDomainTIPSet(domainId, ipAddress);
 		}
 		if(channelId!=null){
@@ -101,11 +106,31 @@ public class LogServiceImpl implements LogService{
 			/** 7) 保存渠道PV  **/
 			increChannelPV(channelId);
 			/** 8) 保存渠道进入目标页IPSet**/
-			if(match){
+			if(matchTarget){
 				putChannelTIPSet(channelId, ipAddress);
 			}
+			
+			putChanneOlduserIPSet(channelId,ipAddress);
 		}
 		
+	}
+	
+	protected void putDomainOlduserIPSet(Integer domainId,String ipAddress){
+		Jedis jedis = getJedis();
+		jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldUserIP.getKey()).append(domainId).toString(), ipAddress);
+		returnResource(jedis);
+	}
+	
+	protected void putSiteOlduserIPSet(Integer siteId,String ipAddress){
+		Jedis jedis = getJedis();
+		jedis.sadd(new StringBuffer().append(RedisKeys.SiteOldUserIP.getKey()).append(siteId).toString(), ipAddress);
+		returnResource(jedis);
+	}
+	
+	protected void putChanneOlduserIPSet(Integer channeId,String ipAddress){
+		Jedis jedis = getJedis();
+		jedis.sadd(new StringBuffer().append(RedisKeys.ChannelOldUserIP.getKey()).append(channeId).toString(), ipAddress);
+		returnResource(jedis);
 	}
 
 	@Override

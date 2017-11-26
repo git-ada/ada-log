@@ -106,6 +106,10 @@ public class MainController {
 			log.debug(ipAddress+ " Q u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
+		if(siteId==null){
+			return;
+		}
+		
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
@@ -132,6 +136,7 @@ public class MainController {
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="c",required=false)Integer channelId,
 	          @RequestParam(value="p",required=false)String browsingPage,
+	          @RequestParam(value="o",required=false)Integer isOldUser,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
@@ -141,7 +146,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + isOldUser + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -152,6 +157,10 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
+		if(siteId==null){
+			return;
+		}
+		
 		try {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
@@ -159,7 +168,7 @@ public class MainController {
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
-		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage);
+		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,(isOldUser==1));
 	}
 	
 	@RequestMapping(value = "l2")
@@ -186,6 +195,10 @@ public class MainController {
 			response.getWriter().println("ok");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if(siteId==null){
+			return;
 		}
 		
 		try {
@@ -225,6 +238,10 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
+		if(siteId==null){
+			return;
+		}
+		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		stayTimeEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
@@ -254,6 +271,10 @@ public class MainController {
 			response.getWriter().println("ok");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if(siteId==null){
+			return;
 		}
 		
 		String domain = getDomain(browsingPage);//得到域名
@@ -286,6 +307,10 @@ public class MainController {
 			response.getWriter().println("ok");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if(siteId==null){
+			return;
 		}
 		
 		String domain = getDomain(browsingPage);//得到域名
