@@ -149,14 +149,6 @@ public class MainController {
 			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + isOldUser + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
-		/** 允许跨域访问 **/
-		try {
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.getWriter().println("ok");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		if(siteId==null){
 			return;
 		}
@@ -165,6 +157,24 @@ public class MainController {
 			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
 		} catch (Exception e1) {
 		}
+		
+		if(channelId==null && browsingPage!=null){
+			channelId = channelService.queryChannel(siteId, browsingPage);
+			if(log.isDebugEnabled()){
+				log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
+			}
+		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			if(channelId!=null){
+				response.getWriter().println(channelId);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
