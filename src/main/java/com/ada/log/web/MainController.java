@@ -167,14 +167,10 @@ public class MainController {
 			}
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
-		
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
 			JSONObject ret = new JSONObject();
-			ret.put("d", domainId);
 			if(channelId!=null){
 				ret.put("c", channelId);
 			}
@@ -184,6 +180,9 @@ public class MainController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
 		
 		Boolean isOldUser = false;
 		if(firstTime!=null && !"".equals(firstTime)){
