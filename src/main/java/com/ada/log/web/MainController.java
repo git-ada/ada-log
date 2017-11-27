@@ -3,6 +3,7 @@ package com.ada.log.web;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
 import com.ada.log.service.LogService;
 import com.ada.log.util.IpUtils;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 主控制器
@@ -136,7 +138,7 @@ public class MainController {
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="c",required=false)Integer channelId,
 	          @RequestParam(value="p",required=false)String browsingPage,
-	          @RequestParam(value="o",required=false,defaultValue="0")Integer isOldUser,
+	          @RequestParam(value="o",required=false)String firstTime,
 	          @RequestParam(value="t",required=false)String timestamp,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
@@ -146,7 +148,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + isOldUser + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + firstTime + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		if(siteId==null){
@@ -165,20 +167,48 @@ public class MainController {
 			}
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
+			JSONObject ret = new JSONObject();
+			ret.put("d", domainId);
 			if(channelId!=null){
-				response.getWriter().println(channelId);
+				ret.put("c", channelId);
 			}
+			ret.put("o", System.currentTimeMillis());
+			response.getWriter().println(ret.toJSONString());
+			response.getWriter().close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
+		Boolean isOldUser = false;
+		if(firstTime!=null && !"".equals(firstTime)){
+			try {
+				boolean isSmpeDate = isSameDate(new Date(Long.valueOf(firstTime)), new Date());
+				if(!isSmpeDate){
+					isOldUser = true;
+				}
+			} catch (Exception e) {
+			}
+		}
 		
-		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,(isOldUser==1));
+		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
+	}
+	
+	public boolean isSameDate(Date date1,Date date2){
+		if(date1 !=null && date2 !=null){
+			if(date1.getYear() == date2.getYear()
+				&& date1.getMonth() == date2.getMonth()
+				&& date1.getDate() == date2.getDate()
+				){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@RequestMapping(value = "l2")
