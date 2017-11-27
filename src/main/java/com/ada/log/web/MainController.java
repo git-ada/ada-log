@@ -185,7 +185,7 @@ public class MainController {
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
 		Boolean isOldUser = false;
-		if(firstTime!=null && !"".equals(firstTime)){
+		if(firstTime!=null && !"".equals(firstTime) && !"1".equals(firstTime)&& !"0".equals(firstTime)){
 			try {
 				boolean isSmpeDate = isSameDate(new Date(Long.valueOf(firstTime)), new Date());
 				if(!isSmpeDate){
@@ -447,5 +447,11 @@ public class MainController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args){
+		MainController impl = new MainController();
+		boolean isSmpeDate = impl.isSameDate(new Date(Long.valueOf("1")), new Date());
+		System.out.println(new Date(Long.valueOf("1")));
 	}
 }
