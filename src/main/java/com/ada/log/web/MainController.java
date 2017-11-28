@@ -150,7 +150,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + firstTime + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+timestamp+",f->"+timestamp+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		if(siteId==null){
