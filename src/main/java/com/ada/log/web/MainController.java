@@ -413,21 +413,37 @@ public class MainController {
 	 */
 	public String getDomain(String browsingPage) {
 		String domain = null;
-		try {
-			domain = new URL(browsingPage).getHost();
-			String domain2=domain+":";
-			if(browsingPage.contains(domain2)){
-				//如果browsingPage带有端口，则加上端口
-				int  port = new URL(browsingPage).getPort();
-				domain2=domain2 + port;
-				return domain2;
-			}else{
-				return domain;
+		Object o=browsingPage;
+		if(browsingPage != null && !"".equals(browsingPage)){
+			try {
+				URL url = new URL(browsingPage);
+				domain = url.getHost();
+				int port = url.getPort();
+				if(port == 80 || port == -1){
+					return domain;
+				}
+				return domain+":"+port;
+			} catch (Exception e) {
+				log.error("域名解析错误: ---> "+browsingPage);
 			}
-		} catch (Exception e) {
-			log.error("域名解析错误：---> "+browsingPage);
 		}
 		return null;
+	}
+	
+	public static void main(String[] args){
+		MainController impl = new MainController();
+//		String str ="https://datatables.net/extensions/fixedcolumns/examples/initialisation/right_column.html";
+//		String str =null ;
+		String str ="";
+//		String str ="http://45.125.219.106:8002/index.jhtm";
+		
+		String str1 = "cityu";
+		String str2 = "cityu";
+//		String str3 = "city"+"u";
+		System.out.println(str1==str2);
+		String domain = impl.getDomain(str);
+		
+		System.out.println(domain);
 	}
 	
 	@RequestMapping(value = "ping")
@@ -449,9 +465,9 @@ public class MainController {
 		}
 	}
 	
-	public static void main(String[] args){
-		MainController impl = new MainController();
-		boolean isSmpeDate = impl.isSameDate(new Date(Long.valueOf("1")), new Date());
-		System.out.println(new Date(Long.valueOf("1")));
-	}
+//	public static void main(String[] args){
+//		MainController impl = new MainController();
+//		boolean isSmpeDate = impl.isSameDate(new Date(Long.valueOf("1")), new Date());
+//		System.out.println(new Date(Long.valueOf("1")));
+//	}
 }
