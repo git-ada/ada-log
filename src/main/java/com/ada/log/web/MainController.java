@@ -413,19 +413,19 @@ public class MainController {
 	 */
 	public String getDomain(String browsingPage) {
 		String domain = null;
-		try {
-			domain = new URL(browsingPage).getHost();
-			String domain2=domain+":";
-			if(browsingPage.contains(domain2)){
-				//如果browsingPage带有端口，则加上端口
-				int  port = new URL(browsingPage).getPort();
-				domain2=domain2 + port;
-				return domain2;
-			}else{
-				return domain;
+		Object o=browsingPage;
+		if(browsingPage != null && !"".equals(browsingPage)){
+			try {
+				URL url = new URL(browsingPage);
+				domain = url.getHost();
+				int port = url.getPort();
+				if(port == 80 || port == -1){
+					return domain;
+				}
+				return domain+":"+port;
+			} catch (Exception e) {
+				log.error("域名解析错误: ---> "+browsingPage);
 			}
-		} catch (Exception e) {
-			log.error("域名解析错误：---> "+browsingPage);
 		}
 		return null;
 	}
