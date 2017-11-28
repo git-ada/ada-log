@@ -140,6 +140,8 @@ public class MainController {
 	          @RequestParam(value="p",required=false)String browsingPage,
 	          @RequestParam(value="o",required=false)String firstTime,
 	          @RequestParam(value="t",required=false)String timestamp,
+	          @RequestParam(value="f",required=false)String firstTimeToday,
+	          @RequestParam(value="r",required=false)String beforReferer,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
 	          @RequestHeader(value="Cookie",required=false)String cookie,
@@ -185,13 +187,25 @@ public class MainController {
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
 		Boolean isOldUser = false;
-		if(firstTime!=null && !"".equals(firstTime) && !"1".equals(firstTime)&& !"0".equals(firstTime)){
-			try {
-				boolean isSmpeDate = isSameDate(new Date(Long.valueOf(firstTime)), new Date());
-				if(!isSmpeDate){
+		
+		/** 当天第一次请求，判断老用户逻辑，减少操作次数，提高性能**/
+		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
+			/** 通过初次设置cookie值 判断是否老用户**/
+			if(firstTime!=null && !"".equals(firstTime) && !"1".equals(firstTime)&& !"0".equals(firstTime)){
+				try {
+					boolean isSmpeDate = isSameDate(new Date(Long.valueOf(firstTime)), new Date());
+					if(!isSmpeDate){
+						isOldUser = true;
+					}
+				} catch (Exception e) {
+				}
+			}
+			
+			/** 通过是否直接访问判断是否老用户，粗暴数据不准确**/
+			if(!isOldUser){
+				if(beforReferer==null || "".equals(beforReferer)){
 					isOldUser = true;
 				}
-			} catch (Exception e) {
 			}
 		}
 		
