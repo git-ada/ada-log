@@ -11,34 +11,27 @@ public class ADPage {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
 	public Integer getSiteId() {
 		return siteId;
 	}
-
 	public void setSiteId(Integer siteId) {
 		this.siteId = siteId;
 	}
-
-	
 	public String getChannelKey() {
 		return channelKey;
 	}
-
 	public void setChannelKey(String channelKey) {
 		this.channelKey = channelKey;
 	}
-
 	public String getMatchContent() {
 		return matchContent;
 	}
-
 	public void setMatchContent(String matchContent) {
 		this.matchContent = matchContent;
 	}
+
 
 }
