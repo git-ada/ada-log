@@ -18,7 +18,7 @@ import com.ada.log.service.ChannelService;
 /**
  * 渠道服务实现类
  */
-@Service
+//@Service
 public class ChannelServiceImpl implements ChannelService,InitializingBean {
 	
 	private final static Log log = LogFactory.getLog(ChannelServiceImpl.class);
