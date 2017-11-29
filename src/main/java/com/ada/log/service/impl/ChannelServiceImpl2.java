@@ -142,7 +142,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 	/** 获取参数值 **/
 	protected String getParameterValue(String browsingPage ,String parameterName){
 		try {
-			String queryString = browsingPage.substring(browsingPage.indexOf("?")+1, browsingPage.length()-1);
+			String queryString = browsingPage.substring(browsingPage.indexOf("?")+1, browsingPage.length());
 			String[] parameters = queryString.split("&");
 			for(String p:parameters){
 				String[] t = p.split("=");
