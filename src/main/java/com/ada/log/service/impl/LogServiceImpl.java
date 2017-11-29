@@ -1,17 +1,20 @@
 package com.ada.log.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
+import com.ada.log.bean.AccessLog;
 import com.ada.log.constant.RedisKeys;
+import com.ada.log.dao.AccessLogDao;
 import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
 import com.ada.log.service.SiteService;
@@ -31,50 +34,52 @@ public class LogServiceImpl implements LogService{
 	private SiteService siteService;
 	
 	private final static Log log = LogFactory.getLog(LogServiceImpl.class);
-
-	/**
-	 * 记录日志
-	 * @param ipAddress     IP地址
-	 * @param uuid          客户端UUID
-	 * @param siteId        站点ID
-	 * @param channelId     渠道ID
-	 * @param domainId      域名ID
-	 * @param clickNum      点击次数
-	 * @param browsingTime  浏览时间,精确到毫秒
-	 * @param browsingPage  当前页面链接
-	 */
-	public void log(String ipAddress,String uuid, Integer siteId, Integer channelId,Integer domainId,Integer clickNum, Integer browsingTime, String browsingPage) {
-		/** 1）保存站点IP Set **/
-		putSiteIPSet(siteId, ipAddress);
-		/** 2）保存站点PV **/
-		increSitePV(siteId);
-		/** 3) 保存域名IP Set **/
-		putDomainIPSet(domainId, ipAddress);
-		/** 4) 保存域名PV  **/
-		increDomainPV(domainId);
-		/** 5) 保存IP鼠标点击次数 **/
-		Integer newClickNum = increIPClickNum(ipAddress, clickNum);
-		Integer oldClickNum = newClickNum - clickNum;
-		/** 6) 更新域名点击IP数 **/
-		updateDomainClickIP(domainId, newClickNum, oldClickNum);
-		/** 7) 保存域名进入目标页IPSet**/
-		if(siteService.matchTargetPage(siteId, browsingPage)){
-			putDomainTIPSet(domainId, ipAddress);
-		}
-		if(channelId!=null){
-			/** 3) 保存渠道IP Set **/
-			putChannelIPSet(channelId, ipAddress);
-			/** 4) 保存渠道PV **/
-			increChannelPV(channelId);
-			/** 6) 更新渠道点击IP数 **/
-			updateChannelClickIP(channelId, newClickNum, oldClickNum);
-			/** 7) 保存渠道进入目标页IPSet**/
-			if(siteService.matchTargetPage(siteId, browsingPage)){
-				putChannelTIPSet(channelId, ipAddress);
+	
+	private List<AccessLog> cacheLogs = new ArrayList();
+	
+	@Autowired
+	private AccessLogDao accessLogDao;
+	
+	@Override
+	public void log(AccessLog log) {
+		Boolean isOldUser = false;
+		
+		/** 当天第一次请求，判断老用户逻辑，减少操作次数，提高性能**/
+		if(log.getTodayTime()!=null){
+			/** 通过初次设置cookie值 判断是否老用户**/
+			if(log.getFirstTime()!=null && log.getFirstTime()>1){
+				try {
+					boolean isSmpeDate = isSameDate(new Date(log.getFirstTime()), new Date());
+					if(!isSmpeDate){
+						isOldUser = true;
+					}
+				} catch (Exception e) {
+				}
+			}
+			
+			/** 通过是否直接访问判断是否老用户，粗暴数据不准确**/
+			if(!isOldUser){
+				if(log.getReferer()==null || "".equals(log.getReferer())){
+					isOldUser = true;
+				}
 			}
 		}
+		
+		log1(log.getIpAddress(), log.getUuid(), log.getSiteId(), log.getChannelId(),log.getDomainId(), log.getBrowser(), isOldUser);
+		
+		cacheLogs.add(log);
 	}
 	
+	@Scheduled(cron="0/1 0 * * * ?")   /** 每间隔1秒钟保存一次 **/
+	public void batchSave(){
+		if(!cacheLogs.isEmpty()){
+			List<AccessLog> temp = this.cacheLogs;
+			cacheLogs = new ArrayList();
+			accessLogDao.batchInsert(temp);
+			temp.clear();
+		}
+	}
+
 	@Override
 	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage,Boolean isOldUser) {
 		/** 1）保存站点IP Set **/
@@ -131,23 +136,6 @@ public class LogServiceImpl implements LogService{
 		Jedis jedis = getJedis();
 		jedis.sadd(new StringBuffer().append(RedisKeys.ChannelOldUserIP.getKey()).append(channeId).toString(), ipAddress);
 		returnResource(jedis);
-	}
-
-	@Override
-	public void log2(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, Integer clickNum) {
-		if(log.isDebugEnabled()){
-			log.debug("ip->"+ipAddress+",siteId->"+siteId+",channelId->"+channelId+",clickNum->"+clickNum);
-		}
-	    Integer oldClickNum = getAndSetIPClickNum(ipAddress,clickNum);
-//		if(oldClickNum == null){
-//			oldClickNum= 0;
-//		}
-		if(channelId!=null){
-			/** 1) 更新渠道点击IP数 **/
-			updateChannelClickIP(channelId, clickNum, oldClickNum);
-		}
-		/** 2) 更新域名点击IP数 **/
-		updateDomainClickIP(domainId, clickNum, oldClickNum);
 	}
 
 	/**
@@ -262,23 +250,8 @@ public class LogServiceImpl implements LogService{
 		if(split[0].contains("目标页面")){
 			return true;
 		}
-		
-		
 		return false;
 	}
-	
-	/*测试*/
-	public static void main(String[] args) throws Exception {
-//		JedisPoolConfig config = new JedisPoolConfig();
-//		
-//		JedisPool jedisPool = new JedisPool(config, "127.0.0.1", 6379, 20000, "g^h*123T", 2);
-//		LogServiceImpl logServiceImpl = new LogServiceImpl();
-//		logServiceImpl.setJedisPool(jedisPool);
-		
-		
-		
-	}
-	
 	
 	/**
 	 * 
@@ -303,59 +276,6 @@ public class LogServiceImpl implements LogService{
 		returnResource(jedis);
 	}	
 	
-	/**
-	 * 更新渠道点击IP数
-	 * @param channelId
-	 * @param newClickNum
-	 * @param oldClickNum
-	 */
-	protected void updateChannelClickIP(Integer channelId,Integer newClickNum,Integer oldClickNum){
-		/** 拿到上次点击数区间 **/
-		String lastClickIPKey = null;
-		if(oldClickNum!=null){
-			lastClickIPKey = matchChannelClickRangeKey(oldClickNum);
-		}
-
-		String currentClickIPKey =  matchChannelClickRangeKey(newClickNum);
-		Jedis jedis = getJedis();
-		if(lastClickIPKey != null){
-			jedis.decr(lastClickIPKey+channelId);
-			log.debug(lastClickIPKey+channelId+"--");
-		}
-		if(currentClickIPKey != null){
-			jedis.incr(currentClickIPKey+channelId);
-			log.debug(currentClickIPKey+channelId+"++");
-		}
-		returnResource(jedis);
-	}
-	
-	/**
-	 * 更新域名点击IP数
-	 * @param domainId
-	 * @param newClickNum
-	 * @param oldClickNum
-	 */
-	protected void updateDomainClickIP(Integer domainId,Integer newClickNum,Integer oldClickNum){
-		String lastClickIPKey = null;
-		if(oldClickNum!=null){
-			lastClickIPKey = matchDomainClickRangeKey(oldClickNum);
-		}
-
-		String currentClickIPKey =  matchDomainClickRangeKey(newClickNum);
-		Jedis jedis = getJedis();
-		
-		if(lastClickIPKey!=null){
-			jedis.decr(lastClickIPKey+domainId);
-			log.debug(lastClickIPKey+domainId+"--");
-		}
-		if(currentClickIPKey!=null){
-			jedis.incr(currentClickIPKey+domainId);
-			log.debug(currentClickIPKey+domainId+"++");
-		}
-		
-		returnResource(jedis);
-	}
-	
 	protected Jedis getJedis(){
 		return jedisPools.getResource();
 	}
@@ -363,39 +283,16 @@ public class LogServiceImpl implements LogService{
 	protected void returnResource(Jedis jedis){
 		jedisPools.returnResource(jedis);
 	}
-	
-	protected String matchDomainClickRangeKey(Integer clickNum){
-		if(clickNum == null){
-			return null;
-		}else if(clickNum >=1 && clickNum <= 2){
-			return RedisKeys.DomainC1IP.getKey();
-		}else if (clickNum >=3 && clickNum <= 5){
-			return RedisKeys.DomainC2IP.getKey();
-		}else if (clickNum >=6 && clickNum <= 10){
-			return RedisKeys.DomainC3IP.getKey();
-		}else if (clickNum > 10){
-			return RedisKeys.DomainC4IP.getKey();
-		}else {
-			return null;
-		}
-	}
-	
-	protected String matchChannelClickRangeKey(Integer clickNum){
-		if(clickNum == null){
-			return null;
-		}else if(clickNum >=1 && clickNum <= 2){
-			return RedisKeys.ChannelC1IP.getKey();
-		}else if (clickNum >=3 && clickNum <= 5){
-			return RedisKeys.ChannelC2IP.getKey();
-		}else if (clickNum >=6 && clickNum <= 10){
-			return RedisKeys.ChannelC3IP.getKey();
-		}else if (clickNum > 10){
-			return RedisKeys.ChannelC4IP.getKey();
-		}else {
-			return null;
-		}
-	}
 
-
-	
+	protected boolean isSameDate(Date date1,Date date2){
+		if(date1 !=null && date2 !=null){
+			if(date1.getYear() == date2.getYear()
+				&& date1.getMonth() == date2.getMonth()
+				&& date1.getDate() == date2.getDate()
+				){
+				return true;
+			}
+		}
+		return false;
+	}
 }

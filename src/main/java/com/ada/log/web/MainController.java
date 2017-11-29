@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ada.log.bean.AccessLog;
 import com.ada.log.event.MouseClickEventHandle;
 import com.ada.log.event.MouseMoveEventHandle;
 import com.ada.log.event.ScrollEventHandle;
@@ -140,6 +141,13 @@ public class MainController {
 	          @RequestParam(value="p",required=false)String browsingPage,
 	          @RequestParam(value="o",required=false)String firstTime,
 	          @RequestParam(value="t",required=false)String timestamp,
+	          @RequestParam(value="f",required=false)String firstTimeToday,
+	          @RequestParam(value="r",required=false)String beforReferer,
+	          @RequestParam(value="os",required=false)String os,
+	          @RequestParam(value="br",required=false)String browser,
+	          @RequestParam(value="ss",required=false)String screenSize,
+	          @RequestParam(value="ps",required=false)String pageSize,
+	          @RequestParam(value="if",required=false)Integer iframe,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
 	          @RequestHeader(value="Cookie",required=false)String cookie,
@@ -148,7 +156,7 @@ public class MainController {
 		
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId+",o->" + firstTime + ",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+timestamp+",f->"+timestamp+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		if(siteId==null){
@@ -184,30 +192,31 @@ public class MainController {
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
-		Boolean isOldUser = false;
-		if(firstTime!=null && !"".equals(firstTime) && !"1".equals(firstTime)&& !"0".equals(firstTime)){
-			try {
-				boolean isSmpeDate = isSameDate(new Date(Long.valueOf(firstTime)), new Date());
-				if(!isSmpeDate){
-					isOldUser = true;
-				}
-			} catch (Exception e) {
-			}
-		}
 		
-		logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
-	}
-	
-	public boolean isSameDate(Date date1,Date date2){
-		if(date1 !=null && date2 !=null){
-			if(date1.getYear() == date2.getYear()
-				&& date1.getMonth() == date2.getMonth()
-				&& date1.getDate() == date2.getDate()
-				){
-				return true;
-			}
+		AccessLog log = new AccessLog();
+		log.setSiteId(siteId);
+		log.setDomainId(domainId);
+		log.setChannelId(channelId);
+		log.setIpAddress(ipAddress);
+		log.setUrl(browsingPage);
+		log.setUseragent(useragent);
+		log.setReferer(beforReferer);
+		log.setOs(os);
+		log.setBrowser(browser);
+		log.setScreenSize(screenSize);
+		log.setPageSize(pageSize);
+		log.setIframe(iframe);
+		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
+			log.setFirstTime(Long.valueOf(firstTimeToday));
 		}
-		return false;
+		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
+			log.setTodayTime(Long.valueOf(firstTimeToday));
+		}
+		if(timestamp!=null && !"".equals(timestamp)){
+			log.setRequestTime(Long.valueOf(timestamp));
+		}
+		logService.log(log);
+		//logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
 	}
 	
 	@RequestMapping(value = "l2")
@@ -358,55 +367,6 @@ public class MainController {
 	}
 	
 	/**
-	 * 提交日志
-	 * @param uuid          客户端UUID
-	 * @param siteId        站点ID
-	 * @param channelId     渠道ID
-	 * @param clickNum      点击次数
-	 * @param browsingTime  浏览时间,精确到毫秒
-	 * @param browsingPage   当前页面链接
-	 * @return
-	 */
-	@RequestMapping(value = "l")
-	public void log(@RequestParam(value="u",required=false)String uuid,
-			          @RequestParam(value="s",required=false)Integer siteId,
-			          @RequestParam(value="c",required=false)Integer channelId,
-			          @RequestParam(value="n",required=false)Integer clickNum,
-			          @RequestParam(value="t",required=false)Integer browsingTime,
-			          @RequestParam(value="p",required=false)String browsingPage,
-			          @RequestParam(value="t1",required=false)String timestamp,
-			          @RequestHeader(value="User-Agent",required=false)String useragent,
-	                  @RequestHeader(value="Referer",required=false)String referer,
-	                  @RequestHeader(value="Cookie",required=false)String cookie,
-			          HttpServletRequest request,
-	                  HttpServletResponse response
-			          ) {
-
-		String ipAddress = IpUtils.getIpAddr(request);
-		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",t->"+browsingTime+",p->"+browsingPage+",t1->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
-		}
-		
-		/** 允许跨域访问 **/
-		try {
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.getWriter().println("ok");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-		} catch (Exception e1) {
-		}
-		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
-		logService.log(ipAddress, uuid, siteId, channelId,domainId, clickNum, browsingTime, browsingPage);
-		
-	}
-	
-	/**
 	 * 获取域名
 	 * @param browsingPage
 	 * @return
@@ -447,11 +407,5 @@ public class MainController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static void main(String[] args){
-		MainController impl = new MainController();
-		boolean isSmpeDate = impl.isSameDate(new Date(Long.valueOf("1")), new Date());
-		System.out.println(new Date(Long.valueOf("1")));
 	}
 }
