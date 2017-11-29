@@ -39,4 +39,10 @@ public class ChannelDaoImpl implements ChannelDao {
 		return channels;
 	}
 
+	@Override
+	public List<Channel> findBySiteIdAndChannelStr(Integer siteId,String channelStr) {
+		List<Channel> channels = jdbcTemplate.queryForList("select * from ada_channel where siteId=? and channelStr =?", Channel.class, siteId,channelStr);
+		return channels;
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.ada.log.service.impl;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +130,29 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 	}
 	
 	
-	
+	/**
+	 * 获取域名
+	 * @param browsingPage
+	 * @return
+	 */
+	public String getDomain(String browsingPage) {
+		String domain = null;
+		Object o=browsingPage;
+		if(browsingPage != null && !"".equals(browsingPage)){
+			try {
+				URL url = new URL(browsingPage);
+				domain = url.getHost();
+				int port = url.getPort();
+				if(port == 80 || port == -1){
+					return domain;
+				}
+				return domain+":"+port;
+			} catch (Exception e) {
+				log.error("域名解析错误: ---> "+browsingPage);
+			}
+		}
+		return null;
+	}
 
 
 }

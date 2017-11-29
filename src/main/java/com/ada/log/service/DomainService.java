@@ -1,5 +1,7 @@
 package com.ada.log.service;
 
+import java.net.URL;
+
 /**
  * 域名相关服务处理
  * @author zhao xiang
@@ -17,6 +19,10 @@ public interface DomainService {
 	public Integer queryDomain(Integer siteId,String domain);
 	
 
-	
-	
+	/**
+	 * 获取域名
+	 * @param browsingPage
+	 * @return
+	 */
+	public String getDomain(String browsingPage);
 }

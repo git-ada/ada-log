@@ -14,4 +14,5 @@ public interface ChannelDao {
 	public List<Channel> findBySiteId(Integer siteId);
 	
 	
+	public List<Channel> findBySiteIdAndChannelStr(Integer siteId,String channelStr);
 }
