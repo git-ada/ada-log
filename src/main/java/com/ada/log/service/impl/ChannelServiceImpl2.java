@@ -56,34 +56,36 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 		if(adPage!=null){
 			String domain = domainService.getDomain(browsingPage);
 			String channelStr = buildChannelStr(domain,adPage,browsingPage);
-			channelId =getChannelIdCache(siteId,channelStr);
-			if(log.isDebugEnabled()){
-				log.debug("内存中无缓存渠道Id,channelStr->"+channelStr);
-			}
-			if(channelId==null){
-				Integer domainId = domainService.queryDomain(siteId, domain);
-				Object domainLock = getDomainLock(domainId);
-				synchronized (domainLock) {
-					channelId = getChannelIdCache(siteId,channelStr);
-					if(channelId==null){
-						/** 跨服务器数据库并发问题 **/
-						//TODO
-						try {
-							jdbcTemplate.update("insert into ada_channel(siteId,domainId,channelName,channelStr,adId,createTime) values(?,?,?,?,?,now())", new Object[]{siteId,domainId,"",channelStr,adPage.getId()});
-							log.info("创建新的渠道链接->"+channelStr);
-						} catch (Exception e) {
-							log.error("创建新的渠道失败->"+e.getMessage(),e);
-						}
-						
-						try {
-							List<Channel> list = channelDao.findBySiteIdAndChannelStr(siteId, channelStr);
-							if(list!=null && !list.isEmpty()){
-								Channel c = list.get(0);
-								setChannelIdCache(siteId, channelStr, c.getId());
-								channelId = c.getId();
+			if(channelStr!=null){
+				channelId =getChannelIdCache(siteId,channelStr);
+				if(log.isDebugEnabled()){
+					log.debug("内存中无缓存渠道Id,channelStr->"+channelStr);
+				}
+				if(channelId==null){
+					Integer domainId = domainService.queryDomain(siteId, domain);
+					Object domainLock = getDomainLock(domainId);
+					synchronized (domainLock) {
+						channelId = getChannelIdCache(siteId,channelStr);
+						if(channelId==null){
+							/** 跨服务器数据库并发问题 **/
+							//TODO
+							try {
+								jdbcTemplate.update("insert into ada_channel(siteId,domainId,channelName,channelStr,adId,createTime) values(?,?,?,?,?,now())", new Object[]{siteId,domainId,"",channelStr,adPage.getId()});
+								log.info("创建新的渠道链接->"+channelStr);
+							} catch (Exception e) {
+								log.error("创建新的渠道失败->"+e.getMessage(),e);
 							}
-						} catch (Exception e) {
-							log.error("查询渠道链接失败->"+e.getMessage(),e);
+							
+							try {
+								List<Channel> list = channelDao.findBySiteIdAndChannelStr(siteId, channelStr);
+								if(list!=null && !list.isEmpty()){
+									Channel c = list.get(0);
+									setChannelIdCache(siteId, channelStr, c.getId());
+									channelId = c.getId();
+								}
+							} catch (Exception e) {
+								log.error("查询渠道链接失败->"+e.getMessage(),e);
+							}
 						}
 					}
 				}
@@ -122,16 +124,19 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 		String parameterName = adPage.getChannelKey();
 		String parameterValue = getParameterValue(browsingPage,parameterName);
 		
-		StringBuffer s = new StringBuffer();
-		s.append(domain).append(adPage.getMatchContent()).append("?").append(parameterName).append("=").append(parameterValue);
-		
-		String channelStr = s.toString();
-		
-		if(log.isDebugEnabled()){
-			log.debug("构建渠道字符串->"+channelStr);
+		if(parameterValue!=null){
+			StringBuffer s = new StringBuffer();
+			s.append(domain).append(adPage.getMatchContent()).append("?").append(parameterName).append("=").append(parameterValue);
+			
+			String channelStr = s.toString();
+			if(log.isDebugEnabled()){
+				log.debug("构建渠道字符串->"+channelStr);
+			}
+			return channelStr;
 		}
-		
-		return channelStr;
+		else{
+			return null;
+		}
 	}
 	
 	/** 获取参数值 **/
@@ -141,7 +146,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 			String[] parameters = queryString.split("&");
 			for(String p:parameters){
 				String[] t = p.split("=");
-				if(p.length() ==2){
+				if(t.length ==2){
 					String key = t[0];
 					String value =  t[1];
 					if(key.equals(parameterName)){
