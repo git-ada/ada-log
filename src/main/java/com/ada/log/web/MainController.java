@@ -148,6 +148,7 @@ public class MainController {
 	          @RequestParam(value="ss",required=false)String screenSize,
 	          @RequestParam(value="ps",required=false)String pageSize,
 	          @RequestParam(value="if",required=false)Integer iframe,
+	          @RequestParam(value="ua",required=false)String jsuseragent,
 	          @RequestHeader(value="User-Agent",required=false)String useragent,
 	          @RequestHeader(value="Referer",required=false)String referer,
 	          @RequestHeader(value="Cookie",required=false)String cookie,
@@ -199,7 +200,7 @@ public class MainController {
 		log.setChannelId(channelId);
 		log.setIpAddress(ipAddress);
 		log.setUrl(browsingPage);
-		log.setUseragent(useragent);
+		log.setUseragent(jsuseragent);
 		log.setReferer(beforReferer);
 		log.setOs(os);
 		log.setBrowser(browser);
