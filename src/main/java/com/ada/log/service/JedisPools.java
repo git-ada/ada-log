@@ -31,6 +31,7 @@ public class JedisPools implements InitializingBean{
 	@Value("${redis.pass:}")
 	private String pass;
 	
+	
 	@Autowired
 	private JedisPoolConfig jedisPoolConfig;
 	
