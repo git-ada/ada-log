@@ -200,6 +200,7 @@ public class MainController {
 		log.setChannelId(channelId);
 		log.setIpAddress(ipAddress);
 		log.setUrl(browsingPage);
+		log.setUuid(uuid);
 		log.setUseragent(jsuseragent);
 		log.setReferer(beforReferer);
 		log.setOs(os);
@@ -207,8 +208,8 @@ public class MainController {
 		log.setScreenSize(screenSize);
 		log.setPageSize(pageSize);
 		log.setIframe(iframe);
-		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
-			log.setFirstTime(Long.valueOf(firstTimeToday));
+		if(firstTime!=null && !"".equals(firstTime)){
+			log.setFirstTime(Long.valueOf(firstTime));
 		}
 		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
 			log.setTodayTime(Long.valueOf(firstTimeToday));

@@ -65,12 +65,12 @@ public class LogServiceImpl implements LogService{
 			}
 		}
 		
-		log1(log.getIpAddress(), log.getUuid(), log.getSiteId(), log.getChannelId(),log.getDomainId(), log.getBrowser(), isOldUser);
+		log1(log.getIpAddress(), log.getUuid(), log.getSiteId(), log.getChannelId(),log.getDomainId(), log.getUrl(), isOldUser);
 		
 		cacheLogs.add(log);
 	}
 	
-	@Scheduled(cron="0/1 0 * * * ?")   /** 每间隔1秒钟保存一次 **/
+	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
 	public void batchSave(){
 		if(!cacheLogs.isEmpty()){
 			List<AccessLog> temp = this.cacheLogs;

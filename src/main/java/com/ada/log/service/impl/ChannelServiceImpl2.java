@@ -69,7 +69,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 						/** 跨服务器数据库并发问题 **/
 						//TODO
 						try {
-							jdbcTemplate.update("insert into ada_channel(siteId,domainId,channelStr,adId,createTime) values(?,?,?,?,now())", new Object[]{siteId,domainId,channelStr,adPage.getId()});
+							jdbcTemplate.update("insert into ada_channel(siteId,domainId,channelName,channelStr,adId,createTime) values(?,?,?,?,?,now())", new Object[]{siteId,domainId,"",channelStr,adPage.getId()});
 							log.info("创建新的渠道链接->"+channelStr);
 						} catch (Exception e) {
 							log.error("创建新的渠道失败->"+e.getMessage(),e);
