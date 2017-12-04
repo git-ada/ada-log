@@ -368,6 +368,23 @@ public class MainController {
 		scrollEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
 	}
 	
+	
+	@RequestMapping(value = "l6")
+	public void onLogin(@RequestParam(value="u",required=false)String uuid,
+			          @RequestParam(value="s",required=false)Integer siteId,
+			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="a",required=false)Integer adId,
+			          @RequestParam(value="p",required=false)String browsingPage,
+			          @RequestParam(value="t",required=false)String timestamp,
+			          @RequestHeader(value="User-Agent",required=false)String useragent,
+	                  @RequestHeader(value="Referer",required=false)String referer,
+	                  @RequestHeader(value="Cookie",required=false)String cookie,
+			          HttpServletRequest request,
+	                  HttpServletResponse response
+			          ) {
+		//TODO
+	}
+	
 	/**
 	 * 获取域名
 	 * @param browsingPage
