@@ -25,4 +25,7 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
+
+    <bean name="handlerExceptionResolver" class="com.ada.log.web.suppert.ExceptionHandle"></bean>
+    
 </beans>
