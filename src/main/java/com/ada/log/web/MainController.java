@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ada.log.bean.ADPage;
 import com.ada.log.bean.AccessLog;
 import com.ada.log.event.MouseClickEventHandle;
 import com.ada.log.event.MouseMoveEventHandle;
@@ -176,12 +177,23 @@ public class MainController {
 			}
 		}
 		
+		ADPage adPage = null;
+		if(browsingPage!=null){
+			adPage = channelService.matchAdPage(siteId, browsingPage);
+			if(log.isDebugEnabled() && adPage !=null){
+				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
+			}
+		}
+		
 		/** 允许跨域访问 **/
 		try {
 			response.setHeader("Access-Control-Allow-Origin", "*");
 			JSONObject ret = new JSONObject();
 			if(channelId!=null){
 				ret.put("c", channelId);
+			}
+			if(adPage !=null ){
+				ret.put("a", adPage.getId());
 			}
 			ret.put("o", System.currentTimeMillis());
 			response.getWriter().println(ret.toJSONString());
@@ -382,7 +394,20 @@ public class MainController {
 			          HttpServletRequest request,
 	                  HttpServletResponse response
 			          ) {
-		//TODO
+		String ipAddress = IpUtils.getIpAddr(request);
+//		if(log.isDebugEnabled()){
+//			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+//		}
+		
+		/** 允许跨域访问 **/
+		try {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.getWriter().println("ok");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	/**

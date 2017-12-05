@@ -163,7 +163,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 		return null;
 	}
 	
-	protected ADPage matchAdPage(Integer siteId,String browsingPage){
+	public ADPage matchAdPage(Integer siteId,String browsingPage){
 		List<ADPage> adPages = siteAdPages.get(siteId);
 		if(siteAdPages!=null && !siteAdPages.isEmpty()){
 			for(ADPage page:adPages){

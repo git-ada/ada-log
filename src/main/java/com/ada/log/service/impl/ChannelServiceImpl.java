@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.ada.log.bean.ADPage;
 import com.ada.log.service.ChannelService;
 
 /**
@@ -96,6 +97,12 @@ public class ChannelServiceImpl implements ChannelService,InitializingBean {
 		}
 		
 		this.channelMap = channelMap;
+	}
+
+	@Override
+	public ADPage matchAdPage(Integer siteId, String browsingPage) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
