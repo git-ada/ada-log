@@ -123,12 +123,14 @@
                             <targetPath>WEB-INF/classes</targetPath> 
                             <includes>
                             	<include>**/config.properties</include>
+                            	<include>**/log4j.xml</include>
                             </includes>
                         </resource>
 						<resource>
                             <directory>src/main/profile/${profiles.activation}</directory>
                             <targetPath></targetPath> 
                             <excludes>
+                            	<exclude>**/log4j.xml</exclude>
                             	<exclude>**/config.properties</exclude>
                             	<exclude>**/profiles.xml</exclude>
                             	<exclude>**/web.xml</exclude>

@@ -112,7 +112,7 @@
 	
 	<root>
 		<level value="INFO" /> 
-		<!-- appender-ref ref="STDOUT" /-->
+		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />
 		<appender-ref ref="INFO" />
