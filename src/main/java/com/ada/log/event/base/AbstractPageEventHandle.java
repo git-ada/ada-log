@@ -15,7 +15,7 @@ import com.ada.log.service.JedisPools;
  */
 public abstract class AbstractPageEventHandle implements PageEventHandle{
 	
-	private final Log log = LogFactory.getLog(getClass());
+	private Log log = LogFactory.getLog(getClass());
 	
 	@Autowired
     private  JedisPools jedisPools;
@@ -35,8 +35,8 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 
 	@Override
 	public void handle(String ipAddress, String uuid, Integer siteId,
-			Integer channelId, Integer domainId, Integer number,String region,
-			Integer adId) {
+			Integer channelId, Integer domainId, Integer adId,String region,
+			Integer number) {
 		
 		if(log.isDebugEnabled()){
 			log.debug("ip->"+ipAddress+",siteId->"+siteId+",channelId->"+channelId+",number->"+number);
