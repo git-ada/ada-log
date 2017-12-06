@@ -87,7 +87,7 @@ public class IPSetServiceImpl implements IPSetService {
 			ipSetJedisPool = afterPropertiesSet();
 			jedis = ipSetJedisPool.getResource(); 
 		} catch (Exception e) {
-			log.error("获取jedis连接错误!!!");
+			log.error("get jedis resource error !");
 		}  
 	    return jedis;
 	}  
@@ -95,7 +95,7 @@ public class IPSetServiceImpl implements IPSetService {
 		 if (jedis != null) {  
 	         ipSetJedisPool.returnResource(jedis);
 	    }   
-	}  
+	} 
 	
 
 }
