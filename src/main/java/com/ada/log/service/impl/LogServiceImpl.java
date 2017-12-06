@@ -39,7 +39,7 @@ public class LogServiceImpl implements LogService{
 	@Autowired
 	private IPDBService IPDBService;
 	
-//	@Autowired
+	@Autowired
 	private IPSetService IPSetService;
 	
 	private final static Log log = LogFactory.getLog(LogServiceImpl.class);
