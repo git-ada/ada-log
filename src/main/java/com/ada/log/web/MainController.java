@@ -222,32 +222,38 @@ public class MainController {
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
 		
-		AccessLog log = new AccessLog();
-		log.setSiteId(siteId);
-		log.setDomainId(domainId);
-		log.setChannelId(channelId);
-		log.setAdId(adId);
-		log.setIpAddress(ipAddress);
-		log.setRegion(region);
-		log.setUrl(browsingPage);
-		log.setUuid(uuid);
-		log.setUseragent(jsuseragent);
-		log.setReferer(beforReferer);
-		log.setOs(os);
-		log.setBrowser(browser);
-		log.setScreenSize(screenSize);
-		log.setPageSize(pageSize);
-		log.setIframe(iframe);
-		if(firstTime!=null && !"".equals(firstTime)){
-			log.setFirstTime(Long.valueOf(firstTime));
-		}else{
-			log.setFirstTime(now);
+		AccessLog req = new AccessLog();
+		req.setSiteId(siteId);
+		req.setDomainId(domainId);
+		req.setChannelId(channelId);
+		req.setAdId(adId);
+		req.setIpAddress(ipAddress);
+		req.setRegion(region);
+		req.setUrl(browsingPage);
+		req.setUuid(uuid);
+		req.setUseragent(jsuseragent);
+		req.setReferer(beforReferer);
+		req.setOs(os);
+		req.setBrowser(browser);
+		req.setScreenSize(screenSize);
+		req.setPageSize(pageSize);
+		req.setIframe(iframe);
+		
+		try {
+			if(firstTime!=null && !"".equals(firstTime)){
+				req.setFirstTime(Long.valueOf(firstTime));
+			}else{
+				req.setFirstTime(now);
+			}
+		} catch (Exception e) {
+			log.error("解析firstTime失败->"+firstTime);
 		}
+		
 		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
-			log.setTodayTime(now);
+			req.setTodayTime(now);
 		}
-		log.setRequestTime(now);
-		logService.log(log);
+		req.setRequestTime(now);
+		logService.log(req);
 		//logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
 	}
 	
