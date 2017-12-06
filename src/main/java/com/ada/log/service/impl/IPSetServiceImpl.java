@@ -80,7 +80,7 @@ public class IPSetServiceImpl implements IPSetService {
 				if(!exIpAddress){
 					jedis.hset(RedisKeys.DomainIPMap.getKey()+domainId+"", ip, String.valueOf(System.currentTimeMillis()));
 					returnResource(jedis);
-					return true;
+					//return true;
 				}
 			} 
 		} 
