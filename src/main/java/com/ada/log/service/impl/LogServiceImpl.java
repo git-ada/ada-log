@@ -109,6 +109,8 @@ public class LogServiceImpl implements LogService{
 			jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(req.getSiteId()).toString());
 			/** ) 域名UV ++ **/
 			jedis.incr(new StringBuffer().append(RedisKeys.DomainUV.getKey()).append(req.getDomainId()).toString());
+			/** ) 保存城市列表 ++ **/
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCitySet.getKey()).append(req.getDomainId()).toString(),req.getRegion());
 			
 			if(isOldUser){
 				/** 记录老用户IP **/
