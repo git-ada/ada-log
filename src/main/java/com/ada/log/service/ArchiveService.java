@@ -48,6 +48,9 @@ public class ArchiveService {
 	@Autowired
 	private SiteDao siteDao;
 	
+	@Autowired
+	private IPSetService iPSetService;
+	
 	/**
 	 * 归档昨日站点统计数据
 	 */
@@ -89,5 +92,29 @@ public class ArchiveService {
 			 }
 		}
 	}
-
+	
+	/**
+	 * 归档昨日ipSet集合到IPMap集合
+	 */
+	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
+	public void archiveIpAddress() {
+		Date date = new Date();
+		List<Site> sites = siteDao.findAll();
+		for(Site site:sites){
+			 List<Domain> domains = domainDao.findBySiteId(site.getId());
+			 for(Domain domain:domains){
+				try {
+					iPSetService.add(domain.getId());
+				} catch (Exception e) {
+					log.info("域名 "+domain.getId()+":"+domain.getDomain()+" ipMap归档失败,Msg->"+e.getMessage(),e);
+				}
+			 }
+		}
+	}
+	
+	//test
+	public static void main(String[] args) {
+		
+		System.out.println(Dates.now());
+	}
 }

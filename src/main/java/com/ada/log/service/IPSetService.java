@@ -1,5 +1,7 @@
 package com.ada.log.service;
 
+import java.util.Set;
+
 /**
  * 历史访问IP地址库，
  */
@@ -19,4 +21,14 @@ public interface IPSetService {
 	 * @return
 	 */
 	public boolean add(Integer domainId,String ipAddress);
+	
+	/**
+	 * 批量添加IP数据集
+	 * @param domianId
+	 * @param ipSet
+	 * @return
+	 */
+	public boolean batchAdd(Integer domianId,Set<String> ipSet);
+	
+	
 }

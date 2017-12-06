@@ -9,13 +9,10 @@ public enum RedisKeys {
 	
 	SitePV("站点PV","SitePV_",""),
 	SiteIP("站点IP","SiteIP_",""),
-	SiteOldUserIP("站点IP","SiteOldUserIP_",""),
 	ChannelPV("渠道PV","ChannelPV_",""),
 	ChannelIP("渠道IP","ChannelIP_",""),
-	ChannelOldUserIP("渠道IP","ChannelOldUserIP_",""),
 	DomainPV("域名PV","DomainPV_",""),
 	DomainIP("域名IP","DomainIP_",""),
-	DomainOldUserIP("渠道IP","DomainOldUserIP_",""),
 	ChannelC1IP("渠道鼠标点击1-2次IP数","ChannelC1IP_",""),
 	ChannelC2IP("渠道鼠标点击3-5次IP数","ChannelC2IP_",""),
 	ChannelC3IP("渠道鼠标点击6-10次IP数","ChannelC3IP_",""),
@@ -27,7 +24,7 @@ public enum RedisKeys {
 	CIPNum("页面鼠标点击次数","CIPNum_",""),
 	ChannelTIP("渠道进入目标页IP集合","ChannelTIP_",""),
 	DomainTIP("域名进入目标页IP集合","DomainTIP_",""),
-	
+					
 	ChannelStayTime1IP("","ChannelStayTime1IP_",""),
 	ChannelStayTime2IP("","ChannelStayTime2IP_",""),
 	ChannelStayTime3IP("","ChannelStayTime3IP_",""),
@@ -57,9 +54,15 @@ public enum RedisKeys {
 	DomainScroll2IP("","DomainScroll2IP_",""),
 	DomainScroll3IP("","DomainScroll3IP_",""),
 	DomainScroll4IP("","DomainScroll4IP_",""),
+
 	
-	
+	SiteOldUserIP("站点老用户数","SiteOldUserIP_",""),
+	ChannelOldUserIP("渠道老用户数","ChannelOldUserIP_",""),
+	DomainOldUserIP("域名老用户数","DomainOldUserIP_",""),
+
 	/**2017-12-04新增**/
+	DomainCitySet("当天访问域名的城市列表","DomainCitySet_",""),
+	
 	DomainAdIP("域名广告入口IP","DomainAdIP_",""),
 	DomainCityIP("域名下城市IP","DomainCityIP_",""),
 	DomainAdCityIP("域名下的城市广告入口IP","DomainAdCityIP_",""),
@@ -148,8 +151,9 @@ public enum RedisKeys {
 	DomainCityAdScroll2IP("","DomainCityAdScroll2IP_",""),
 	DomainCityAdScroll3IP("","DomainCityAdScroll3IP_",""),
 	DomainCityAdScroll4IP("","DomainCityAdScroll4IP_","")
-	;
 	
+	
+	;
 	private String title;
 	private String key;
 	private String desc;
