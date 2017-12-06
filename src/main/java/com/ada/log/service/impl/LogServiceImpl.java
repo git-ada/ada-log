@@ -152,7 +152,7 @@ public class LogServiceImpl implements LogService{
 			}
 			/** 保存老IP数 **/
 			if(oldip){
-				jedis.incr(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(req.getChannelId()).toString());
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(req.getChannelId()).toString(), req.getIpAddress());
 			}
 		}
 
@@ -176,7 +176,7 @@ public class LogServiceImpl implements LogService{
 			}
 			/** 保存老IP数 **/
 			if(oldip){
-				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdOldIP.getKey()).append(req.getDomainId()).toString());
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdOldIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
 			}
 		}
 		
@@ -201,7 +201,7 @@ public class LogServiceImpl implements LogService{
 		}
 		/** 保存老IP数 **/
 		if(oldip){
-			jedis.incr(new StringBuffer().append(RedisKeys.DomainCityOldIP.getKey()).append(req.getDomainId()).toString());
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
 		}
 		
 		/** 地区广告入口 **/
@@ -224,7 +224,7 @@ public class LogServiceImpl implements LogService{
 			}
 			/** 保存老IP数 **/
 			if(oldip){
-				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityOldIP.getKey()).append(req.getDomainId()).toString());
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
 			}
 		}
 		
