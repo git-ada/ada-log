@@ -172,7 +172,7 @@ public class MainController {
 			region = "未知地区";
 		}
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" "+region+" onAccess u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+timestamp+",f->"+timestamp+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" "+region+" onAccess u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+firstTime+",f->"+firstTimeToday+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		if(siteId==null){
