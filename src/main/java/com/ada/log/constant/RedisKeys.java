@@ -56,7 +56,98 @@ public enum RedisKeys {
 	DomainScroll1IP("","DomainScroll1IP_",""),
 	DomainScroll2IP("","DomainScroll2IP_",""),
 	DomainScroll3IP("","DomainScroll3IP_",""),
-	DomainScroll4IP("","DomainScroll4IP_","")
+	DomainScroll4IP("","DomainScroll4IP_",""),
+	
+	
+	/**2017-12-04新增**/
+	DomainAdIP("域名广告入口IP","DomainAdIP_",""),
+	DomainCityIP("域名下城市IP","DomainCityIP_",""),
+	DomainAdCityIP("域名下的城市广告入口IP","DomainAdCityIP_",""),
+	
+	DomainAdPV("域名广告入口PV","DomainAdPV_",""),
+	DomainCityPV("域名下城市PV","DomainCityPV_",""),
+	DomainAdCityPV("域名下的城市广告入口PV","DomainAdCityPV_",""),
+	
+	SiteUV("站点UV","SiteUV_",""),
+	DomainUV("域名UV","DomainUV_",""),
+	DomainAdUV("域名广告入口UV","DomainAdUV_",""),
+	DomainCityUV("域名下城市UV","DomainCityUV_",""),
+	DomainAdCityUV("域名下的城市广告入口UV","DomainAdCityUV_",""),
+	
+	DomainAdTIP("域名广告入口进入目标页IP集合","DomainAdTIP_",""),
+	DomainCityTIP("域名下城市进入目标页IP集合","DomainCityTIP_",""),
+	DomainAdCityTIP("域名下的城市广告入口进入目标页IP集合","DomainAdCityTIP_",""),
+	
+	DomainAdOldUserIP("域名广告入口老用户数","DomainAdOldUserIP_",""),
+	DomainCityOldUserIP("域名下城市老用户数","DomainCityOldUserIP_",""),
+	DomainAdCityOldUserIP("域名下的城市广告入口老用户数","DomainAdCityOldUserIP_",""),
+	
+	DomainOldIP("域名老IP","DomainOldIP_",""),
+	DomainAdOldIP("域名广告入口老IP","DomainAdOldIP_",""),
+	DomainCityOldIP("域名下城市老IP","DomainCityOldIP_",""),
+	DomainAdCityOldIP("域名下城市广告入口老IP","DomainAdCityOldIP_",""),
+	
+	DomainIPMap("域名历史IPMap","DomainIPMap_",""),
+	DomainAdIPMap("域名广告入口历史IPMap","DomainAdIPMap_",""),
+	DomainCityIPMap("域名下城市历史IPMap","DomainCityIPMap_",""),
+	DomainCityAdIPMap("域名下城市广告入口历史IPMap","DomainCityAdIPMap_",""),
+	
+	DomainLoginIp("域名登录用户数","DomainLoginIp_",""),
+	DomainAdLoginIp("域名广告入口登录用户数","DomainAdLoginIp_",""),
+	DomainCityLoginIp("域名下城市登录用户数","DomainCityLoginIp_",""),
+	DomainAdCityLoginIp("域名下城市广告入口登录用户数","DomainAdCityLoginIp_",""),
+	
+	DomainAdC1IP("域名广告入口鼠标点击1-2次IP数","DomainAdC1IP_",""),
+	DomainAdC2IP("域名广告入口鼠标点击3-5次IP数","DomainAdC2IP_",""),
+	DomainAdC3IP("域名广告入口鼠标点击6-10次IP数","DomainAdC3IP_",""),
+	DomainAdC4IP("域名广告入口鼠标点击10次以上IP数","DomainAdC4IP_",""),
+	DomainCityC1IP("域名下城市鼠标点击1-2次IP数","DomainCityC1IP_",""),
+	DomainCityC2IP("域名下城市鼠标点击3-5次IP数","DomainCityC2IP_",""),
+	DomainCityC3IP("域名下城市鼠标点击6-10次IP数","DomainCityC3IP_",""),
+	DomainCityC4IP("域名下城市鼠标点击10次以上IP数","DomainCityC4IP_",""),
+	DomainCityAdC1IP("域名下城市广告入口鼠标点击1-2次IP数","DomainCityAdC1IP_",""),
+	DomainCityAdC2IP("域名下城市广告入口鼠标点击3-5次IP数","DomainCityAdC2IP_",""),
+	DomainCityAdC3IP("域名下城市广告入口鼠标点击6-10次IP数","DomainCityAdC3IP_",""),
+	DomainCityAdC4IP("域名下城市广告入口鼠标点击10次以上IP数","DomainCityAdC4IP_",""),
+	
+	DomainAdStayTime1IP("","DomainAdStayTime1IP_",""),
+	DomainAdStayTime2IP("","DomainAdStayTime2IP_",""),
+	DomainAdStayTime3IP("","DomainAdStayTime3IP_",""),
+	DomainAdStayTime4IP("","DomainAdStayTime4IP_",""),
+	DomainCityStayTime1IP("","DomainCityStayTime1IP_",""),
+	DomainCityStayTime2IP("","DomainCityStayTime2IP_",""),
+	DomainCityStayTime3IP("","DomainCityStayTime3IP_",""),
+	DomainCityStayTime4IP("","DomainCityStayTime4IP_",""),
+	DomainCityAdStayTime1IP("","DomainCityAdStayTime1IP_",""),
+	DomainCityAdStayTime2IP("","DomainCityAdStayTime2IP_",""),
+	DomainCityAdStayTime3IP("","DomainCityAdStayTime3IP_",""),
+	DomainCityAdStayTime4IP("","DomainCityAdStayTime4IP_",""),
+	
+	DomainAdMouseMove1IP("","DomainAdMouseMove1IP_",""),
+	DomainAdMouseMove2IP("","DomainAdMouseMove2IP_",""),
+	DomainAdMouseMove3IP("","DomainAdMouseMove3IP_",""),
+	DomainAdMouseMove4IP("","DomainAdMouseMove4IP_",""),
+	DomainCityMouseMove1IP("","DomainCityMouseMove1IP_",""),
+	DomainCityMouseMove2IP("","DomainCityMouseMove2IP_",""),
+	DomainCityMouseMove3IP("","DomainCityMouseMove3IP_",""),
+	DomainCityMouseMove4IP("","DomainCityMouseMove4IP_",""),
+	DomainCityAdMouseMove1IP("","DomainCityAdMouseMove1IP_",""),
+	DomainCityAdMouseMove2IP("","DomainCityAdMouseMove2IP_",""),
+	DomainCityAdMouseMove3IP("","DomainCityAdMouseMove3IP_",""),
+	DomainCityAdMouseMove4IP("","DomainCityAdMouseMove4IP_",""),
+	
+	DomainAdScroll1IP("","DomainAdScroll1IP_",""),
+	DomainAdScroll2IP("","DomainAdScroll2IP_",""),
+	DomainAdScroll3IP("","DomainAdScroll3IP_",""),
+	DomainAdScroll4IP("","DomainAdScroll4IP_",""),
+	DomainCityScroll1IP("","DomainCityScroll1IP_",""),
+	DomainCityScroll2IP("","DomainCityScroll2IP_",""),
+	DomainCityScroll3IP("","DomainCityScroll3IP_",""),
+	DomainCityScroll4IP("","DomainCityScroll4IP_",""),
+	DomainCityAdScroll1IP("","DomainCityAdScroll1IP_",""),
+	DomainCityAdScroll2IP("","DomainCityAdScroll2IP_",""),
+	DomainCityAdScroll3IP("","DomainCityAdScroll3IP_",""),
+	DomainCityAdScroll4IP("","DomainCityAdScroll4IP_","")
 	;
 	
 	private String title;

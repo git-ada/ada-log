@@ -1,5 +1,7 @@
 package com.ada.log.bean;
 
+import java.beans.Transient;
+
 
 /**
  * 访问日志 Entity
@@ -12,9 +14,14 @@ public class AccessLog  implements java.io.Serializable{
     /** 域名ID */
 	private Integer domainId;                    
     /** 渠道ID */
-	private Integer channelId;                    
+	private Integer channelId;
+	/** 广告ID */
+	private Integer adId;
     /** IP地址 */
 	private String ipAddress;
+	/** 地区 */
+	private String region;
+	/** 客户端ID */
 	private String uuid;
     /** 浏览页 */
 	private String url;                    
@@ -170,7 +177,28 @@ public class AccessLog  implements java.io.Serializable{
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+
+	public Integer getAdId() {
+		return adId;
+	}
+
+	public void setAdId(Integer adId) {
+		this.adId = adId;
+	}
 	
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	
+	@Transient
+	public boolean isTodayFirst(){
+		return todayTime !=null;
+	}
 
 	
 }

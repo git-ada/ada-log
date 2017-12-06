@@ -31,14 +31,16 @@ public class AccessLogDaoImpl implements AccessLogDao {
 	public void batchInsert(final List<AccessLog> logs) {
 		Long startTime = System.currentTimeMillis();
 		
-		jdbcTemplate.batchUpdate("INSERT INTO `ada_access_log`(siteId,domainId,channelId,ipAddress,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
+		jdbcTemplate.batchUpdate("INSERT INTO `ada_access_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				AccessLog log = logs.get(i);
 				Integer parameterIndex = 1;
 				setInteger(ps, parameterIndex++,log.getSiteId());
 				setInteger(ps, parameterIndex++,log.getDomainId());
 				setInteger(ps, parameterIndex++,log.getChannelId());
+				setInteger(ps, parameterIndex++,log.getAdId());
 				setString(ps, parameterIndex++,log.getIpAddress());
+				setString(ps, parameterIndex++,log.getRegion());
 				setString(ps, parameterIndex++,log.getUuid());
 				setString(ps, parameterIndex++, log.getUrl());
 				setString(ps, parameterIndex++, log.getUseragent());

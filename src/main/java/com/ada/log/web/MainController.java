@@ -3,7 +3,6 @@ package com.ada.log.web;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ada.log.bean.ADPage;
 import com.ada.log.bean.AccessLog;
+import com.ada.log.event.LoginEventHandle;
 import com.ada.log.event.MouseClickEventHandle;
 import com.ada.log.event.MouseMoveEventHandle;
 import com.ada.log.event.ScrollEventHandle;
 import com.ada.log.event.StayTimeEventHandle;
 import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
+import com.ada.log.service.IPDBService;
 import com.ada.log.service.LogService;
 import com.ada.log.util.IpUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -58,6 +59,13 @@ public class MainController {
 	
 	@Autowired
 	private MouseClickEventHandle mouseClickEventHandle;
+	
+	@Autowired
+	private LoginEventHandle loginEventHandle;
+	
+	@Autowired
+	private IPDBService IPDBService;
+	
 	
 	@RequestMapping(value = "track")
 	public void queryChannel( HttpServletRequest request,
@@ -136,9 +144,11 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "l1")
-	public void log1(@RequestParam(value="u",required=false)String uuid,
+	public void onAccess(
+			  @RequestParam(value="u",required=false)String uuid,
 	          @RequestParam(value="s",required=false)Integer siteId,
 	          @RequestParam(value="c",required=false)Integer channelId,
+	          @RequestParam(value="a",required=false)Integer adId,
 	          @RequestParam(value="p",required=false)String browsingPage,
 	          @RequestParam(value="o",required=false)String firstTime,
 	          @RequestParam(value="t",required=false)String timestamp,
@@ -157,8 +167,12 @@ public class MainController {
 	          HttpServletResponse response){
 		
 		String ipAddress = IpUtils.getIpAddr(request);
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L1 u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+timestamp+",f->"+timestamp+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" "+region+" onAccess u->"+uuid+",s->"+siteId+",c->"+channelId + ",p->"+browsingPage+ ",r->"+beforReferer+",o->"+timestamp+",f->"+timestamp+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		if(siteId==null){
@@ -172,18 +186,20 @@ public class MainController {
 		
 		if(channelId==null && browsingPage!=null){
 			channelId = channelService.queryChannel(siteId, browsingPage);
-			if(log.isDebugEnabled()){
+			if(log.isDebugEnabled() && channelId !=null){
 				log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
 			}
 		}
 		
 		ADPage adPage = null;
-		if(browsingPage!=null){
+		if(browsingPage!=null && adId==null){
 			adPage = channelService.matchAdPage(siteId, browsingPage);
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
 		}
+		
+		Long now = System.currentTimeMillis();
 		
 		/** 允许跨域访问 **/
 		try {
@@ -195,7 +211,7 @@ public class MainController {
 			if(adPage !=null ){
 				ret.put("a", adPage.getId());
 			}
-			ret.put("o", System.currentTimeMillis());
+			ret.put("o", now);
 			response.getWriter().println(ret.toJSONString());
 			response.getWriter().close();
 		} catch (IOException e) {
@@ -210,7 +226,9 @@ public class MainController {
 		log.setSiteId(siteId);
 		log.setDomainId(domainId);
 		log.setChannelId(channelId);
+		log.setAdId(adId);
 		log.setIpAddress(ipAddress);
+		log.setRegion(region);
 		log.setUrl(browsingPage);
 		log.setUuid(uuid);
 		log.setUseragent(jsuseragent);
@@ -222,13 +240,13 @@ public class MainController {
 		log.setIframe(iframe);
 		if(firstTime!=null && !"".equals(firstTime)){
 			log.setFirstTime(Long.valueOf(firstTime));
+		}else{
+			log.setFirstTime(now);
 		}
 		if(firstTimeToday!=null && !"".equals(firstTimeToday)){
-			log.setTodayTime(Long.valueOf(firstTimeToday));
+			log.setTodayTime(now);
 		}
-		if(timestamp!=null && !"".equals(timestamp)){
-			log.setRequestTime(Long.valueOf(timestamp));
-		}
+		log.setRequestTime(now);
 		logService.log(log);
 		//logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
 	}
@@ -237,6 +255,7 @@ public class MainController {
 	public void onClick(@RequestParam(value="u",required=false)String uuid,
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="a",required=false)Integer adId,
 			          @RequestParam(value="n",required=false)Integer clickNum,
 			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t",required=false)String timestamp,
@@ -248,7 +267,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L2 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" onClick u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+clickNum+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -270,14 +289,20 @@ public class MainController {
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
+		
 		//logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
-		mouseClickEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, clickNum, browsingPage);
+		mouseClickEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, clickNum);
 	}
 	
 	@RequestMapping(value = "l3")
 	public void onStayTime(@RequestParam(value="u",required=false)String uuid,
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="a",required=false)Integer adId,
 			          @RequestParam(value="n",required=false)Integer number,
 			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t",required=false)String timestamp,
@@ -289,7 +314,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" onStayTime u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -306,13 +331,18 @@ public class MainController {
 		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		stayTimeEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
+		stayTimeEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
 	}
 	
 	@RequestMapping(value = "l4")
 	public void onMouseMove(@RequestParam(value="u",required=false)String uuid,
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="a",required=false)Integer adId,
 			          @RequestParam(value="n",required=false)Integer number,
 			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t",required=false)String timestamp,
@@ -324,7 +354,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" onMouseMove u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -341,7 +371,11 @@ public class MainController {
 		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		mouseMoveEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
+		mouseMoveEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
 	}
 	
 	
@@ -349,6 +383,7 @@ public class MainController {
 	public void onScroll(@RequestParam(value="u",required=false)String uuid,
 			          @RequestParam(value="s",required=false)Integer siteId,
 			          @RequestParam(value="c",required=false)Integer channelId,
+			          @RequestParam(value="a",required=false)Integer adId,
 			          @RequestParam(value="n",required=false)Integer number,
 			          @RequestParam(value="p",required=false)String browsingPage,
 			          @RequestParam(value="t",required=false)String timestamp,
@@ -360,7 +395,7 @@ public class MainController {
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
 		if(log.isDebugEnabled()){
-			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+			log.debug(ipAddress+" onScroll u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
 		}
 		
 		/** 允许跨域访问 **/
@@ -377,7 +412,11 @@ public class MainController {
 		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
-		scrollEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, number, browsingPage);
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
+		scrollEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
 	}
 	
 	
@@ -395,9 +434,16 @@ public class MainController {
 	                  HttpServletResponse response
 			          ) {
 		String ipAddress = IpUtils.getIpAddr(request);
-//		if(log.isDebugEnabled()){
-//			log.debug(ipAddress+" L3 u->"+uuid+",s->"+siteId+",c->"+channelId+",n->"+number+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
-//		}
+		if(log.isDebugEnabled()){
+			log.debug(ipAddress+" onLogin u->"+uuid+",s->"+siteId+",c->"+channelId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		String region = IPDBService.getRegion(ipAddress);
+		if(region==null && "".equals(region)){
+			region = "未知地区";
+		}
+		loginEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, region, adId);
 		
 		/** 允许跨域访问 **/
 		try {

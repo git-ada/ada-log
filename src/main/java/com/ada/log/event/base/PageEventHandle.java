@@ -21,6 +21,8 @@ public interface PageEventHandle {
 			Integer siteId, 
 			Integer channelId,
 			Integer domainId,
-			Integer number, 
-			String browsingPage);
+			Integer adId,
+			String region,
+			Integer number
+			);
 }

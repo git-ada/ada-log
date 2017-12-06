@@ -35,8 +35,8 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 
 	@Override
 	public void handle(String ipAddress, String uuid, Integer siteId,
-			Integer channelId, Integer domainId, Integer number,
-			String browsingPage) {
+			Integer channelId, Integer domainId, Integer number,String region,
+			Integer adId) {
 		
 		if(log.isDebugEnabled()){
 			log.debug("ip->"+ipAddress+",siteId->"+siteId+",channelId->"+channelId+",number->"+number);
@@ -45,6 +45,8 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		if(number==null){
 			return;
 		}
+		
+		Jedis jedis = jedisPools.getResource();
 		
 	    Integer oldNumber = getAndSetIPEventNum(ipAddress,number);
 	    
@@ -60,7 +62,15 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		if(domainId!=null){
 			/** 2) 更新域名IP数 **/
 			updateDomainEventIP(domainId, number, oldNumber);
+			updateRegionEventIP(domainId, region, number, oldNumber);
+			
+			if(adId!=null){
+				updateDomainAdEventIP(domainId, number, oldNumber);
+				updateRegionAdEventIP(domainId, region, number, oldNumber);
+			}
 		}
+		
+		jedisPools.returnResource(jedis);
 	}
 	
 	/**
@@ -141,6 +151,140 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		
 		if(newrange != null){
 			String currentEventIPKey =  new StringBuffer().append(domainKey).append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+			jedis.incr(currentEventIPKey);
+			log.debug(currentEventIPKey+"++");
+		}
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 更新域名点击IP数
+	 * @param domainId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
+	protected void updateDomainAdEventIP(Integer domainId,Integer newNumber,Integer oldNumber){
+		/** 拿到上次点击数区间 **/
+		Integer oldrange = matchRange(oldNumber);
+		Integer newrange = matchRange(newNumber);
+		
+		if(oldrange!=null && newrange != null && oldrange == newrange){
+			/** 同样请求 **/
+			log.warn("意料之外出现同数据,domainId->"+domainId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
+			return ;
+		}
+		
+		Jedis jedis = getJedis();
+		if(oldrange != null && newrange !=null ){
+			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+			String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
+			jedis.decr(lastEventIPKey);
+			log.debug(lastEventIPKey+"--");
+		}
+		
+		if(newrange != null){
+			String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+			jedis.incr(currentEventIPKey);
+			log.debug(currentEventIPKey+"++");
+		}
+		returnResource(jedis);
+	}
+	
+	
+	/**
+	 * 更新域名点击IP数
+	 * @param domainId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
+	protected void updateDomainAdEventIP(Integer domainId,String region,Integer newNumber,Integer oldNumber){
+		/** 拿到上次点击数区间 **/
+		Integer oldrange = matchRange(oldNumber);
+		Integer newrange = matchRange(newNumber);
+		
+		if(oldrange!=null && newrange != null && oldrange == newrange){
+			/** 同样请求 **/
+			log.warn("意料之外出现同数据,domainId->"+domainId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
+			return ;
+		}
+		
+		Jedis jedis = getJedis();
+		if(oldrange != null && newrange !=null ){
+			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+			String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
+			jedis.decr(lastEventIPKey);
+			log.debug(lastEventIPKey+"--");
+		}
+		
+		if(newrange != null){
+			String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+			jedis.incr(currentEventIPKey);
+			log.debug(currentEventIPKey+"++");
+		}
+		returnResource(jedis);
+	}
+	
+	
+	/**
+	 * 更新域名点击IP数
+	 * @param domainId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
+	protected void updateRegionEventIP(Integer domainId,String region,Integer newNumber,Integer oldNumber){
+		/** 拿到上次点击数区间 **/
+		Integer oldrange = matchRange(oldNumber);
+		Integer newrange = matchRange(newNumber);
+		
+		if(oldrange!=null && newrange != null && oldrange == newrange){
+			/** 同样请求 **/
+			log.warn("意料之外出现同数据,domainId->"+domainId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
+			return ;
+		}
+		
+		Jedis jedis = getJedis();
+		if(oldrange != null && newrange !=null ){
+			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+			String lastEventIPKey = new StringBuffer().append("DomainCity").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+			jedis.decr(lastEventIPKey);
+			log.debug(lastEventIPKey+"--");
+		}
+		
+		if(newrange != null){
+			String currentEventIPKey =  new StringBuffer().append("DomainCity").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+			jedis.incr(currentEventIPKey);
+			log.debug(currentEventIPKey+"++");
+		}
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 更新域名点击IP数
+	 * @param domainId
+	 * @param newClickNum
+	 * @param oldClickNum
+	 */
+	protected void updateRegionAdEventIP(Integer domainId,String region,Integer newNumber,Integer oldNumber){
+		/** 拿到上次点击数区间 **/
+		Integer oldrange = matchRange(oldNumber);
+		Integer newrange = matchRange(newNumber);
+		
+		if(oldrange!=null && newrange != null && oldrange == newrange){
+			/** 同样请求 **/
+			log.warn("意料之外出现同数据,domainId->"+domainId+",newNumber->"+newNumber+",oldNumber->"+oldNumber);
+			return ;
+		}
+		
+		Jedis jedis = getJedis();
+		if(oldrange != null && newrange !=null ){
+			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+			String lastEventIPKey = new StringBuffer().append("DomainCityAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+			jedis.decr(lastEventIPKey);
+			log.debug(lastEventIPKey+"--");
+		}
+		
+		if(newrange != null){
+			String currentEventIPKey =  new StringBuffer().append("DomainCityAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
 			jedis.incr(currentEventIPKey);
 			log.debug(currentEventIPKey+"++");
 		}

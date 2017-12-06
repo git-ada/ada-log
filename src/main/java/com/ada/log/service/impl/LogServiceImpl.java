@@ -15,6 +15,8 @@ import redis.clients.jedis.Jedis;
 import com.ada.log.bean.AccessLog;
 import com.ada.log.constant.RedisKeys;
 import com.ada.log.dao.AccessLogDao;
+import com.ada.log.service.IPDBService;
+import com.ada.log.service.IPSetService;
 import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
 import com.ada.log.service.SiteService;
@@ -33,6 +35,12 @@ public class LogServiceImpl implements LogService{
 	@Autowired
 	private SiteService siteService;
 	
+	@Autowired
+	private IPDBService IPDBService;
+	
+//	@Autowired
+	private IPSetService IPSetService;
+	
 	private final static Log log = LogFactory.getLog(LogServiceImpl.class);
 	
 	private List<AccessLog> cacheLogs = new ArrayList();
@@ -42,31 +50,8 @@ public class LogServiceImpl implements LogService{
 	
 	@Override
 	public void log(AccessLog log) {
-		Boolean isOldUser = false;
-		
-		/** 当天第一次请求，判断老用户逻辑，减少操作次数，提高性能**/
-		if(log.getTodayTime()!=null){
-			/** 通过初次设置cookie值 判断是否老用户**/
-			if(log.getFirstTime()!=null && log.getFirstTime()>1){
-				try {
-					boolean isSmpeDate = isSameDate(new Date(log.getFirstTime()), new Date());
-					if(!isSmpeDate){
-						isOldUser = true;
-					}
-				} catch (Exception e) {
-				}
-			}
-			
-			/** 通过是否直接访问判断是否老用户，粗暴数据不准确**/
-			if(!isOldUser){
-				if(log.getReferer()==null || "".equals(log.getReferer())){
-					isOldUser = true;
-				}
-			}
-		}
-		
-		log1(log.getIpAddress(), log.getUuid(), log.getSiteId(), log.getChannelId(),log.getDomainId(), log.getUrl(), isOldUser);
-		
+		/** 实时统计 **/
+		stat(log);
 		cacheLogs.add(log);
 	}
 	
@@ -79,45 +64,168 @@ public class LogServiceImpl implements LogService{
 			temp.clear();
 		}
 	}
-
-	@Override
-	public void log1(String ipAddress, String uuid, Integer siteId,Integer channelId,Integer domainId, String browsingPage,Boolean isOldUser) {
-		/** 1）保存站点IP Set **/
-		putSiteIPSet(siteId, ipAddress);
-		/** 2）保存站点PV **/
-		increSitePV(siteId);
-		/** 3) 保存域名IP Set **/
-		putDomainIPSet(domainId, ipAddress);
-		/** 4) 保存域名PV  **/
-		increDomainPV(domainId);
-		/** 5) 保存域名进入目标页IPSet**/
+	
+	/** 判断是否老用户**/
+	protected Boolean isOldUser(AccessLog log) {
+		Boolean isOldUser = false;
 		
-		if(isOldUser){
-			putSiteOlduserIPSet(siteId,ipAddress);
-			putDomainOlduserIPSet(domainId,ipAddress);
+		/** 当天第一次请求，判断老用户逻辑，减少操作次数，提高性能**/
+		if(log.getTodayTime()!=null && log.getFirstTime()!=null){
+			/** 通过初次设置cookie值 判断是否老用户**/
+			if(log.getTodayTime() > log.getFirstTime()){
+				isOldUser = true;
+			}
+			
+			/** 通过是否直接访问判断是否老用户，粗暴数据不准确**/
+//			if(!isOldUser){
+//				if(log.getReferer()==null || "".equals(log.getReferer())){
+//					isOldUser = true;
+//				}
+//			}
+		}
+		return isOldUser;
+	}
+	
+	public void stat(AccessLog req) {
+		/** 客户端当天第一次访问**/
+		Boolean isTodayFirstTime = req.getTodayTime() !=null;
+		Jedis jedis = getJedis();
+		/** ）保存站点PV **/
+		increSitePV(req.getSiteId());
+		/** ) 保存域名PV  **/
+		increDomainPV(req.getDomainId());
+
+		/** 客户端当天第一个请求处理老用户逻辑**/
+		Boolean isOldUser = false;
+		/** 老IP **/
+		boolean oldip = false;
+		if(isTodayFirstTime){
+			isOldUser = isOldUser(req);
+			putSiteIPSet(req.getSiteId(), req.getIpAddress());
+			/** ) 保存域名IP Set **/
+			putDomainIPSet(req.getDomainId(), req.getIpAddress());
+			/** ) 站点UV ++ **/
+			jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(req.getSiteId()).toString());
+			/** ) 域名UV ++ **/
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainUV.getKey()).append(req.getDomainId()).toString());
+			
+			if(isOldUser){
+				/** 记录老用户IP **/
+				putSiteOlduserIPSet(req.getSiteId(),req.getIpAddress());
+				putDomainOlduserIPSet(req.getDomainId(),req.getIpAddress());
+			}
+			oldip = IPSetService.exists(req.getDomainId(), req.getIpAddress());
+		}
+			
+		if(oldip){
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
 		}
 		
-		Boolean matchTarget = siteService.matchTargetPage(siteId, browsingPage);
+		/** ) 保存域名进入目标页IPSet**/
+		Boolean matchTarget = siteService.matchTargetPage(req.getSiteId(), req.getUrl());
 		if(log.isDebugEnabled()){
-			log.debug("匹配目标页 ->"+matchTarget +",browsingPage->"+browsingPage);
+			log.debug("匹配目标页 ->"+matchTarget +",browsingPage->"+req.getUrl());
 		}
 		
 		if(matchTarget){
-			putDomainTIPSet(domainId, ipAddress);
-		}
-		if(channelId!=null){
-			/** 6) 保存渠道IP Set **/
-			putChannelIPSet(channelId, ipAddress);
-			/** 7) 保存渠道PV  **/
-			increChannelPV(channelId);
-			/** 8) 保存渠道进入目标页IPSet**/
-			if(matchTarget){
-				putChannelTIPSet(channelId, ipAddress);
-			}
-			
-			putChanneOlduserIPSet(channelId,ipAddress);
+			putDomainTIPSet(req.getDomainId(), req.getIpAddress());
 		}
 		
+		/** 渠道统计 **/
+		if(req.getChannelId()!=null){
+			if(isTodayFirstTime){
+				/** 保存渠道IP Set **/
+				putChannelIPSet(req.getChannelId(), req.getIpAddress());
+			}
+			/** 保存渠道PV  **/
+			increChannelPV(req.getChannelId());
+			/** 保存渠道进入目标页IPSet**/
+			if(matchTarget){
+				putChannelTIPSet(req.getChannelId(), req.getIpAddress());
+			}
+			/** 保存老用户IPSet **/
+			if(isOldUser){
+				putChanneOlduserIPSet(req.getChannelId(),req.getIpAddress());
+			}
+			/** 保存老IP数 **/
+			if(oldip){
+				jedis.incr(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(req.getChannelId()).toString());
+			}
+		}
+
+		/** 广告入口统计 **/
+		if(req.getAdId()!=null){
+			/** ) 保存域名PV  **/
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainAdPV.getKey()).append(req.getDomainId()).toString());
+			if(isTodayFirstTime){
+				/** ) 保存域名IP Set **/
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
+				/** ) 域名UV ++ **/
+				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdUV.getKey()).append(req.getDomainId()).toString());
+			}
+			/** 保存目标页 **/
+			if(matchTarget){
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdTIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
+			}
+			/** 保存老用户IPSet **/
+			if(isOldUser){
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdOldUserIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
+			}
+			/** 保存老IP数 **/
+			if(oldip){
+				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdOldIP.getKey()).append(req.getDomainId()).toString());
+			}
+		}
+		
+		/** 地域统计 **/
+		String region = req.getRegion();
+		req.setRegion(region);
+		if(isTodayFirstTime){
+			/** ) 保存域名IP Set **/
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityIP.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString(), req.getIpAddress());
+			/** ) 域名UV ++ **/
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainCityUV.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString());
+		}
+		/** ) 保存域名PV  **/
+		jedis.incr(new StringBuffer().append(RedisKeys.DomainCityPV.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString());
+		/** 保存目标页 **/
+		if(matchTarget){
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityTIP.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString(), req.getIpAddress());
+		}
+		/** 保存老用户IPSet **/
+		if(isOldUser){
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldUserIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
+		}
+		/** 保存老IP数 **/
+		if(oldip){
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainCityOldIP.getKey()).append(req.getDomainId()).toString());
+		}
+		
+		/** 地区广告入口 **/
+		if(req.getAdId()!=null){
+			/** ) 保存域名PV  **/
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityPV.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString());
+			if(isTodayFirstTime){
+				/** ) 保存域名IP Set **/
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityIP.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString(), req.getIpAddress());
+				/** ) 域名UV ++ **/
+				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityUV.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString());
+			}
+			/** 保存目标页 **/
+			if(matchTarget){
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityTIP.getKey()).append(req.getDomainId()).append("_").append(req.getRegion()).toString(), req.getIpAddress());
+			}
+			/** 保存老用户IPSet **/
+			if(isOldUser){
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldUserIP.getKey()).append(req.getDomainId()).toString(), req.getIpAddress());
+			}
+			/** 保存老IP数 **/
+			if(oldip){
+				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityOldIP.getKey()).append(req.getDomainId()).toString());
+			}
+		}
+		
+		returnResource(jedis);
 	}
 	
 	protected void putDomainOlduserIPSet(Integer domainId,String ipAddress){
@@ -154,9 +262,31 @@ public class LogServiceImpl implements LogService{
 	 * @param siteId       站点ID
 	 * @param ipAddress
 	 */
+	protected void increSiteUVSet(Integer siteId) {
+		Jedis jedis = getJedis();
+		jedis.incr(RedisKeys.SitePV.getKey()+siteId+"");
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存站点PV +1
+	 * @param siteId       站点ID
+	 * @param ipAddress
+	 */
 	protected void increSitePV(Integer siteId) {
 		Jedis jedis = getJedis();
 		jedis.incr(RedisKeys.SitePV.getKey()+siteId+"");
+		returnResource(jedis);
+	}
+	
+	/**
+	 * 保存站点UV +1
+	 * @param siteId       站点ID
+	 * @param ipAddress
+	 */
+	protected void increSiteUV(Integer siteId) {
+		Jedis jedis = getJedis();
+		jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(siteId).toString());
 		returnResource(jedis);
 	}
 	
