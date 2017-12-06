@@ -20,6 +20,7 @@ import com.ada.log.dao.ChannelDao;
 import com.ada.log.dao.SiteDao;
 import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
+import com.alibaba.fastjson.JSON;
 
 /**
  * 渠道服务实现类
@@ -232,6 +233,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 			}
 		}
 		Map<Integer,List<ADPage>> temp = this.siteAdPages;
+		log.debug("加载广告页->"+JSON.toJSONString(loadSiteAdPages));
 		this.siteAdPages = loadSiteAdPages;		
 		temp.clear();
 	}
