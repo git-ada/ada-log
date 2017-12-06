@@ -50,15 +50,10 @@ public class IPSetServiceImpl implements IPSetService {
 	@Override
 	public boolean exists(Integer domainId,String ipAddress) {
 		Jedis jedis = getJedis();
-		Boolean exDomain = jedis.hexists(RedisKeys.DomainIPMap.getKey()+domainId+"", ipAddress);
-		if(exDomain){
-			Map<String, String> allIp = jedis.hgetAll(RedisKeys.DomainIPMap.getKey()+domainId+"");
+		boolean exIpAddress = jedis.hexists(RedisKeys.DomainIPMap.getKey()+domainId+"", ipAddress);
+		if(exIpAddress){
 			returnResource(jedis);
-			if(allIp.containsKey(ipAddress)){
-            	return true;
-            }else{
-            	return false;
-            }
+			return true;
 		}
 		returnResource(jedis);
 		return false;
