@@ -1,5 +1,7 @@
 package com.ada.log.service;
 
+import java.util.Set;
+
 import com.ada.log.bean.AccessLog;
 
 
@@ -16,6 +18,13 @@ public interface LogService {
 		          Integer channelId,Integer domainId, String browsingPage,Boolean isOldUser);
 	
 	public void log(AccessLog log);
+	
+	/**
+	 * 得到IPSet集合
+	 * @param  domainId
+	 * @return IPSet
+	 */
+	public Set<String> loopDomainIPSet(Integer domainId);
 	
 
 

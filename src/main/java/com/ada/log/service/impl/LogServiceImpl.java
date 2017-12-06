@@ -3,6 +3,7 @@ package com.ada.log.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -191,6 +192,19 @@ public class LogServiceImpl implements LogService{
 		Jedis jedis = getJedis();
 		jedis.sadd(RedisKeys.DomainIP.getKey()+domainId+"", ipAddress);
 		returnResource(jedis);
+	}
+	
+	/**
+	 * 获取域名IPSet集合
+	 * @param domainId     域名ID
+	 * @param ipAddress    IP地址
+	 */
+	@Override
+	public Set<String> loopDomainIPSet(Integer domainId){
+		Jedis jedis = getJedis();
+		Set<String> allip = jedis.smembers(RedisKeys.DomainIP.getKey()+domainId+"");
+		returnResource(jedis);
+		return allip;
 	}
 	
 	/**

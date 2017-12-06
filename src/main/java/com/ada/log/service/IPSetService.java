@@ -18,5 +18,5 @@ public interface IPSetService {
 	 * @param ipAddress
 	 * @return
 	 */
-	public boolean add(Integer domainId,String ipAddress);
+	public boolean add(Integer domainId);
 }
