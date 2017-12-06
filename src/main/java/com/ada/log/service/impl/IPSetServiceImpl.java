@@ -52,19 +52,13 @@ public class IPSetServiceImpl implements IPSetService {
 		Jedis jedis = getJedis();
 		Boolean exDomain = jedis.exists(RedisKeys.DomainIPMap.getKey()+domainId+"");
 		if(exDomain){
-			Set<String> ipSet = logService.loopDomainIPSet(domainId);
-			if(ipSet !=null && ipSet.size()>0){
-				for (String ip : ipSet) {  
-					Map<String, String> allIp = jedis.hgetAll(RedisKeys.DomainIPMap.getKey()+domainId+"");
-					returnResource(jedis);
-					Iterator<String> iter = allIp.keySet().iterator(); 
-			        while(iter.hasNext()){ 
-			            if(iter.next().equals(ip)){//String ipKey=iter.next(); 
-			            	return true;//true:不是 oldIp
-			            }
-			        }
-				} 
-			} 
+			Map<String, String> allIp = jedis.hgetAll(RedisKeys.DomainIPMap.getKey()+domainId+"");
+			returnResource(jedis);
+			if(allIp.containsKey(ipAddress)){
+            	return true;
+            }else{
+            	return false;
+            }
 		}
 		returnResource(jedis);
 		return false;
@@ -79,14 +73,13 @@ public class IPSetServiceImpl implements IPSetService {
 				boolean exIpAddress = exists(domainId, ip);
 				if(!exIpAddress){
 					jedis.hset(RedisKeys.DomainIPMap.getKey()+domainId+"", ip, String.valueOf(System.currentTimeMillis()));
-					returnResource(jedis);
-					//return true;
 				}
 			} 
 		} 
 		returnResource(jedis);
 		return false;
 	}
+	
 	
 	protected Jedis getJedis()  {  
 		Jedis jedis = null; 
