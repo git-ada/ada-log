@@ -194,7 +194,9 @@ public class MainController {
 		ADPage adPage = null;
 		if(browsingPage!=null && adId==null){
 			adPage = channelService.matchAdPage(siteId, browsingPage);
-			adId = adPage.getId();
+			if(adPage.getId()!=null){
+				adId = adPage.getId();
+			}
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
