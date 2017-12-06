@@ -31,7 +31,7 @@ public class AccessLogDaoImpl implements AccessLogDao {
 	public void batchInsert(final List<AccessLog> logs) {
 		Long startTime = System.currentTimeMillis();
 		
-		jdbcTemplate.batchUpdate("INSERT INTO `ada_access_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
+		jdbcTemplate.batchUpdate("INSERT INTO `ada_access_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				AccessLog log = logs.get(i);
 				Integer parameterIndex = 1;
