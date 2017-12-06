@@ -31,7 +31,7 @@ public class IPSetServiceImpl implements IPSetService {
 	
 	public void afterPropertiesSet() throws Exception {
 		JedisPoolConfig config = new JedisPoolConfig();
-		JedisPool jedisPool = new JedisPool(jedisPoolConfig,host, Integer.valueOf(port), 1000, pass, defualtDBindex);
+		ipSetJedisPool = new JedisPool(jedisPoolConfig,host, Integer.valueOf(port), 1000, pass, defualtDBindex);
 	}
 
 	@Override
