@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import com.ada.log.service.LogService;
 import com.ada.log.util.Dates;
 
 @Service
-public class IPSetServiceImpl implements IPSetService {
+public class IPSetServiceImpl implements IPSetService,InitializingBean {
 	private final static Log log = LogFactory.getLog(IPSetServiceImpl.class);
 	@Value("${redis.host:}")
 	private String host;
@@ -41,10 +42,8 @@ public class IPSetServiceImpl implements IPSetService {
 	private JedisPool ipSetJedisPool;  /** , **/
 	private Integer defualtDBindex =  8; /** 默认库 **/
 	
-	public JedisPool afterPropertiesSet() throws Exception {
-		JedisPoolConfig config = new JedisPoolConfig();
+	public void afterPropertiesSet() throws Exception {
 		ipSetJedisPool = new JedisPool(jedisPoolConfig,host, Integer.valueOf(port), 1000, pass, defualtDBindex);
-		return ipSetJedisPool;
 	}
 
 	@Override
@@ -85,16 +84,9 @@ public class IPSetServiceImpl implements IPSetService {
 	}
 	
 	
-	protected Jedis getJedis()  {  
-		Jedis jedis = null; 
-		try {
-			ipSetJedisPool = afterPropertiesSet();
-			jedis = ipSetJedisPool.getResource(); 
-		} catch (Exception e) {
-			log.error("get jedis resource error !");
-		}  
-	    return jedis;
-	}  
+	protected Jedis getJedis(){
+		return ipSetJedisPool.getResource();
+	} 
 	protected void returnResource(Jedis jedis) {  
 		 if (jedis != null) {  
 	         ipSetJedisPool.returnResource(jedis);
