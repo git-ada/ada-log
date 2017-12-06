@@ -20,7 +20,7 @@ public interface IPSetService {
 	 * @param ipAddress
 	 * @return
 	 */
-	public boolean add(Integer domainId,String ipAddress);
+	public void add(Integer domainId,String ipAddress);
 	
 	/**
 	 * 批量添加IP数据集
@@ -28,7 +28,7 @@ public interface IPSetService {
 	 * @param ipSet
 	 * @return
 	 */
-	public boolean batchAdd(Integer domianId,Set<String> ipSet);
+	public void batchAdd(Integer domianId,Set<String> ipSet);
 	
 	
 }

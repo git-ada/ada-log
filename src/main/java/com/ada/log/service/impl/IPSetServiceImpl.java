@@ -60,19 +60,28 @@ public class IPSetServiceImpl implements IPSetService {
 	}
 	
 	@Override
-	public boolean add(Integer domainId,String ipAddress) {
+	public void add(Integer domainId,String ipAddress) {
+		
+	}
+	
+	/**
+	 * 批量添加IP数据集
+	 * @param domianId
+	 * @param ipSet
+	 * @return
+	 */
+	@Override
+	public void batchAdd(Integer domianId,Set<String> ipSet){
 		Jedis jedis = getJedis();
-		Set<String> ipSet = logService.loopDomainIPSet(domainId);
 		if(ipSet !=null && ipSet.size()>0){
 			for (String ip : ipSet) {  
-				boolean exIpAddress = exists(domainId, ip);
+				boolean exIpAddress = exists(domianId, ip);
 				if(!exIpAddress){
-					jedis.hset(RedisKeys.DomainIPMap.getKey()+domainId+"", ip, String.valueOf(System.currentTimeMillis()));
+					jedis.hset(RedisKeys.DomainIPMap.getKey()+domianId+"", ip, String.valueOf(System.currentTimeMillis()));
 				}
 			} 
 		} 
 		returnResource(jedis);
-		return false;
 	}
 	
 	

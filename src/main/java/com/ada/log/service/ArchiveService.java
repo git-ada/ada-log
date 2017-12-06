@@ -2,6 +2,8 @@ package com.ada.log.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class ArchiveService {
 	
 	@Autowired
 	private IPSetService iPSetService;
+	
+	@Autowired
+	private LogService logService;
 	
 	/**
 	 * 归档昨日站点统计数据
@@ -104,7 +109,8 @@ public class ArchiveService {
 			 List<Domain> domains = domainDao.findBySiteId(site.getId());
 			 for(Domain domain:domains){
 				try {
-					iPSetService.add(domain.getId());
+					Set<String> ipSet = logService.loopDomainIPSet(domain.getId());
+					iPSetService.batchAdd(domain.getId(),ipSet);
 				} catch (Exception e) {
 					log.info("域名 "+domain.getId()+":"+domain.getDomain()+" ipMap归档失败,Msg->"+e.getMessage(),e);
 				}
