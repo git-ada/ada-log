@@ -114,8 +114,8 @@ public class LogServiceImpl implements LogService{
 				//putSiteIPSet(req.getSiteId(), req.getIpAddress());
 				jedis.sadd(new StringBuffer().append(RedisKeys.SiteIP.getKey()).append(req.getSiteId()).toString(),req.getIpAddress());
 				/** ) 保存域名IP Set **/
-				//putDomainIPSet(req.getDomainId(), req.getIpAddress());
-				jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(req.getSiteId()).toString(),req.getIpAddress());
+//				putDomainIPSet(req.getDomainId(), req.getIpAddress());
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(req.getDomainId()).toString(),req.getIpAddress());
 				//jedis.sadd(RedisKeys.DomainIP.getKey()+domainId+"", ipAddress);
 				/** ) 站点UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(req.getSiteId()).toString());
