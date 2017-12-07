@@ -83,13 +83,16 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 	 */
 	protected Integer getAndSetIPEventNum(String ipAddress,Integer number){
 		Jedis jedis = getJedis();
-		String redisKey = new StringBuffer().append(eventKey).append("IP").append(spacer).append(ipAddress).toString();
-		String oldvalue = jedis.getSet(redisKey, number.toString());
-		returnResource(jedis);
-		if(oldvalue != null){
-			return Integer.valueOf(oldvalue);
-		}else{
-			return null;
+		try{
+			String redisKey = new StringBuffer().append(eventKey).append("IP").append(spacer).append(ipAddress).toString();
+			String oldvalue = jedis.getSet(redisKey, number.toString());
+			if(oldvalue != null){
+				return Integer.valueOf(oldvalue);
+			}else{
+				return null;
+			}
+		} finally{
+			returnResource(jedis);
 		}
 	}
 	
@@ -111,19 +114,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append(channelKey).append(eventKey).append(oldrange).append("IP").append(spacer).append(channelId).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append(channelKey).append(eventKey).append(oldrange).append("IP").append(spacer).append(channelId).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append(channelKey).append(eventKey).append(newrange).append("IP").append(spacer).append(channelId).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append(channelKey).append(eventKey).append(newrange).append("IP").append(spacer).append(channelId).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	/**
@@ -144,19 +150,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append(domainKey).append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append(domainKey).append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append(domainKey).append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append(domainKey).append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	/**
@@ -177,19 +186,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	
@@ -211,19 +223,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append("DomainAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	
@@ -245,19 +260,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append("DomainCity").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append("DomainCity").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append("DomainCity").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append("DomainCity").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	/**
@@ -278,19 +296,22 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = getJedis();
-		if(oldrange != null && newrange !=null ){
-			/** 构造Key 如: ChannelClick1_192.168.1.10 **/
-			String lastEventIPKey = new StringBuffer().append("DomainCityAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-			jedis.decr(lastEventIPKey);
-			log.debug(lastEventIPKey+"--");
+		try{
+			if(oldrange != null && newrange !=null ){
+				/** 构造Key 如: ChannelClick1_192.168.1.10 **/
+				String lastEventIPKey = new StringBuffer().append("DomainCityAd").append(eventKey).append(oldrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+				jedis.decr(lastEventIPKey);
+				log.debug(lastEventIPKey+"--");
+			}
+			
+			if(newrange != null){
+				String currentEventIPKey =  new StringBuffer().append("DomainCityAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
+				jedis.incr(currentEventIPKey);
+				log.debug(currentEventIPKey+"++");
+			}
+		} finally{
+			returnResource(jedis);
 		}
-		
-		if(newrange != null){
-			String currentEventIPKey =  new StringBuffer().append("DomainCityAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-			jedis.incr(currentEventIPKey);
-			log.debug(currentEventIPKey+"++");
-		}
-		returnResource(jedis);
 	}
 	
 	protected Integer matchRange(Integer number){
