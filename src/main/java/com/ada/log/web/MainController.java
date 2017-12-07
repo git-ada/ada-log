@@ -194,7 +194,7 @@ public class MainController {
 		ADPage adPage = null;
 		if(browsingPage!=null && adId==null){
 			adPage = channelService.matchAdPage(siteId, browsingPage);
-			if(adPage.getId()!=null){
+			if(adPage!=null){
 				adId = adPage.getId();
 			}
 			if(log.isDebugEnabled() && adPage !=null){
