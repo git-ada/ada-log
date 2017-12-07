@@ -1,6 +1,7 @@
 package com.ada.log.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ import com.ada.log.service.IPSetService;
 import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
 import com.ada.log.service.SiteService;
+import com.ada.log.util.Dates;
 
 /**
  * 核心实现
@@ -332,8 +334,11 @@ public class LogServiceImpl implements LogService{
 	 * @param ipAddress    IP地址
 	 */
 	@Override
-	public Set<String> loopDomainIPSet(Integer domainId){
+	public Set<String> getYesterdayDomainIPSet(Integer domainId){
 		Jedis jedis = getJedis();
+		Date today = Dates.todayStart();
+		Date lastDay = Dates.add(today, Calendar.DAY_OF_WEEK, -1);
+		jedis.select(lastDay.getDay());
 		Set<String> allip = jedis.smembers(RedisKeys.DomainIP.getKey()+domainId+"");
 		returnResource(jedis);
 		return allip;

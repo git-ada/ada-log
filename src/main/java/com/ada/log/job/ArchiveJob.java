@@ -27,8 +27,8 @@ public class ArchiveJob {
 		log.info("结束归档作业，用时"+cost+"ms");
 	}
 	
-	@Scheduled(cron="0 */3 * * * ?")
-//	@Scheduled(cron="0 10 0 * * ?")
+//	@Scheduled(cron="0 */3 * * * ?")
+	@Scheduled(cron="0 10 0 * * ?")
 	public void excute2(){
 		log.info("开始执行IPSet归档作业");
 		Long startTime = System.currentTimeMillis();

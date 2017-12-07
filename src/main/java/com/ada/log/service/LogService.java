@@ -14,11 +14,11 @@ public interface LogService {
 	public void log(AccessLog log);
 	
 	/**
-	 * 得到IPSet集合
+	 * 得到昨天IPSet集合
 	 * @param  domainId
 	 * @return IPSet
 	 */
-	public Set<String> loopDomainIPSet(Integer domainId);
+	public Set<String> getYesterdayDomainIPSet(Integer domainId);
 	
 
 

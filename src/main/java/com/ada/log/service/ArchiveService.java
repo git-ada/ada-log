@@ -109,7 +109,7 @@ public class ArchiveService {
 			 List<Domain> domains = domainDao.findBySiteId(site.getId());
 			 for(Domain domain:domains){
 				try {
-					Set<String> ipSet = logService.loopDomainIPSet(domain.getId());
+					Set<String> ipSet = logService.getYesterdayDomainIPSet(domain.getId());
 					iPSetService.batchAdd(domain.getId(),ipSet);
 				} catch (Exception e) {
 					log.info("域名 "+domain.getId()+":"+domain.getDomain()+" ipMap归档失败,Msg->"+e.getMessage(),e);
