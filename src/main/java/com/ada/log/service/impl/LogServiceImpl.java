@@ -380,16 +380,6 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	/**
-	 * 更新渠道多个点击次数区间
-	 * @param channelId   渠道ID
-	 * @param ipClickNum  IP累计点击次数
-	 */
-	protected void updateChannelMultipleRangeClickIP(Integer channelId,Integer ipClickNum){
-		Jedis jedis = getJedis();
-		
-	}
-	
-	/**
 	 * 匹配是否目标页 
 	 * @param siteId 
 	 * @param browsingPage  
