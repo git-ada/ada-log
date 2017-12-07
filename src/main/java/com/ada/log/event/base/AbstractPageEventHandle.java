@@ -47,30 +47,32 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		}
 		
 		Jedis jedis = jedisPools.getResource();
-		
-	    Integer oldNumber = getAndSetIPEventNum(ipAddress,number);
-	    
-	    if(oldNumber!=null && oldNumber==number){
-	    	/** 未变动忽略  **/
-	    	return;
-	    }
-	    
-		if(channelId!=null){
-			/** 1) 更新渠道IP数 **/
-			updateChannelEventIP(channelId, number, oldNumber);
-		}
-		if(domainId!=null){
-			/** 2) 更新域名IP数 **/
-			updateDomainEventIP(domainId, number, oldNumber);
-			updateRegionEventIP(domainId, region, number, oldNumber);
-			
-			if(adId!=null){
-				updateDomainAdEventIP(domainId, number, oldNumber);
-				updateRegionAdEventIP(domainId, region, number, oldNumber);
+		try {
+		    Integer oldNumber = getAndSetIPEventNum(ipAddress,number);
+		    
+		    if(oldNumber!=null && oldNumber==number){
+		    	/** 未变动忽略  **/
+		    	return;
+		    }
+		    
+			if(channelId!=null){
+				/** 1) 更新渠道IP数 **/
+				updateChannelEventIP(channelId, number, oldNumber);
 			}
-		}
+			if(domainId!=null){
+				/** 2) 更新域名IP数 **/
+				updateDomainEventIP(domainId, number, oldNumber);
+				updateRegionEventIP(domainId, region, number, oldNumber);
+				
+				if(adId!=null){
+					updateDomainAdEventIP(domainId, number, oldNumber);
+					updateRegionAdEventIP(domainId, region, number, oldNumber);
+				}
+			}
 		
-		jedisPools.returnResource(jedis);
+		} finally{
+			jedisPools.returnResource(jedis);
+		}
 	}
 	
 	/**

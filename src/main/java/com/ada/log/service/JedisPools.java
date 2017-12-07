@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.ada.log.util.Dates;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
+import com.ada.log.util.Dates;
 
 @Service
 public class JedisPools implements InitializingBean{
@@ -72,8 +72,11 @@ public class JedisPools implements InitializingBean{
 	
 	public void cleanDb(Integer dbindex){
 		Jedis jedis = getResource(dbindex);
-		jedis.flushDB();
-		returnResource(dbindex,jedis);
+		try{
+			jedis.flushDB();
+		} finally{
+			returnResource(jedis);
+		}
 		log.info("已清库 DBIndex:"+dbindex);
 	}
 	
@@ -91,6 +94,14 @@ public class JedisPools implements InitializingBean{
 	 */
 	public Jedis getResource(Integer dbindex){
 		return jedisPools.get(dbindex).getResource();
+	}
+	
+	public JedisPool getJedisPool(){
+		return jedisPools.get(defualtDBindex);
+	}
+	
+	public JedisPool getJedisPool(Integer dbindex){
+		return jedisPools.get(dbindex);
 	}
 	
 	public void returnResource(Jedis jedis) {

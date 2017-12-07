@@ -49,13 +49,12 @@ public class IPSetServiceImpl implements IPSetService,InitializingBean {
 	@Override
 	public boolean exists(Integer domainId,String ipAddress) {
 		Jedis jedis = getJedis();
-		boolean exIpAddress = jedis.hexists(RedisKeys.DomainIPMap.getKey()+domainId+"", ipAddress);
-		if(exIpAddress){
+		try{
+			boolean exists = jedis.hexists(RedisKeys.DomainIPMap.getKey()+domainId+"", ipAddress);
+			return exists;
+		} finally{
 			returnResource(jedis);
-			return true;
 		}
-		returnResource(jedis);
-		return false;
 	}
 	
 	@Override
@@ -72,15 +71,18 @@ public class IPSetServiceImpl implements IPSetService,InitializingBean {
 	@Override
 	public void batchAdd(Integer domianId,Set<String> ipSet){
 		Jedis jedis = getJedis();
-		if(ipSet !=null && ipSet.size()>0){
-			for (String ip : ipSet) {  
-				boolean exIpAddress = exists(domianId, ip);
-				if(!exIpAddress){
-					jedis.hset(RedisKeys.DomainIPMap.getKey()+domianId+"", ip, String.valueOf(System.currentTimeMillis()));
-				}
+		try {
+			if(ipSet !=null && ipSet.size()>0){
+				for (String ip : ipSet) {  
+					boolean exIpAddress = exists(domianId, ip);
+					if(!exIpAddress){
+						jedis.hset(RedisKeys.DomainIPMap.getKey()+domianId+"", ip, String.valueOf(System.currentTimeMillis()));
+					}
+				} 
 			} 
-		} 
-		returnResource(jedis);
+		} finally{
+			returnResource(jedis);
+		}
 	}
 	
 	
