@@ -147,7 +147,7 @@ public class LogServiceImpl implements LogService{
 			if(matchTarget){
 	//			putDomainTIPSet(req.getDomainId(), req.getIpAddress());
 				/**域名进入目标页IP集合 **/
-				jedis.sadd(RedisKeys.DomainTIP.getKey()+domainId, ipAddress);
+				jedis.sadd(new StringBuffer(RedisKeys.DomainTIP.getKey()).append(domainId).toString(), ipAddress);
 			}
 			
 			/** 渠道统计 **/
@@ -155,15 +155,17 @@ public class LogServiceImpl implements LogService{
 				if(isTodayFirstTime){
 					/** 保存渠道IP Set **/
 	//				putChannelIPSet(req.getChannelId(), req.getIpAddress());
-					jedis.sadd(RedisKeys.ChannelIP.getKey()+channelId+"", ipAddress);
+					jedis.sadd(new StringBuffer(RedisKeys.ChannelIP.getKey()).append(channelId).toString(), ipAddress);
+					
 				}
 				/** 保存渠道PV  **/
 	//			increChannelPV(req.getChannelId());
-				jedis.incr(RedisKeys.ChannelPV.getKey()+channelId+"");	
+				jedis.incr(new StringBuffer(RedisKeys.ChannelPV.getKey()).append(channelId).toString());	
+				
 				/** 保存渠道进入目标页IPSet**/
 				if(matchTarget){
 	//				putChannelTIPSet(req.getChannelId(), req.getIpAddress());
-					jedis.sadd(RedisKeys.ChannelTIP.getKey()+channelId, ipAddress);
+					jedis.sadd(new StringBuffer(RedisKeys.ChannelTIP.getKey()).append(channelId).toString(), ipAddress);
 				}
 				/** 保存老用户IPSet **/
 				if(isOldUser){
