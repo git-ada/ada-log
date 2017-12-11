@@ -17,38 +17,6 @@
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %t %5p [%F:%L] - %m%n" />
 		</layout>
 	</appender>
-
-	<!--设定级别为debug的配置信息-->
-	<appender name="DEBUG" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/app_debug.log" />
-		<param name="Append" value="true" />
-		<param name="Encoding" value="utf-8" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %t %5p [%F:%L] - %m%n" />
-		</layout>
-
-		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-			<param name="LevelMin" value="DEBUG" />
-			<param name="LevelMax" value="DEBUG" />
-		</filter>
-
-	</appender>
-
-	<!--设定级别为info的配置信息-->
-	<appender name="INFO" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-		<param name="File" value="${catalina.home}/logs/app_info.log" />
-		<param name="Append" value="true" />
-		<param name="Encoding" value="utf-8" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %t %5p [%F:%L] - %m%n" />
-		</layout>
-		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-			<param name="LevelMin" value="INFO" />
-			<param name="LevelMax" value="INFO" />
-		</filter>
-	</appender>
 	
 	<!--设定级别为warn的配置信息-->
 	<appender name="WARN" class="org.apache.log4j.DailyRollingFileAppender">
