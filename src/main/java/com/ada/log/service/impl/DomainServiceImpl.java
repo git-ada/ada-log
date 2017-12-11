@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ada.log.service.DomainService;
 
@@ -86,16 +88,42 @@ public class DomainServiceImpl implements DomainService,InitializingBean {
 				return domainId;
 			}
 			
-			/** 跨服务器数据库并发问题 **/
-			jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
+//			/** 跨服务器数据库并发问题 **/
+//			jdbcTemplate.execute("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
+//			
+//			List<Map<String, Object>> queryForList3 = jdbcTemplate.queryForList("select id from ada_domain where siteId=? and domain=? ",siteId,domain);
+//			if(queryForList3 != null && queryForList3.size()>0){
+//				domainId = (Integer)queryForList3.get(0).get("id");
+//				setDomainIdCache(siteId,domain,domainId);
+//			}
 			
-			List<Map<String, Object>> queryForList3 = jdbcTemplate.queryForList("select id from ada_domain where siteId=? and domain=? ",siteId,domain);
-			if(queryForList3 != null && queryForList3.size()>0){
-				domainId = (Integer)queryForList3.get(0).get("id");
-				setDomainIdCache(siteId,domain,domainId);
-			}
+			domainId = queryForUpdateDomain(siteId,domain);
+			setDomainIdCache(siteId,domain,domainId);
 			return domainId;
 		}
+	}
+	
+	/**
+	 * 查询数据库或者更新（高并发同步锁）
+	 * @param siteId
+	 * @param domain
+	 * @return
+	 */
+	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
+	public Integer queryForUpdateDomain(Integer siteId,String domain){
+		Integer domainId = null;
+		
+		List<Map<String, Object>> list = jdbcTemplate.queryForList("select id from ada_domain where siteId=? and domain=? for update",siteId,domain);
+		if(list != null && list.size()>0){
+			domainId = (Integer)list.get(0).get("id");
+		}else{
+			/** 跨服务器数据库并发问题 **/
+			jdbcTemplate.update("insert into ada_domain(siteId,domain,createTime) values("+siteId+",'"+domain+"',now())");
+			List<Map<String, Object>> list2 = jdbcTemplate.queryForList("select id from ada_domain where siteId=? and domain=?",siteId,domain);
+			domainId = (Integer)list2.get(0).get("id");
+		}
+
+		return domainId;
 	}
 
 	public void afterPropertiesSet() throws Exception {
