@@ -28,7 +28,7 @@ public class ArchiveJob {
 	}
 	
 //	@Scheduled(cron="0 */3 * * * ?")
-	@Scheduled(cron="0 10 0 * * ?")
+	@Scheduled(cron="0 0 7 * * ?")
 	public void excute2(){
 		log.info("开始执行IPSet归档作业");
 		Long startTime = System.currentTimeMillis();
