@@ -34,6 +34,7 @@ public class ExceptionHandle implements HandlerExceptionResolver{
 			
 		}
 		
+		log.error(new StringBuffer().append(request.getRequestURI()).append("?").append(request.getQueryString()).toString());
 		if(log.isDebugEnabled()){
 			log.error(ex.getClass().getName()+local,ex);
 		}else{
