@@ -166,7 +166,7 @@ public class ChannelServiceImpl2 implements ChannelService,InitializingBean {
 	
 	public ADPage matchAdPage(Integer siteId,String browsingPage){
 		List<ADPage> adPages = siteAdPages.get(siteId);
-		if(siteAdPages!=null && !siteAdPages.isEmpty()){
+		if(adPages!=null && !adPages.isEmpty()){
 			for(ADPage page:adPages){
 				/** 页面链接包含广告页关键字 **/
 				if(browsingPage.indexOf(page.getMatchContent()) !=-1){
