@@ -48,6 +48,9 @@ public class AccessLogDaoImpl implements AccessLogDao {
 				setString(ps, parameterIndex++, log.getBrowser());
 				setString(ps, parameterIndex++, log.getScreenSize());
 				setString(ps, parameterIndex++, log.getPageSize());
+				if(log.getReferer()!=null &&log.getReferer().length()>128){
+					log.setReferer(log.getReferer().substring(0, 128));
+				}
 				setString(ps, parameterIndex++, log.getReferer());
 				setInteger(ps, parameterIndex++, log.getIframe());
 				setTimestamp(ps, parameterIndex++, log.getFirstTime());
