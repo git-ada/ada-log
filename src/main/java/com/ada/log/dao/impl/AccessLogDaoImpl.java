@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ada.log.bean.AccessLog;
+import com.ada.log.bean.EventLog;
 import com.ada.log.dao.AccessLogDao;
 
 @Service
@@ -55,6 +56,66 @@ public class AccessLogDaoImpl implements AccessLogDao {
 				setInteger(ps, parameterIndex++, log.getIframe());
 				setTimestamp(ps, parameterIndex++, log.getFirstTime());
 				setTimestamp(ps, parameterIndex++, log.getTodayTime());
+				setTimestamp(ps, parameterIndex++, log.getRequestTime());
+			}
+			
+			protected void setInteger(PreparedStatement ps,Integer parameterIndex,Integer value) throws SQLException {
+				if(value==null){
+					ps.setNull(parameterIndex, Types.INTEGER);
+				}else{
+					ps.setInt(parameterIndex, value);
+				}
+			}
+			
+			protected void setString(PreparedStatement ps,Integer parameterIndex,String value)  throws SQLException {
+				if(value==null){
+					ps.setNull(parameterIndex, Types.VARCHAR);
+				}else{
+					ps.setString(parameterIndex, value);
+				}
+			}
+			
+			protected void setTimestamp(PreparedStatement ps,Integer parameterIndex,Long value)  throws SQLException {
+				if(value==null){
+					ps.setNull(parameterIndex, Types.TIMESTAMP);
+				}else{
+					ps.setTimestamp(parameterIndex, new Timestamp(value));
+				}
+			}
+			
+			@Override
+			public int getBatchSize() {
+				return logs.size();
+			}
+		});
+		
+		if(log.isDebugEnabled()){
+			Long endTime = System.currentTimeMillis();
+			Long cost = endTime -startTime;
+			log.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
+		}
+	}
+	
+	
+	@Override
+	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
+	public void batchInsertEventLog(final List<EventLog> logs) {
+		Long startTime = System.currentTimeMillis();
+		
+		jdbcTemplate.batchUpdate("INSERT INTO `ada_event_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				EventLog log = logs.get(i);
+				Integer parameterIndex = 1;
+				setInteger(ps, parameterIndex++,log.getSiteId());
+				setInteger(ps, parameterIndex++,log.getDomainId());
+				setInteger(ps, parameterIndex++,log.getChannelId());
+				setInteger(ps, parameterIndex++,log.getAdId());
+				setString(ps, parameterIndex++,log.getIpAddress());
+				setString(ps, parameterIndex++,log.getRegion());
+				setString(ps, parameterIndex++,log.getUuid());
+				setString(ps, parameterIndex++, log.getUrl());
+				setString(ps, parameterIndex++, log.getEvent());
+				setString(ps, parameterIndex++, log.getArgs());
 				setTimestamp(ps, parameterIndex++, log.getRequestTime());
 			}
 			

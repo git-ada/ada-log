@@ -1,11 +1,17 @@
 package com.ada.log.event.base;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import redis.clients.jedis.Jedis;
 
+import com.ada.log.bean.EventLog;
+import com.ada.log.dao.AccessLogDao;
 import com.ada.log.service.JedisPools;
 
 /**
@@ -27,11 +33,30 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 	private String eventKey; //Click,
 	private Integer[] pageEventThresholds;
 	
+	@Autowired
+	private AccessLogDao accessLogDao;
+	
 	public AbstractPageEventHandle(Integer[] pageEventThresholds,String eventKey) {
 		super();
 		this.pageEventThresholds = pageEventThresholds;
 		this.eventKey = eventKey;
 	}
+	
+	private static List<EventLog> cacheLogs = new ArrayList<EventLog>();
+	
+	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
+	public void batchSave(){
+		try {
+			if(!cacheLogs.isEmpty()){
+				List<EventLog> temp = this.cacheLogs;
+				cacheLogs =  new ArrayList<EventLog>();
+				accessLogDao.batchInsertEventLog(cacheLogs);
+				temp.clear();
+			}
+		} catch (Exception e) {
+			log.error("保存事件日志出错->"+e.getMessage(),e);
+		}
+	};
 
 	@Override
 	public void handle(String ipAddress, String uuid, Integer siteId,
@@ -45,6 +70,16 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		if(number==null){
 			return;
 		}
+		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setArgs(number.toString());
+		cacheLogs.add(log);
 		
 		Jedis jedis = jedisPools.getResource();
 		try {
