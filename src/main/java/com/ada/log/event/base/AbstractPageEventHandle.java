@@ -54,17 +54,7 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		if(number==null){
 			return;
 		}
-		
-		EventLog log = new EventLog();
-		log.setAdId(adId);
-		log.setDomainId(domainId);
-		log.setIpAddress(ipAddress);
-		log.setUuid(uuid);
-		log.setSiteId(siteId);
-		log.setRegion(region);
-		log.setArgs(number.toString());
-		logService.log(log);
-		
+
 		Jedis jedis = jedisPools.getResource();
 		try {
 		    Integer oldNumber = getAndSetIPEventNum(ipAddress,number);

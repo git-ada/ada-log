@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ada.log.bean.ADPage;
 import com.ada.log.bean.AccessLog;
+import com.ada.log.bean.EventLog;
 import com.ada.log.event.LoginEventHandle;
 import com.ada.log.event.MouseClickEventHandle;
 import com.ada.log.event.MouseMoveEventHandle;
@@ -305,6 +306,18 @@ public class MainController {
 		
 		//logService.log2(ipAddress, uuid, siteId, channelId,domainId, clickNum);
 		mouseClickEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, clickNum);
+		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setUrl(browsingPage);
+		log.setEvent("onClick");
+		log.setArgs(clickNum.toString());
+		logService.log(log);
 	}
 	
 	@RequestMapping(value = "l3")
@@ -345,6 +358,19 @@ public class MainController {
 			region = "未知地区";
 		}
 		stayTimeEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
+		
+		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setUrl(browsingPage);
+		log.setEvent("onStayTime");
+		log.setArgs(number.toString());
+		logService.log(log);
 	}
 	
 	@RequestMapping(value = "l4")
@@ -385,6 +411,18 @@ public class MainController {
 			region = "未知地区";
 		}
 		mouseMoveEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
+		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setUrl(browsingPage);
+		log.setEvent("onMouseMove");
+		log.setArgs(number.toString());
+		logService.log(log);
 	}
 	
 	
@@ -426,6 +464,18 @@ public class MainController {
 			region = "未知地区";
 		}
 		scrollEventHandle.handle(ipAddress, uuid, siteId, channelId, domainId, adId,region, number);
+		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setUrl(browsingPage);
+		log.setEvent("onScroll");
+		log.setArgs(number.toString());
+		logService.log(log);
 	}
 	
 	
@@ -462,7 +512,16 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
-		
+		EventLog log = new EventLog();
+		log.setAdId(adId);
+		log.setDomainId(domainId);
+		log.setIpAddress(ipAddress);
+		log.setUuid(uuid);
+		log.setSiteId(siteId);
+		log.setRegion(region);
+		log.setUrl(browsingPage);
+		log.setEvent("onLogin");
+		logService.log(log);
 	}
 	
 	/**
