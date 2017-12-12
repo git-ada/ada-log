@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
 import com.ada.log.bean.AccessLog;
+import com.ada.log.bean.EventLog;
 import com.ada.log.constant.RedisKeys;
 import com.ada.log.dao.AccessLogDao;
 import com.ada.log.service.IPDBService;
@@ -47,6 +48,7 @@ public class LogServiceImpl implements LogService{
 	private final static Log log = LogFactory.getLog(LogServiceImpl.class);
 	
 	private List<AccessLog> cacheLogs = new ArrayList();
+	private List<EventLog> eventLogs = new ArrayList<EventLog>();
 	
 	@Autowired
 	private AccessLogDao accessLogDao;
@@ -60,12 +62,32 @@ public class LogServiceImpl implements LogService{
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
 	public void batchSave(){
-		if(!cacheLogs.isEmpty()){
-			List<AccessLog> temp = this.cacheLogs;
-			cacheLogs = new ArrayList();
-			accessLogDao.batchInsert(temp);
-			temp.clear();
+		try {
+			if(!cacheLogs.isEmpty()){
+				List<AccessLog> temp = this.cacheLogs;
+				cacheLogs = new ArrayList();
+				accessLogDao.batchInsert(temp);
+				temp.clear();
+			}
+		} catch (Exception e) {
+			log.error("保存访问日志出错->"+e.getMessage(),e);
 		}
+		
+		
+		try {
+			if(!eventLogs.isEmpty()){
+				List<EventLog> temp = this.eventLogs;
+				eventLogs =  new ArrayList<EventLog>();
+				accessLogDao.batchInsertEventLog(temp);
+				temp.clear();
+			}
+		} catch (Exception e) {
+			log.error("保存事件日志出错->"+e.getMessage(),e);
+		}
+	}
+	
+	public void log(EventLog log) {
+		eventLogs.add(log);
 	}
 	
 	/** 判断是否老用户**/

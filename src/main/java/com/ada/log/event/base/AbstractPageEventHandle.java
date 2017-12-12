@@ -11,8 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import redis.clients.jedis.Jedis;
 
 import com.ada.log.bean.EventLog;
-import com.ada.log.dao.AccessLogDao;
 import com.ada.log.service.JedisPools;
+import com.ada.log.service.LogService;
 
 /**
  * 超偶像的页面点击事件处理器
@@ -34,7 +34,7 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 	private Integer[] pageEventThresholds;
 	
 	@Autowired
-	private AccessLogDao accessLogDao;
+	private LogService logService;
 	
 	public AbstractPageEventHandle(Integer[] pageEventThresholds,String eventKey) {
 		super();
@@ -42,22 +42,6 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		this.eventKey = eventKey;
 	}
 	
-	private static List<EventLog> cacheLogs = new ArrayList<EventLog>();
-	
-	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
-	public void batchSave(){
-		try {
-			if(!cacheLogs.isEmpty()){
-				List<EventLog> temp = this.cacheLogs;
-				cacheLogs =  new ArrayList<EventLog>();
-				accessLogDao.batchInsertEventLog(cacheLogs);
-				temp.clear();
-			}
-		} catch (Exception e) {
-			log.error("保存事件日志出错->"+e.getMessage(),e);
-		}
-	};
-
 	@Override
 	public void handle(String ipAddress, String uuid, Integer siteId,
 			Integer channelId, Integer domainId, Integer adId,String region,
@@ -79,7 +63,7 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 		log.setSiteId(siteId);
 		log.setRegion(region);
 		log.setArgs(number.toString());
-		cacheLogs.add(log);
+		logService.log(log);
 		
 		Jedis jedis = jedisPools.getResource();
 		try {
