@@ -316,6 +316,7 @@ public class MainController {
 		log.setRegion(region);
 		log.setUrl(browsingPage);
 		log.setEvent("onClick");
+		log.setRequestTime(Long.valueOf(timestamp));
 		log.setArgs(clickNum.toString());
 		logService.log(log);
 	}
@@ -369,6 +370,7 @@ public class MainController {
 		log.setRegion(region);
 		log.setUrl(browsingPage);
 		log.setEvent("onStayTime");
+		log.setRequestTime(Long.valueOf(timestamp));
 		log.setArgs(number.toString());
 		logService.log(log);
 	}
@@ -421,6 +423,7 @@ public class MainController {
 		log.setRegion(region);
 		log.setUrl(browsingPage);
 		log.setEvent("onMouseMove");
+		log.setRequestTime(Long.valueOf(timestamp));
 		log.setArgs(number.toString());
 		logService.log(log);
 	}
@@ -474,6 +477,7 @@ public class MainController {
 		log.setRegion(region);
 		log.setUrl(browsingPage);
 		log.setEvent("onScroll");
+		log.setRequestTime(Long.valueOf(timestamp));
 		log.setArgs(number.toString());
 		logService.log(log);
 	}
@@ -520,6 +524,7 @@ public class MainController {
 		log.setSiteId(siteId);
 		log.setRegion(region);
 		log.setUrl(browsingPage);
+		log.setRequestTime(Long.valueOf(timestamp));
 		log.setEvent("onLogin");
 		logService.log(log);
 	}
