@@ -223,12 +223,12 @@ public class LogServiceImpl implements LogService{
 			
 			/** ) 保存域名IP Set **/
 			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
+			/** ) 保存域名PV  **/
+			jedis.incr(new StringBuffer().append(RedisKeys.DomainCityPV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 			if(isTodayFirstTime){
 				/** ) 域名UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.DomainCityUV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 			}
-			/** ) 保存域名PV  **/
-			jedis.incr(new StringBuffer().append(RedisKeys.DomainCityPV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 			/** 保存目标页 **/
 			if(matchTarget){
 				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityTIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
