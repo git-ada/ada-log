@@ -194,11 +194,11 @@ public class LogServiceImpl implements LogService{
 	
 			/** 广告入口统计 **/
 			if(req.getAdId()!=null){
+				/** ) 保存域名IP **/
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdIP.getKey()).append(domainId).toString(), ipAddress);
 				/** ) 保存域名PV  **/
 				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdPV.getKey()).append(domainId).toString());
 				if(isTodayFirstTime){
-					/** ) 保存域名IP Set **/
-					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdIP.getKey()).append(domainId).toString(), ipAddress);
 					/** ) 域名UV ++ **/
 					jedis.incr(new StringBuffer().append(RedisKeys.DomainAdUV.getKey()).append(domainId).toString());
 				}
@@ -217,11 +217,13 @@ public class LogServiceImpl implements LogService{
 			}
 			
 			/** 地域统计 **/
+			
 			String region = req.getRegion();
 			req.setRegion(region);
+			
+			/** ) 保存域名IP Set **/
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 			if(isTodayFirstTime){
-				/** ) 保存域名IP Set **/
-				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 				/** ) 域名UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.DomainCityUV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 			}
@@ -242,11 +244,11 @@ public class LogServiceImpl implements LogService{
 			
 			/** 地区广告入口 **/
 			if(req.getAdId()!=null){
+				/** ) 保存域名IP Set **/
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 				/** ) 保存域名PV  **/
 				jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityPV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 				if(isTodayFirstTime){
-					/** ) 保存域名IP Set **/
-					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 					/** ) 域名UV ++ **/
 					jedis.incr(new StringBuffer().append(RedisKeys.DomainAdCityUV.getKey()).append(domainId).append("_").append(req.getRegion()).toString());
 				}
