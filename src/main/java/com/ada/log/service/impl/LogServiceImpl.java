@@ -136,6 +136,8 @@ public class LogServiceImpl implements LogService{
 			Boolean isOldUser = false;
 			/** 老IP **/
 			boolean oldip = false;
+			//TEMP
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(domainId).toString(),ipAddress);
 			if(isTodayFirstTime){
 				oldip = IPSetService.exists(domainId, ipAddress);
 				if(oldip){
@@ -143,12 +145,9 @@ public class LogServiceImpl implements LogService{
 				}else{
 					isOldUser = isOldUser(req);
 				}
-				//putSiteIPSet(req.getSiteId(), req.getIpAddress());
 				jedis.sadd(new StringBuffer().append(RedisKeys.SiteIP.getKey()).append(siteId).toString(),ipAddress);
 				/** ) 保存域名IP Set **/
-//				putDomainIPSet(domainId, ipAddress);
-				jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(domainId).toString(),ipAddress);
-				//jedis.sadd(RedisKeys.DomainIP.getKey()+domainId+"", ipAddress);
+//				jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(domainId).toString(),ipAddress);
 				/** ) 站点UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(siteId).toString());
 				/** ) 域名UV ++ **/
