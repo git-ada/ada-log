@@ -102,7 +102,7 @@ public class LogServiceImpl implements LogService{
 //			}
 //			
 			Long now = System.currentTimeMillis();
-			Long time = log.getFirstTime() - now;
+			Long time = now - log.getFirstTime();
 			if(time > 86400000){/** 超过24小时算老用户 **/
 				isOldUser = true;
 			}
@@ -126,17 +126,17 @@ public class LogServiceImpl implements LogService{
 			Integer domainId =  req.getDomainId();
 			Integer channelId = req.getChannelId();
 			/** ）保存站点PV **/
-	//		increSitePV(req.getSiteId());
 			jedis.incr(new StringBuffer().append(RedisKeys.SitePV.getKey()).append(req.getSiteId()).toString());
 			/** ) 保存域名PV  **/
-	//		increDomainPV(req.getDomainId());
 			jedis.incr(new StringBuffer().append(RedisKeys.DomainPV.getKey()).append(domainId).toString());
 	
 			/** 客户端当天第一个请求处理老用户逻辑**/
 			Boolean isOldUser = false;
 			/** 老IP **/
 			boolean oldip = false;
-			//TEMP
+			/** ) 保存站点IP Set **/
+			jedis.sadd(new StringBuffer().append(RedisKeys.SiteIP.getKey()).append(siteId).toString(),ipAddress);
+			/** ) 保存域名IP Set **/
 			jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(domainId).toString(),ipAddress);
 			if(isTodayFirstTime){
 				oldip = IPSetService.exists(domainId, ipAddress);
@@ -145,25 +145,17 @@ public class LogServiceImpl implements LogService{
 				}else{
 					isOldUser = isOldUser(req);
 				}
-				jedis.sadd(new StringBuffer().append(RedisKeys.SiteIP.getKey()).append(siteId).toString(),ipAddress);
-				/** ) 保存域名IP Set **/
-//				jedis.sadd(new StringBuffer().append(RedisKeys.DomainIP.getKey()).append(domainId).toString(),ipAddress);
 				/** ) 站点UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.SiteUV.getKey()).append(siteId).toString());
 				/** ) 域名UV ++ **/
 				jedis.incr(new StringBuffer().append(RedisKeys.DomainUV.getKey()).append(domainId).toString());
 				/** ) 保存城市列表 ++ **/
 				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCitySet.getKey()).append(domainId).toString(),req.getRegion());
-				
 				if(isOldUser){
 					/** 记录老用户IP **/
-	//				putSiteOlduserIPSet(siteId,ipAddress);
-					jedis.sadd(new StringBuffer().append(RedisKeys.SiteOldUserIP.getKey()).append(siteId).toString(), ipAddress);
-	//				putDomainOlduserIPSet(domainId,ipAddress);
 					jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldUserIP.getKey()).append(domainId).toString(), ipAddress);
 				}
 			}
-				
 			if(oldip){
 				jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(domainId).toString(), ipAddress);
 			}
@@ -175,37 +167,29 @@ public class LogServiceImpl implements LogService{
 			}
 			
 			if(matchTarget){
-	//			putDomainTIPSet(domainId, ipAddress);
 				/**域名进入目标页IP集合 **/
 				jedis.sadd(new StringBuffer(RedisKeys.DomainTIP.getKey()).append(domainId).toString(), ipAddress);
 			}
 			
 			/** 渠道统计 **/
 			if(req.getChannelId()!=null){
-				if(isTodayFirstTime){
-					/** 保存渠道IP Set **/
-	//				putChannelIPSet(req.getChannelId(), ipAddress);
-					jedis.sadd(new StringBuffer(RedisKeys.ChannelIP.getKey()).append(channelId).toString(), ipAddress);
-					
-				}
+				/** 保存渠道IP Set **/
+				jedis.sadd(new StringBuffer(RedisKeys.ChannelIP.getKey()).append(channelId).toString(), ipAddress);
 				/** 保存渠道PV  **/
-	//			increChannelPV(req.getChannelId());
-				jedis.incr(new StringBuffer(RedisKeys.ChannelPV.getKey()).append(channelId).toString());	
-				
+				jedis.incr(new StringBuffer(RedisKeys.ChannelPV.getKey()).append(channelId).toString());
 				/** 保存渠道进入目标页IPSet**/
 				if(matchTarget){
-	//				putChannelTIPSet(req.getChannelId(), ipAddress);
 					jedis.sadd(new StringBuffer(RedisKeys.ChannelTIP.getKey()).append(channelId).toString(), ipAddress);
 				}
 				/** 保存老用户IPSet **/
 				if(isOldUser){
-	//				putChanneOlduserIPSet(req.getChannelId(),ipAddress);
 					jedis.sadd(new StringBuffer().append(RedisKeys.ChannelOldUserIP.getKey()).append(channelId).toString(), ipAddress);
 				}
 				/** 保存老IP数 **/
-				if(oldip){
-					jedis.sadd(new StringBuffer().append(RedisKeys.DomainOldIP.getKey()).append(req.getChannelId()).toString(), ipAddress);
-				}
+				//TODO
+//				if(oldip){
+//					jedis.sadd(new StringBuffer().append(RedisKeys.ChannelOldUserIP.getKey()).append(req.getChannelId()).toString(), ipAddress);
+//				}
 			}
 	
 			/** 广告入口统计 **/
