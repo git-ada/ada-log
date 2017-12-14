@@ -97,10 +97,15 @@ public class LogServiceImpl implements LogService{
 		/** 当天第一次请求，判断老用户逻辑，减少操作次数，提高性能**/
 		if(log.getTodayTime()!=null && log.getFirstTime()!=null){
 			/** 通过初次设置cookie值 判断是否老用户**/
-			if(log.getTodayTime() > log.getFirstTime()){
+//			if(log.getTodayTime() > log.getFirstTime()){
+//				isOldUser = true;
+//			}
+//			
+			Long now = System.currentTimeMillis();
+			Long time = log.getFirstTime() - now;
+			if(time > 86400000){/** 超过24小时算老用户 **/
 				isOldUser = true;
 			}
-			
 			/** 通过是否直接访问判断是否老用户，粗暴数据不准确**/
 //			if(!isOldUser){
 //				if(log.getReferer()==null || "".equals(log.getReferer())){
