@@ -56,26 +56,26 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 			if(channelId!=null){
 				/** 1) 更新渠道IP数 **/
 				String _channelKey =  new StringBuffer().append(channelKey).append(eventKey).append(newrange).append("IP").append(spacer).append(channelId).toString();
-				jedis.incr(_channelKey);
+				jedis.sadd(_channelKey,ipAddress);
 				log.debug(_channelKey+"++");
 			}
 			if(domainId!=null){
 				/** 2) 更新域名IP数 **/
 				String _domainKey =  new StringBuffer().append(domainKey).append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
-				jedis.incr(_domainKey);
+				jedis.sadd(_domainKey,ipAddress);
 				log.debug(_domainKey+"++");
 				
 				/** 3）更新域名下属地区 **/
 				String _domainRegionKey =  new StringBuffer().append("DomainCity").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-				jedis.incr(_domainRegionKey);
+				jedis.sadd(_domainRegionKey,ipAddress);
 				log.debug(_domainRegionKey+"++");
 				if(adId!=null){
 					String _domainAdKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
-					jedis.incr(_domainAdKey);
+					jedis.sadd(_domainAdKey,ipAddress);
 					log.debug(_domainAdKey+"++");
 					
 					String _domainCityAdKey =  new StringBuffer().append("DomainCityAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
-					jedis.incr(_domainCityAdKey);
+					jedis.sadd(_domainCityAdKey,ipAddress);
 					log.debug(_domainCityAdKey+"++");
 				}
 			}
