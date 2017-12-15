@@ -25,7 +25,7 @@ public class LoginEventHandle {
 			Integer channelId,
 			Integer domainId,
 			String region,
-			Integer adId) {
+			Integer adId,Integer entranceType) {
 		
 		if(log.isDebugEnabled()){
 			log.debug("ip->"+ipAddress+",siteId->"+siteId+",channelId->"+channelId+",domainId->"+domainId+",region->"+region+",adid");
@@ -36,7 +36,7 @@ public class LoginEventHandle {
 		jedis.sadd(new StringBuffer().append(RedisKeys.DomainLoginIp.getKey()).append(domainId).toString(), ipAddress);
 		jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityLoginIp.getKey()).append(region).toString(), ipAddress);
 		
-		if(adId!=null){
+		if(entranceType == 1){
 			jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdLoginIp.getKey()).append(domainId).toString(), ipAddress);
 			jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityLoginIp.getKey()).append(region).toString(), ipAddress);
 		}

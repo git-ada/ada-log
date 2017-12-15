@@ -39,7 +39,7 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 	
 	@Override
 	public void handle(String ipAddress, String uuid, Integer siteId,
-			Integer channelId, Integer domainId, Integer adId,String region,
+			Integer channelId, Integer domainId, Integer adId,Integer entranceType,String region,
 			Integer number) {
 		
 		if(log.isDebugEnabled()){
@@ -69,7 +69,8 @@ public abstract class AbstractPageEventHandle implements PageEventHandle{
 				String _domainRegionKey =  new StringBuffer().append("DomainCity").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).append(spacer).append(region).toString();
 				jedis.sadd(_domainRegionKey,ipAddress);
 				log.debug(_domainRegionKey+"++");
-				if(adId!=null){
+				/** 广告入口 **/
+				if(entranceType == 1){
 					String _domainAdKey =  new StringBuffer().append("DomainAd").append(eventKey).append(newrange).append("IP").append(spacer).append(domainId).toString();
 					jedis.sadd(_domainAdKey,ipAddress);
 					log.debug(_domainAdKey+"++");

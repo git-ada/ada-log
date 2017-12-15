@@ -17,6 +17,8 @@ public class AccessLog  implements java.io.Serializable{
 	private Integer channelId;
 	/** 广告ID */
 	private Integer adId;
+	/** 入口类型 **/
+	private Integer entranceType;
     /** IP地址 */
 	private String ipAddress;
 	/** 地区 */
@@ -198,6 +200,14 @@ public class AccessLog  implements java.io.Serializable{
 	@Transient
 	public boolean isTodayFirst(){
 		return todayTime !=null;
+	}
+
+	public Integer getEntranceType() {
+		return entranceType;
+	}
+
+	public void setEntranceType(Integer entranceType) {
+		this.entranceType = entranceType;
 	}
 
 	

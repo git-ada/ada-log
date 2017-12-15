@@ -193,7 +193,7 @@ public class LogServiceImpl implements LogService{
 			}
 	
 			/** 广告入口统计 **/
-			if(req.getAdId()!=null){
+			if(req.getEntranceType() == 1){
 				/** ) 保存域名IP **/
 				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdIP.getKey()).append(domainId).toString(), ipAddress);
 				/** ) 保存域名PV  **/

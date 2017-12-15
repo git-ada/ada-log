@@ -22,6 +22,7 @@ public interface PageEventHandle {
 			Integer channelId,
 			Integer domainId,
 			Integer adId,
+			Integer entranceType,
 			String region,
 			Integer number
 			);
