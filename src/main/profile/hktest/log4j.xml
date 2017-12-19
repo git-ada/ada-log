@@ -75,11 +75,11 @@
 	</logger>
 	
 	<logger name="com.ada.log">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 	
 	<root>
-		<level value="DEBUG" /> 
+		<level value="INFO" /> 
 		<!-- appender-ref ref="STDOUT" /-->
 		<appender-ref ref="ROLLINGFILE" />
 		<appender-ref ref="DEBUG" />
