@@ -195,7 +195,7 @@ public class LogServiceImpl implements LogService{
 			/** 广告入口统计 **/
 			if(req.getEntranceType() == 1){
 				/** ）保存广告IP **/
-				jedis.sadd(new StringBuffer().append(RedisKeys.AdIP.getKey()).append(req.getSiteId()).toString());
+				jedis.sadd(new StringBuffer().append(RedisKeys.AdIP.getKey()).append(req.getSiteId()).toString(), ipAddress);
 				/** ) 保存广告PV  **/
 				jedis.incr(new StringBuffer().append(RedisKeys.AdPV.getKey()).append(domainId).toString());
 				/** ) 保存域名IP **/
