@@ -46,6 +46,7 @@ public class AccessLogDaoImpl implements AccessLogDao {
 				if(log.getUrl()!=null &&log.getUrl().length()>128){
 					log.setUrl(log.getUrl().substring(0, 128));
 				}
+				setString(ps, parameterIndex++, log.getUrl());
 				setString(ps, parameterIndex++, log.getUseragent());
 				setString(ps, parameterIndex++, log.getOs());
 				setString(ps, parameterIndex++, log.getBrowser());
