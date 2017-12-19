@@ -4,13 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +21,42 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
 import com.ada.log.dao.AccessLogDao;
+import com.ada.log.util.Dates;
 
 @Service
-public class AccessLogDaoImpl implements AccessLogDao {
+public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log = LogFactory.getLog(AccessLogDaoImpl.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	private String insertAcccessLogSql;
+	private String insertEventLogSql;
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		resetSql();
+	}
+	
+	@Scheduled(cron="0 0 0 * * ?")
+	protected void resetSql() {
+		SimpleDateFormat df =new SimpleDateFormat("yyyyMMdd");
+		String date = df.format(Dates.now());
+		insertAcccessLogSql = "INSERT INTO `ada_access_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+		insertEventLogSql = "INSERT INTO `ada_event_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+	}
+	
+	public void createAccessTable(String data){
+		String sql = "CREATE TABLE `ada_access_log_"+data+"` (`id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',`siteId` int(11) DEFAULT NULL COMMENT '站点ID',`domainId` int(11) DEFAULT NULL COMMENT '域名ID',`channelId` int(11) DEFAULT NULL COMMENT '渠道ID',`adId` int(11) DEFAULT NULL COMMENT '广告ID',`ipAddress` varchar(24) DEFAULT NULL COMMENT 'IP地址',`region` varchar(64) DEFAULT NULL COMMENT '地区',`uuid` varchar(32) DEFAULT NULL COMMENT '客户端ID',`url` varchar(256) DEFAULT NULL COMMENT '浏览页',`referer` varchar(256) DEFAULT NULL COMMENT '引用页',`useragent` varchar(256) DEFAULT NULL COMMENT '客户端头信息',`os` varchar(24) DEFAULT NULL COMMENT '操作系统',`browser` varchar(24) DEFAULT NULL COMMENT '浏览器',`screenSize` varchar(16) DEFAULT NULL COMMENT '屏幕大小',`pageSize` varchar(16) DEFAULT NULL COMMENT '页面大小',`iframe` int(11) DEFAULT NULL COMMENT '在Iframe中',`firstTime` datetime DEFAULT NULL COMMENT '首次访问时间',`todayTime` datetime DEFAULT NULL COMMENT '当天首次访问时间',`requestTime` datetime DEFAULT NULL COMMENT '客户端请求时间',`createTime` datetime DEFAULT NULL COMMENT '创建时间',PRIMARY KEY (`id`),KEY `index_ip` (`ipAddress`)) ENGINE=InnoDB AUTO_INCREMENT=19431900 DEFAULT CHARSET=utf8 COMMENT='访问日志'";
+	}
 
 	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void batchInsert(final List<AccessLog> logs) {
 		Long startTime = System.currentTimeMillis();
 		
-		jdbcTemplate.batchUpdate("INSERT INTO `ada_access_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
+		jdbcTemplate.batchUpdate(insertAcccessLogSql, new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				AccessLog log = logs.get(i);
 				Integer parameterIndex = 1;
@@ -108,7 +132,7 @@ public class AccessLogDaoImpl implements AccessLogDao {
 	public void batchInsertEventLog(final List<EventLog> logs) {
 		Long startTime = System.currentTimeMillis();
 		
-		jdbcTemplate.batchUpdate("INSERT INTO `ada_event_log`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())", new BatchPreparedStatementSetter() {
+		jdbcTemplate.batchUpdate(insertEventLogSql, new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				EventLog log = logs.get(i);
 				Integer parameterIndex = 1;
@@ -164,4 +188,5 @@ public class AccessLogDaoImpl implements AccessLogDao {
 			log.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
 		}
 	}
+
 }
