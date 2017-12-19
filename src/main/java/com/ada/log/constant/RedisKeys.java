@@ -9,6 +9,11 @@ public enum RedisKeys {
 	
 	SitePV("站点PV","SitePV_",""),
 	SiteIP("站点IP","SiteIP_",""),
+	
+	AdIP("广告IP","AdIP_",""),
+	AdPV("广告PV","AdPV_",""),
+	AdUV("广告UV","AdUV_",""),
+	
 	ChannelPV("渠道PV","ChannelPV_",""),
 	ChannelIP("渠道IP","ChannelIP_",""),
 	DomainPV("域名PV","DomainPV_",""),

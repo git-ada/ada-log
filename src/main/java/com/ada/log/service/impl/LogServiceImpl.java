@@ -194,6 +194,10 @@ public class LogServiceImpl implements LogService{
 	
 			/** 广告入口统计 **/
 			if(req.getEntranceType() == 1){
+				/** ）保存广告IP **/
+				jedis.sadd(new StringBuffer().append(RedisKeys.AdIP.getKey()).append(req.getSiteId()).toString());
+				/** ) 保存广告PV  **/
+				jedis.incr(new StringBuffer().append(RedisKeys.AdPV.getKey()).append(domainId).toString());
 				/** ) 保存域名IP **/
 				jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdIP.getKey()).append(domainId).toString(), ipAddress);
 				/** ) 保存域名PV  **/
@@ -201,6 +205,7 @@ public class LogServiceImpl implements LogService{
 				if(isTodayFirstTime){
 					/** ) 域名UV ++ **/
 					jedis.incr(new StringBuffer().append(RedisKeys.DomainAdUV.getKey()).append(domainId).toString());
+					jedis.incr(new StringBuffer().append(RedisKeys.AdUV.getKey()).append(domainId).toString());
 				}
 				/** 保存目标页 **/
 				if(matchTarget){
