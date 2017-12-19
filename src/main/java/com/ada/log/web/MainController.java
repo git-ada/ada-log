@@ -25,6 +25,7 @@ import com.ada.log.event.ScrollEventHandle;
 import com.ada.log.event.StayTimeEventHandle;
 import com.ada.log.service.ChannelService;
 import com.ada.log.service.DomainService;
+import com.ada.log.service.EntranceService;
 import com.ada.log.service.IPDBService;
 import com.ada.log.service.LogService;
 import com.ada.log.util.IpUtils;
@@ -67,84 +68,10 @@ public class MainController {
 	@Autowired
 	private IPDBService IPDBService;
 	
+	@Autowired
+	private EntranceService entranceService;
+	
 	private String clientVersion = "1";
-	
-	
-	@RequestMapping(value = "track")
-	public void queryChannel( HttpServletRequest request,
-            HttpServletResponse response) {
-		
-		log.info(request.getRequestURL().append(request.getQueryString()));
-	}
-	
-	@RequestMapping(value = "d")
-	public void debug(
-			@RequestParam(value="u",required=false)String uuid,
-			@RequestParam(value="s",required=false)Integer siteId,
-			@RequestParam(value="m",required=false)String message,
-			@RequestParam(value="t",required=false)String timestamp,
-			@RequestParam(value="p",required=false)String browsingPage,
-            @RequestHeader(value="User-Agent",required=false)String useragent,
-            @RequestHeader(value="Referer",required=false)String referer,
-            @RequestHeader(value="Cookie",required=false)String cookie,
-            HttpServletRequest request,
-            HttpServletResponse response){
-		if(log.isDebugEnabled()){
-			String ipAddress = IpUtils.getIpAddr(request);
-			log.debug(ipAddress+ " DEBUG m->"+message+",u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
-		}
-	}
-	
-	
-	/**
-	 * 查询渠道
-	 * @param uuid            客户端UUID
-	 * @param siteId          站点ID
-	 * @param browsingPage    用户当前访问地址
-	 * @return
-	 * @throws Exception 
-	 */
-	@RequestMapping(value = "q")
-	public void queryChannel(@RequestParam(value="u",required=false)String uuid,
-			                   @RequestParam(value="s",required=false)Integer siteId,
-			                   @RequestParam(value="p",required=false)String browsingPage,
-			                   @RequestParam(value="t",required=false)String timestamp,
-			                   @RequestHeader(value="User-Agent",required=false)String useragent,
-			                   @RequestHeader(value="Referer",required=false)String referer,
-			                   @RequestHeader(value="Cookie",required=false)String cookie,
-			                   
-			                   HttpServletRequest request,
-			                   HttpServletResponse response
-			                   ) {
-		String ipAddress = IpUtils.getIpAddr(request);
-		if(log.isDebugEnabled()){
-			log.debug(ipAddress+ " Q u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
-		}
-		
-		if(siteId==null){
-			return;
-		}
-		
-		try {
-			browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-		} catch (Exception e1) {
-		}
-		if(siteId!=null && browsingPage!=null){
-			Integer channelId = channelService.queryChannel(siteId, browsingPage);
-			/** 允许跨域访问 **/
-			try {
-				response.setHeader("Access-Control-Allow-Origin", "*");
-				if(channelId!=null){
-					response.getWriter().println(channelId.toString());
-					if(log.isDebugEnabled()){
-						log.debug("匹配到渠道,siteId->"+siteId+",browsingPage->"+browsingPage+",channelId->"+channelId);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	@RequestMapping(value = "l1")
 	public void onAccess(
@@ -196,6 +123,9 @@ public class MainController {
 		} catch (Exception e1) {
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		if(channelId==null && browsingPage!=null){
 			channelId = channelService.queryChannel(siteId, browsingPage);
 			if(log.isDebugEnabled() && channelId !=null){
@@ -205,21 +135,14 @@ public class MainController {
 		
 		ADPage adPage = null;
 		if(entranceType==null || "".equals(entranceType)){
-			try {
-				browsingPage = URLDecoder.decode(browsingPage, "utf-8");
-			} catch (Exception e1) {
-			}
-			
 			adPage = channelService.matchAdPage(siteId, browsingPage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
 		}
 		Long now = System.currentTimeMillis();
 		
@@ -240,10 +163,6 @@ public class MainController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
-		
 		
 		AccessLog req = new AccessLog();
 		req.setSiteId(siteId);
@@ -319,27 +238,21 @@ public class MainController {
 			return;
 		}
 
-		ADPage adPage = null;
-		if(entranceType==null){
-			try {
-				entrancePage = URLDecoder.decode(entrancePage, "utf-8");
-			} catch (Exception e1) {
-			}
-			adPage = channelService.matchAdPage(siteId, entrancePage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
-			if(log.isDebugEnabled() && adPage !=null){
-				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
-			}
-		}
-		
 		String domain = getDomain(browsingPage);//得到域名
 		Integer domainId = domainService.queryDomain(siteId, domain);
 		
+		ADPage adPage = null;
+		if(entranceType==null || "".equals(entranceType)){
+			adPage = channelService.matchAdPage(siteId, browsingPage);
+			if(log.isDebugEnabled() && adPage !=null){
+				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
+			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
+		}
+
 		String region = IPDBService.getRegion(ipAddress);
 		if(region==null && "".equals(region)){
 			region = "未知地区";
@@ -400,26 +313,21 @@ public class MainController {
 			return;
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		ADPage adPage = null;
 		if(entranceType==null || "".equals(entranceType)){
-			try {
-				entrancePage = URLDecoder.decode(entrancePage, "utf-8");
-			} catch (Exception e1) {
-			}
-			adPage = channelService.matchAdPage(siteId, entrancePage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
+			adPage = channelService.matchAdPage(siteId, browsingPage);
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
 		String region = IPDBService.getRegion(ipAddress);
 		if(region==null && "".equals(region)){
 			region = "未知地区";
@@ -479,26 +387,21 @@ public class MainController {
 			return;
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		ADPage adPage = null;
 		if(entranceType==null || "".equals(entranceType)){
-			try {
-				entrancePage = URLDecoder.decode(entrancePage, "utf-8");
-			} catch (Exception e1) {
-			}
-			adPage = channelService.matchAdPage(siteId, entrancePage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
+			adPage = channelService.matchAdPage(siteId, browsingPage);
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
 		String region = IPDBService.getRegion(ipAddress);
 		if(region==null && "".equals(region)){
 			region = "未知地区";
@@ -558,26 +461,21 @@ public class MainController {
 			return;
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		ADPage adPage = null;
 		if(entranceType==null || "".equals(entranceType)){
-			try {
-				entrancePage = URLDecoder.decode(entrancePage, "utf-8");
-			} catch (Exception e1) {
-			}
-			adPage = channelService.matchAdPage(siteId, entrancePage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
+			adPage = channelService.matchAdPage(siteId, browsingPage);
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
 		String region = IPDBService.getRegion(ipAddress);
 		if(region==null && "".equals(region)){
 			region = "未知地区";
@@ -629,26 +527,21 @@ public class MainController {
 			return;
 		}
 		
+		String domain = getDomain(browsingPage);//得到域名
+		Integer domainId = domainService.queryDomain(siteId, domain);
+		
 		ADPage adPage = null;
 		if(entranceType==null || "".equals(entranceType)){
-			try {
-				entrancePage = URLDecoder.decode(entrancePage, "utf-8");
-			} catch (Exception e1) {
-			}
-			adPage = channelService.matchAdPage(siteId, entrancePage);
-			if(adPage!=null){
-				adId = adPage.getId();
-				entranceType = 1;
-			}else{
-				entranceType = 2;
-			}
+			adPage = channelService.matchAdPage(siteId, browsingPage);
 			if(log.isDebugEnabled() && adPage !=null){
 				log.debug("匹配到广告,siteId->"+siteId+",browsingPage->"+browsingPage+",adaId->"+adPage.getId());
 			}
+			if(adPage!=null){
+				adId = adPage.getId();
+			}
+			entranceType = entranceService.getAndSetEntrance(ipAddress, domainId, adId, browsingPage).getType();
 		}
 		
-		String domain = getDomain(browsingPage);//得到域名
-		Integer domainId = domainService.queryDomain(siteId, domain);
 		String region = IPDBService.getRegion(ipAddress);
 		if(region==null && "".equals(region)){
 			region = "未知地区";
@@ -700,6 +593,10 @@ public class MainController {
 		return null;
 	}
 	
+	protected Integer getEntranceType() {
+		return null;
+	}
+	
 	@RequestMapping(value = "ping")
 	public void ping(
 			@RequestHeader(value="User-Agent",required=false)String useragent,
@@ -718,4 +615,23 @@ public class MainController {
 			e.printStackTrace();
 		}
 	}
+	
+	@RequestMapping(value = "d")
+	public void debug(
+			@RequestParam(value="u",required=false)String uuid,
+			@RequestParam(value="s",required=false)Integer siteId,
+			@RequestParam(value="m",required=false)String message,
+			@RequestParam(value="t",required=false)String timestamp,
+			@RequestParam(value="p",required=false)String browsingPage,
+            @RequestHeader(value="User-Agent",required=false)String useragent,
+            @RequestHeader(value="Referer",required=false)String referer,
+            @RequestHeader(value="Cookie",required=false)String cookie,
+            HttpServletRequest request,
+            HttpServletResponse response){
+		if(log.isDebugEnabled()){
+			String ipAddress = IpUtils.getIpAddr(request);
+			log.debug(ipAddress+ " DEBUG m->"+message+",u->"+uuid+",s->"+siteId+",p->"+browsingPage+",t->"+timestamp+" "+ useragent+ " "+ cookie+ " "+ referer);
+		}
+	}
+	
 }
