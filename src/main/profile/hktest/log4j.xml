@@ -75,7 +75,7 @@
 	</logger>
 	
 	<logger name="com.ada.log">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	
 	<root>
