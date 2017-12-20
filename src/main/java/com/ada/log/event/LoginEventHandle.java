@@ -34,11 +34,11 @@ public class LoginEventHandle {
 		Jedis jedis = jedisPools.getResource();
 		
 		jedis.sadd(new StringBuffer().append(RedisKeys.DomainLoginIp.getKey()).append(domainId).toString(), ipAddress);
-		jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityLoginIp.getKey()).append(region).toString(), ipAddress);
+		jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityLoginIp.getKey()).append(domainId).append("_").append(region).toString(), ipAddress);
 		
 		if(entranceType == 1){
 			jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdLoginIp.getKey()).append(domainId).toString(), ipAddress);
-			jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityLoginIp.getKey()).append(region).toString(), ipAddress);
+			jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityLoginIp.getKey()).append(domainId).append("_").append(region).toString(), ipAddress);
 		}
 		
 		//TODO渠道
