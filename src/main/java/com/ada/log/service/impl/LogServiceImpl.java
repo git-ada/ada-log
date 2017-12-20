@@ -240,11 +240,11 @@ public class LogServiceImpl implements LogService{
 			}
 			/** 保存老用户IPSet **/
 			if(isOldUser){
-				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldUserIP.getKey()).append(domainId).toString(), ipAddress);
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldUserIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 			}
 			/** 保存老IP数 **/
 			if(oldip){
-				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldIP.getKey()).append(domainId).toString(), ipAddress);
+				jedis.sadd(new StringBuffer().append(RedisKeys.DomainCityOldIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 			}
 			
 			/** 地区广告入口 **/
