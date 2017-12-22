@@ -87,7 +87,7 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	public void log(EventLog log) {
-		eventLogs.add(log);
+		//eventLogs.add(log);
 	}
 	
 	/** 判断是否老用户**/
