@@ -263,11 +263,11 @@ public class LogServiceImpl implements LogService{
 				}
 				/** 保存老用户IPSet **/
 				if(isOldUser){
-					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldUserIP.getKey()).append(domainId).toString(), ipAddress);
+					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldUserIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 				}
 				/** 保存老IP数 **/
 				if(oldip){
-					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldIP.getKey()).append(domainId).toString(), ipAddress);
+					jedis.sadd(new StringBuffer().append(RedisKeys.DomainAdCityOldIP.getKey()).append(domainId).append("_").append(req.getRegion()).toString(), ipAddress);
 				}
 			}
 		
