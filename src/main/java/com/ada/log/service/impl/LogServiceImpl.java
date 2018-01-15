@@ -57,7 +57,7 @@ public class LogServiceImpl implements LogService{
 	public void log(AccessLog log) {
 		/** 实时统计 **/
 		stat(log);
-		//cacheLogs.add(log);
+		cacheLogs.add(log);
 	}
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
