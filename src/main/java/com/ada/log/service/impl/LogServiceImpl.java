@@ -88,6 +88,10 @@ public class LogServiceImpl implements LogService{
 	
 	public void log(EventLog log) {
 		//eventLogs.add(log);
+		
+		if("onLogin".equals(log.getEvent()){
+			eventLogs.add(log);
+		}
 	}
 	
 	/** 判断是否老用户**/
