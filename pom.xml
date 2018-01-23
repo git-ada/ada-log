@@ -168,5 +168,11 @@
 				<profiles.activation>hktest</profiles.activation>
 			</properties>
 		</profile>
+		<profile>
+			<id>gdtest</id>
+			<properties>
+				<profiles.activation>hktest</profiles.activation>
+			</properties>
+		</profile>
 	</profiles>
 </project>
