@@ -26,7 +26,7 @@ import com.ada.log.util.Dates;
 @Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
-	private final static Log log = LogFactory.getLog(AccessLogDaoImpl.class);
+	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -59,6 +59,9 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 		jdbcTemplate.batchUpdate(insertAcccessLogSql, new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				AccessLog log = logs.get(i);
+				if(log==null){
+					log1.error("日志对象为空,logs->"+logs+",i->"+log);;
+				}
 				Integer parameterIndex = 1;
 				setInteger(ps, parameterIndex++,log.getSiteId());
 				setInteger(ps, parameterIndex++,log.getDomainId());
@@ -119,10 +122,10 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 			}
 		});
 		
-		if(log.isDebugEnabled()){
+		if(log1.isDebugEnabled()){
 			Long endTime = System.currentTimeMillis();
 			Long cost = endTime -startTime;
-			log.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
+			log1.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
 		}
 	}
 	
@@ -182,10 +185,10 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 			}
 		});
 		
-		if(log.isDebugEnabled()){
+		if(log1.isDebugEnabled()){
 			Long endTime = System.currentTimeMillis();
 			Long cost = endTime -startTime;
-			log.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
+			log1.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
 		}
 	}
 
