@@ -60,7 +60,7 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				AccessLog log = logs.get(i);
 				if(log==null){
-					log1.error("日志对象为空,logs->"+logs+",i->"+log);;
+					log1.error("日志对象为空,logs->"+logs.size()+",i->"+i);;
 				}
 				Integer parameterIndex = 1;
 				setInteger(ps, parameterIndex++,log.getSiteId());
