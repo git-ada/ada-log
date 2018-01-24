@@ -56,9 +56,7 @@ public class LogServiceImpl implements LogService{
 	@Override
 	public void log(AccessLog data) {
 		/** 实时统计 **/
-		log.info("222222222");
 		stat(data);
-		log.info("33333333");
 		cacheLogs.add(data);
 	}
 	
@@ -67,9 +65,11 @@ public class LogServiceImpl implements LogService{
 		try {
 			if(!cacheLogs.isEmpty()){
 				List<AccessLog> temp = this.cacheLogs;
-				cacheLogs = new ArrayList();
-				accessLogDao.batchInsert(temp);
-				temp.clear();
+				if(!temp.isEmpty()){
+					cacheLogs = new ArrayList();
+					accessLogDao.batchInsert(temp);
+					temp.clear();
+				}
 			}
 		} catch (Exception e) {
 			log.error("保存访问日志出错->"+e.getMessage(),e);
