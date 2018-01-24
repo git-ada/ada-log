@@ -54,14 +54,16 @@ public class LogServiceImpl implements LogService{
 	private AccessLogDao accessLogDao;
 	
 	@Override
-	public void log(AccessLog log) {
+	public void log(AccessLog data) {
 		/** 实时统计 **/
-		stat(log);
-		cacheLogs.add(log);
+		log.info("222222222");
+		stat(data);
+		log.info("33333333");
+		cacheLogs.add(data);
 	}
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
-	public void batchSave(){
+	public synchronized void batchSave(){
 		try {
 			if(!cacheLogs.isEmpty()){
 				List<AccessLog> temp = this.cacheLogs;
