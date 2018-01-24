@@ -57,7 +57,7 @@ public class LogServiceImpl implements LogService{
 	public void log(AccessLog log) {
 		/** 实时统计 **/
 		stat(log);
-//		cacheLogs.add(log);
+		cacheLogs.add(log);
 	}
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
@@ -75,12 +75,12 @@ public class LogServiceImpl implements LogService{
 		
 		
 		try {
-			if(!eventLogs.isEmpty()){
+//			if(!eventLogs.isEmpty()){
 				List<EventLog> temp = this.eventLogs;
 				eventLogs =  new ArrayList<EventLog>();
 				accessLogDao.batchInsertEventLog(temp);
 				temp.clear();
-			}
+//			}
 		} catch (Exception e) {
 			log.error("保存事件日志出错->"+e.getMessage(),e);
 		}
