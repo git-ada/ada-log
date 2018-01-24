@@ -196,8 +196,12 @@ public class MainController {
 			req.setTodayTime(now);
 		}
 		req.setRequestTime(now);
-		logService.log(req);
-		//logService.log1(ipAddress, uuid, siteId, channelId,domainId,browsingPage,isOldUser);
+		try {
+			logService.log(req);
+		} catch (Exception e) {
+			log.error(e);
+		}
+		
 	}
 	
 	@RequestMapping(value = "l2")
