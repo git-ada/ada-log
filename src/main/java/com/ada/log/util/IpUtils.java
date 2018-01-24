@@ -15,7 +15,7 @@ public class IpUtils {
 	 * @return
 	 */
     public static String getIpAddr(HttpServletRequest request) {  
-        String [] headeNames = new String[]{"X-real-ip","X-REAL-IP","X-Forwarded-For","HTTP_X_FORWARDED_FOR","Proxy-Client-IP","WL-Proxy-Client-IP"};
+        String [] headeNames = new String[]{"X-Real-IP","X-real-ip","X-REAL-IP","X-Forwarded-For","HTTP_X_FORWARDED_FOR","Proxy-Client-IP","WL-Proxy-Client-IP"};
         for(String headerName:headeNames){
         	String ip = get(request,headerName);
         	if(ip!=null){
