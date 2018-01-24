@@ -75,23 +75,23 @@ public class LogServiceImpl implements LogService{
 		
 		
 		try {
-//			if(!eventLogs.isEmpty()){
+			if(!eventLogs.isEmpty()){
 				List<EventLog> temp = this.eventLogs;
 				eventLogs =  new ArrayList<EventLog>();
 				accessLogDao.batchInsertEventLog(temp);
 				temp.clear();
-//			}
+			}
 		} catch (Exception e) {
 			log.error("保存事件日志出错->"+e.getMessage(),e);
 		}
 	}
 	
 	public void log(EventLog log) {
-		//eventLogs.add(log);
+		eventLogs.add(log);
 		
-		if("onLogin".equals(log.getEvent())){
-			eventLogs.add(log);
-		}
+//		if("onLogin".equals(log.getEvent())){
+//			eventLogs.add(log);
+//		}
 	}
 	
 	/** 判断是否老用户**/
