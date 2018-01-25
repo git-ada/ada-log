@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import redis.clients.jedis.Jedis;
-
 import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
 import com.ada.log.constant.RedisKeys;
@@ -24,6 +22,8 @@ import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
 import com.ada.log.service.SiteService;
 import com.ada.log.util.Dates;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * 核心实现
@@ -53,11 +53,15 @@ public class LogServiceImpl implements LogService{
 	@Autowired
 	private AccessLogDao accessLogDao;
 	
+	private Integer numberOfBatchSave = 5000;
+	
 	@Override
 	public void log(AccessLog data) {
 		/** 实时统计 **/
 		stat(data);
-		cacheLogs.add(data);
+		if(data!=null){
+			cacheLogs.add(data);
+		}
 	}
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
@@ -67,7 +71,19 @@ public class LogServiceImpl implements LogService{
 				List<AccessLog> temp = this.cacheLogs;
 				if(!temp.isEmpty()){
 					cacheLogs = new ArrayList();
-					accessLogDao.batchInsert(temp);
+					if(temp.size() <= numberOfBatchSave){
+						accessLogDao.batchInsert(temp);
+					}else{
+						Integer maxBatch=  temp.size()/numberOfBatchSave + (temp.size()%numberOfBatchSave>0?1:0);
+						for(int i=0;i<maxBatch;i++){
+							List tlist = new ArrayList();
+							for(int j=i*numberOfBatchSave;j<numberOfBatchSave && j<temp.size();j++){
+								tlist.add(temp.get(j));
+								accessLogDao.batchInsert(tlist);
+							}
+						}
+					}
+					
 					temp.clear();
 				}
 			}
