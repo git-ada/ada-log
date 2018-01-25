@@ -193,4 +193,10 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 		}
 	}
 
+	@Override
+	public List<AccessLog> findBySiteId(Integer siteId, Integer pageSize, Integer pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
