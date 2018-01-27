@@ -23,7 +23,7 @@ import com.ada.log.dao.AccessLogDao;
 import com.ada.log.util.Dates;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
-@Service
+//@Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
