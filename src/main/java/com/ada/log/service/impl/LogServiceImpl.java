@@ -62,7 +62,7 @@ public class LogServiceImpl implements LogService,InitializingBean{
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		timer.schedule(new TimerTask() {
+		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				try {
 					batchSave();
