@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.apache.phoenix.jdbc.PhoenixResultSet;
@@ -22,6 +23,8 @@ import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLogToSql;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLog;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLogToSql;
+
+import jline.internal.Log;
 
  
 
@@ -206,7 +209,10 @@ public class StatementMgt {
 		return AccessLogList;
 	}
 	
+	private AtomicInteger total = new AtomicInteger();
+	
 	public int batchAddAccessLog(List<AccessLog> accessLoglist) {
+		Log.info("batct add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
 		Connection conn =null;
         Statement stmt =null;
 		
