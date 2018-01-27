@@ -24,7 +24,7 @@ import com.yorbee.qgs.bigdata.hbase.entity.AccessLogToSql;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLog;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLogToSql;
 
-import jline.internal.Log;
+//import jline.internal.Log;
 
  
 
@@ -234,7 +234,7 @@ public class StatementMgt {
 	private static AtomicInteger total = new AtomicInteger();
 	
 	public int batchAddAccessLog(List<AccessLog> accessLoglist) {
-		Log.info("batch add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
+		logger.info("batch add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
 		Connection conn =null;
         Statement stmt =null;
 		
