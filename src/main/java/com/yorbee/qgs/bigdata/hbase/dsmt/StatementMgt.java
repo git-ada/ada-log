@@ -256,10 +256,11 @@ public class StatementMgt {
 				String phoenixSQL="";
 				phoenixSQL=AccessLogToSql.insertStr(accessLog);
 				//logger.info(phoenixSQL);
-				int ret = stmt.executeUpdate(phoenixSQL);
-				counts=counts+ret;
+//				int ret = stmt.executeUpdate(phoenixSQL);
+				stmt.addBatch(phoenixSQL);
+//				counts=counts+ret;
 			}
-			
+			stmt.executeBatch();
 			conn.commit();
             
 			// 耗时监控：记录一个结束时间
@@ -272,7 +273,18 @@ public class StatementMgt {
 			e.printStackTrace();
 			 
 		}finally{
-        	 
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
         	stmt=null;
         	conn=null;
         }
