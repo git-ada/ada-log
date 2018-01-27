@@ -23,7 +23,7 @@ import com.ada.log.dao.AccessLogDao;
 import com.ada.log.util.Dates;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
-//@Service
+@Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
@@ -43,8 +43,12 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	protected void resetSql() {
 		SimpleDateFormat df =new SimpleDateFormat("yyyyMMdd");
 		String date = df.format(Dates.now());
-		insertAcccessLogSql = "INSERT INTO `ada_access_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
-		insertEventLogSql = "INSERT INTO `ada_event_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+//		insertAcccessLogSql = "INSERT INTO `ada_access_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+//		insertEventLogSql = "INSERT INTO `ada_event_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+		
+		insertAcccessLogSql = "INSERT INTO `ada_access_log(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+		insertEventLogSql = "INSERT INTO `ada_event_log(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+
 	}
 	
 	public void createAccessTable(String data){
