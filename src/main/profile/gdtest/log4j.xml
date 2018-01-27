@@ -78,6 +78,10 @@
 		<level value="ERROR" />
 	</logger>
 	
+	<logger name="com.yorbee.qgs.bigdata.hbase.dao">
+		<level value="INFO" />
+	</logger>
+	
 	<root>
 		<level value="INFO" /> 
 		<!-- appender-ref ref="STDOUT" /-->
