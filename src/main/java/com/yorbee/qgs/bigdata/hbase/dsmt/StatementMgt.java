@@ -224,10 +224,9 @@ public class StatementMgt {
 			for(AccessLog accessLog:accessLoglist) {
 				String phoenixSQL="";
 				phoenixSQL=AccessLogToSql.insertStr(accessLog);
-				logger.info(phoenixSQL);
+				//logger.info(phoenixSQL);
 				int ret = stmt.executeUpdate(phoenixSQL);
 				counts=counts+ret;
-				System.out.println(""+ret);
 			}
 			
 			conn.commit();
