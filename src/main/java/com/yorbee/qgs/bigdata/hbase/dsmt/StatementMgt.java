@@ -234,7 +234,7 @@ public class StatementMgt {
 	private static AtomicInteger total = new AtomicInteger();
 	
 	public int batchAddAccessLog(List<AccessLog> accessLoglist) {
-		Log.info("batct add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
+		Log.info("batch add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
 		Connection conn =null;
         Statement stmt =null;
 		
