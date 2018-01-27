@@ -5,9 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,7 @@ import redis.clients.jedis.Jedis;
  */
 @Service
 @SuppressWarnings("all")
-public class LogServiceImpl implements LogService{
+public class LogServiceImpl implements LogService,InitializingBean{
 
 	@Autowired
     private  JedisPools jedisPools;
@@ -50,10 +53,25 @@ public class LogServiceImpl implements LogService{
 	private List<AccessLog> cacheLogs = new ArrayList();
 	private List<EventLog> eventLogs = new ArrayList<EventLog>();
 	
+	private Timer timer = new Timer();
+	
 	@Autowired
 	private AccessLogDao accessLogDao;
 	
 	private Integer numberOfBatchSave = 1000000;
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		timer.schedule(new TimerTask() {
+			public void run() {
+				try {
+					batchSave();
+				} catch (Exception e) {
+					log.error(e);
+				}
+			}
+		}, 1000,1000);
+	}
 	
 	@Override
 	public void log(AccessLog data) {
@@ -62,9 +80,11 @@ public class LogServiceImpl implements LogService{
 		if(data!=null){
 			cacheLogs.add(data);
 		}
+		
+		
 	}
 	
-	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
+//	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
 	public  void batchSave(){
 		try {
 			if(!cacheLogs.isEmpty()){
@@ -555,4 +575,6 @@ public class LogServiceImpl implements LogService{
 		}
 		return false;
 	}
+
+	
 }
