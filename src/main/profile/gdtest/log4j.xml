@@ -78,7 +78,7 @@
 		<level value="ERROR" />
 	</logger>
 	
-	<logger name="com.yorbee.qgs.bigdata.hbase.dao">
+	<logger name="com.yorbee.qgs">
 		<level value="INFO" />
 	</logger>
 	
