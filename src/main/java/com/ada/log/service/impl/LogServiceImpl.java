@@ -77,7 +77,7 @@ public class LogServiceImpl implements LogService{
 						Integer maxBatch=  temp.size()/numberOfBatchSave + (temp.size()%numberOfBatchSave>0?1:0);
 						for(int i=0;i<maxBatch;i++){
 							List tlist = new ArrayList();
-							for(int j=i*numberOfBatchSave;j<temp.size();j++){
+							for(int j=i*numberOfBatchSave,k=0;k<numberOfBatchSave && j<temp.size();j++,k++){
 								AccessLog al = temp.get(j);
 								if(al!=null){
 									tlist.add(al);
