@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
 import com.ada.log.dao.AccessLogDao;
 import com.ada.log.util.Dates;
+import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
 @Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {

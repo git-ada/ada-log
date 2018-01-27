@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ada.log.bean.ADPage;
-import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
 import com.ada.log.event.LoginEventHandle;
 import com.ada.log.event.MouseClickEventHandle;
@@ -30,6 +29,7 @@ import com.ada.log.service.IPDBService;
 import com.ada.log.service.LogService;
 import com.ada.log.util.IpUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
 /**
  * 主控制器

@@ -1,53 +1,80 @@
-package com.ada.log.bean;
-
-import java.beans.Transient;
+package com.yorbee.qgs.bigdata.hbase.entity;
 
 
-/**
- * 访问日志 Entity
- */
-public class AccessLog  implements java.io.Serializable{
+@Table("ada_access_log")
+public class AccessLog implements java.io.Serializable{
+	@Column("serialVersionUID")
 	private static final long serialVersionUID = -3291838374333591320L;
-                   
-    /** 站点ID */
+	@Column("id")  
+	private int id;
+
+	@Column("siteId")
 	private Integer siteId;                    
-    /** 域名ID */
+
+	@Column("domainId")
 	private Integer domainId;                    
-    /** 渠道ID */
+
+	@Column("channelId")
 	private Integer channelId;
-	/** 广告ID */
+
+	@Column("adId")
 	private Integer adId;
-	/** 入口类型 **/
+
+	@Column("entranceType")
 	private Integer entranceType;
-    /** IP地址 */
+
+	@Column("ipAddress")
 	private String ipAddress;
-	/** 地区 */
+
+	@Column("region")
 	private String region;
-	/** 客户端ID */
+
+	@Column("uuid")
 	private String uuid;
-    /** 浏览页 */
+
+	@Column("url")
 	private String url;                    
-    /** 客户端头信息 */
+
+	@Column("useragent")
 	private String useragent;                    
-    /** 操作系统 */
+
+	@Column("os")
 	private String os;                    
-    /** 浏览器 */
+
+	@Column("browser")
 	private String browser;                    
-    /** 屏幕大小 */
+
+	@Column("screenSize")
 	private String screenSize;                    
-    /** 页面大小 */
+
+	@Column("pageSize")
 	private String pageSize;                    
-    /** 引用页 */
+
+	@Column("referer")
 	private String referer;                    
-    /** 在Iframe中 */
+
+	@Column("iframe")
 	private Integer iframe;                    
-    /** 首次访问时间 */
+
+	@Column("firstTime")
 	private Long firstTime;                    
-    /** 当天首次访问时间 */
+
+	@Column("todayTime")
 	private Long todayTime;                    
-    /** 客户端请求时间 */
-	private Long requestTime;          
+
+	@Column("requestTime")
+	private Long requestTime;
 	
+	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public Integer getSiteId(){
 		return this.siteId;
 	}
@@ -168,7 +195,7 @@ public class AccessLog  implements java.io.Serializable{
 		this.requestTime = requestTime;
 	}
 
-	public static long getSerialversionuid() {
+	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
 
@@ -197,7 +224,7 @@ public class AccessLog  implements java.io.Serializable{
 		this.region = region;
 	}
 	
-	@Transient
+
 	public boolean isTodayFirst(){
 		return todayTime !=null;
 	}
@@ -210,5 +237,4 @@ public class AccessLog  implements java.io.Serializable{
 		this.entranceType = entranceType;
 	}
 
-	
 }

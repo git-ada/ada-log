@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
 import com.ada.log.constant.RedisKeys;
 import com.ada.log.dao.AccessLogDao;
@@ -22,6 +21,7 @@ import com.ada.log.service.JedisPools;
 import com.ada.log.service.LogService;
 import com.ada.log.service.SiteService;
 import com.ada.log.util.Dates;
+import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
 import redis.clients.jedis.Jedis;
 

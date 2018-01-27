@@ -2,8 +2,8 @@ package com.ada.log.dao;
 
 import java.util.List;
 
-import com.ada.log.bean.AccessLog;
 import com.ada.log.bean.EventLog;
+import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
 public interface AccessLogDao {
 
