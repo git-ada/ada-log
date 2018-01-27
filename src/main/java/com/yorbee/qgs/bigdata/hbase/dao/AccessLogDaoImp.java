@@ -31,8 +31,8 @@ public class AccessLogDaoImp implements AccessLogDao{
 		// TODO Auto-generated method stub
 		List<AccessLog> accesslogList=new ArrayList<AccessLog>();
 		StatementMgt smgt=new StatementMgt();
-		_host=Comms.HB_HOST;
-		_port=Comms.HB_PORT;
+//		_host=Comms.HB_HOST;
+//		_port=Comms.HB_PORT;
 		smgt.init(_host, _port);
 		accesslogList=smgt.queryAccesslog(siteId, pageSize, pageNo);
 		return accesslogList;
