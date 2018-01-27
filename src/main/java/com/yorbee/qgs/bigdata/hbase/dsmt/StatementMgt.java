@@ -158,8 +158,7 @@ public class StatementMgt {
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+"  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
-			System.out.println(phoenixSQL);
+			//logger.info(phoenixSQL);
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
 			// 查询出来的列是不固定的，所以这里通过遍历的方式获取列名
@@ -202,9 +201,32 @@ public class StatementMgt {
 			e.printStackTrace();
 
 		} finally {
+			try {
+				set.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+			try {
+				stmt.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+			
+			try {
+				conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+			
+			
 			set = null;
 			stmt = null;
 			conn = null;
+			
+			
 		}
 		return AccessLogList;
 	}
