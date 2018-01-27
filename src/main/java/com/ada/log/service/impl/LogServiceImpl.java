@@ -53,7 +53,7 @@ public class LogServiceImpl implements LogService{
 	@Autowired
 	private AccessLogDao accessLogDao;
 	
-	private Integer numberOfBatchSave = 5000;
+	private Integer numberOfBatchSave = 1000;
 	
 	@Override
 	public void log(AccessLog data) {
@@ -78,9 +78,12 @@ public class LogServiceImpl implements LogService{
 						for(int i=0;i<maxBatch;i++){
 							List tlist = new ArrayList();
 							for(int j=i*numberOfBatchSave;j<temp.size();j++){
-								tlist.add(temp.get(j));
-								accessLogDao.batchInsert(tlist);
+								AccessLog al = temp.get(j);
+								if(al!=null){
+									tlist.add(al);
+								}
 							}
+							accessLogDao.batchInsert(tlist);
 						}
 					}
 					
