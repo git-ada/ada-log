@@ -53,7 +53,7 @@ public class LogServiceImpl implements LogService{
 	@Autowired
 	private AccessLogDao accessLogDao;
 	
-	private Integer numberOfBatchSave = 1000;
+	private Integer numberOfBatchSave = 10000;
 	
 	@Override
 	public void log(AccessLog data) {
