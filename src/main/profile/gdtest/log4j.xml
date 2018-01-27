@@ -82,6 +82,11 @@
 		<level value="INFO" />
 	</logger>
 	
+	<logger name="com.ada.log.dao.impl">
+		<level value="INFO" />
+	</logger>
+	
+	
 	<root>
 		<level value="INFO" /> 
 		<!-- appender-ref ref="STDOUT" /-->
