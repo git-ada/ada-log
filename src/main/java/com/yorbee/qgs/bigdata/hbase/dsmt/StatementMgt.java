@@ -250,6 +250,9 @@ public class StatementMgt {
 			// 准备查询
 			stmt = conn.createStatement();
 			for(AccessLog accessLog:accessLoglist) {
+				if(accessLog==null){
+					continue;
+				}
 				String phoenixSQL="";
 				phoenixSQL=AccessLogToSql.insertStr(accessLog);
 				//logger.info(phoenixSQL);
