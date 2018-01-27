@@ -65,7 +65,7 @@ public class LogServiceImpl implements LogService{
 	}
 	
 	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
-	public synchronized void batchSave(){
+	public  void batchSave(){
 		try {
 			if(!cacheLogs.isEmpty()){
 				List<AccessLog> temp = this.cacheLogs;
