@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,10 +51,14 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	public void createAccessTable(String data){
 		String sql = "CREATE TABLE `ada_access_log_"+data+"` (`id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',`siteId` int(11) DEFAULT NULL COMMENT '站点ID',`domainId` int(11) DEFAULT NULL COMMENT '域名ID',`channelId` int(11) DEFAULT NULL COMMENT '渠道ID',`adId` int(11) DEFAULT NULL COMMENT '广告ID',`ipAddress` varchar(24) DEFAULT NULL COMMENT 'IP地址',`region` varchar(64) DEFAULT NULL COMMENT '地区',`uuid` varchar(32) DEFAULT NULL COMMENT '客户端ID',`url` varchar(256) DEFAULT NULL COMMENT '浏览页',`referer` varchar(256) DEFAULT NULL COMMENT '引用页',`useragent` varchar(256) DEFAULT NULL COMMENT '客户端头信息',`os` varchar(24) DEFAULT NULL COMMENT '操作系统',`browser` varchar(24) DEFAULT NULL COMMENT '浏览器',`screenSize` varchar(16) DEFAULT NULL COMMENT '屏幕大小',`pageSize` varchar(16) DEFAULT NULL COMMENT '页面大小',`iframe` int(11) DEFAULT NULL COMMENT '在Iframe中',`firstTime` datetime DEFAULT NULL COMMENT '首次访问时间',`todayTime` datetime DEFAULT NULL COMMENT '当天首次访问时间',`requestTime` datetime DEFAULT NULL COMMENT '客户端请求时间',`createTime` datetime DEFAULT NULL COMMENT '创建时间',PRIMARY KEY (`id`),KEY `index_ip` (`ipAddress`)) ENGINE=InnoDB AUTO_INCREMENT=19431900 DEFAULT CHARSET=utf8 COMMENT='访问日志'";
 	}
+	
+	private static AtomicInteger total = new AtomicInteger();
 
 	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void batchInsert(final List<AccessLog> logs) {
+		
+		log1.info("batch add " + logs.size() +",total->"+total.addAndGet(logs.size()));
 		Long startTime = System.currentTimeMillis();
 		
 		jdbcTemplate.batchUpdate(insertAcccessLogSql, new BatchPreparedStatementSetter() {
