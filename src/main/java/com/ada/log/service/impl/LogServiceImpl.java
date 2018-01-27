@@ -34,7 +34,7 @@ import redis.clients.jedis.Jedis;
  */
 @Service
 @SuppressWarnings("all")
-public class LogServiceImpl implements LogService,InitializingBean{
+public class LogServiceImpl implements LogService{
 
 	@Autowired
     private  JedisPools jedisPools;
@@ -59,20 +59,7 @@ public class LogServiceImpl implements LogService,InitializingBean{
 	private AccessLogDao accessLogDao;
 	
 	private Integer numberOfBatchSave = 1000000;
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		timer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				try {
-					batchSave();
-				} catch (Exception e) {
-					log.error(e);
-				}
-			}
-		}, 1000,1000);
-	}
-	
+
 	@Override
 	public void log(AccessLog data) {
 		/** 实时统计 **/
@@ -80,11 +67,21 @@ public class LogServiceImpl implements LogService,InitializingBean{
 		if(data!=null){
 			cacheLogs.add(data);
 		}
-		
-		
 	}
 	
-//	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
+	@Scheduled(cron="0/1 * * * * ?")   /** 每间隔1秒钟保存一次 **/
+	public void scheduled(){
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					batchSave();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		}).start();;
+	}
+	
 	public  void batchSave(){
 		try {
 			if(!cacheLogs.isEmpty()){
