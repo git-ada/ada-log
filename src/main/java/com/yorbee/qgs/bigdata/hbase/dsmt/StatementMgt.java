@@ -10,13 +10,15 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.phoenix.jdbc.PhoenixResultSet;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-
+import com.ada.log.service.impl.LogServiceImpl;
 import com.yorbee.qgs.bigdata.hbase.client.PhoenixClientConnection;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLogToSql;
@@ -27,7 +29,8 @@ import com.yorbee.qgs.bigdata.hbase.entity.EventLogToSql;
 
 
 public class StatementMgt {
-	private final static Logger logger = Logger.getLogger(StatementMgt.class.getName());
+//	private final static Logger logger = Logger.getLogger(StatementMgt.class.getName());/
+	private final static Log logger = LogFactory.getLog(StatementMgt.class);
 	public String host;
 	public String port;
 
