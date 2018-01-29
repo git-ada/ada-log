@@ -123,15 +123,17 @@ public class StatementMgt {
 			stmt = conn.createStatement();
 			int ret = stmt.executeUpdate(phoenixSQL);
 			conn.commit();
-            System.out.println(""+ret);
+//            System.out.println(""+ret);
 			// 耗时监控：记录一个结束时间
 			long endTime = System.currentTimeMillis();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage());
 			return "SQL执行出错：" + e.getMessage();
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage());
 			return "SQL执行出错：" + e.getMessage();
 		}finally{
         	 
@@ -238,10 +240,10 @@ public class StatementMgt {
 			long endTime = System.currentTimeMillis();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage(),e);
 			 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage(),e);
 			 
 		}finally{
         	 
@@ -287,10 +289,10 @@ public class StatementMgt {
 			long endTime = System.currentTimeMillis();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage(),e);
 			 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("SQL执行出错：" + e.getMessage(),e);
 			 
 		}finally{
         	 
