@@ -92,9 +92,15 @@ public class LogServiceImpl implements LogService{
 				List<AccessLog> temp = this.cacheLogs;
 				if(!temp.isEmpty()){
 					cacheLogs = new ArrayList();
+					List batch = new ArrayList();
 					if(temp.size() <= numberOfBatchSave){
-						log.info("batch add " + temp.size() +",total->"+total.addAndGet(temp.size()));
-						accessLogDao.batchInsert(temp);
+						for(AccessLog t:temp){
+							if(t!=null){
+								batch.add(t);
+							}
+						}
+						log.info("batch add " + batch.size() +",total->"+total.addAndGet(batch.size()));
+						accessLogDao.batchInsert(batch);
 					}else{
 						Integer maxBatch=  temp.size()/numberOfBatchSave + (temp.size()%numberOfBatchSave>0?1:0);
 						for(int i=0;i<maxBatch;i++){
