@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ada.log.dao.AccessLogDao;
 import com.yorbee.qgs.bigdata.hbase.dsmt.StatementMgt;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
