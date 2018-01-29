@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.apache.phoenix.jdbc.PhoenixResultSet;
@@ -23,8 +22,6 @@ import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLogToSql;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLog;
 import com.yorbee.qgs.bigdata.hbase.entity.EventLogToSql;
-
-//import jline.internal.Log;
 
  
 
@@ -158,7 +155,8 @@ public class StatementMgt {
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+"  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			//logger.info(phoenixSQL);
+			logger.info(phoenixSQL);
+			System.out.println(phoenixSQL);
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
 			// 查询出来的列是不固定的，所以这里通过遍历的方式获取列名
@@ -201,40 +199,14 @@ public class StatementMgt {
 			e.printStackTrace();
 
 		} finally {
-			try {
-				set.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-			
-			try {
-				stmt.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-			
-			
-			try {
-				conn.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-			
-			
-			
 			set = null;
 			stmt = null;
 			conn = null;
-			
-			
 		}
 		return AccessLogList;
 	}
 	
-	private static AtomicInteger total = new AtomicInteger();
-	
 	public int batchAddAccessLog(List<AccessLog> accessLoglist) {
-		logger.info("batch add " + accessLoglist.size() +",total->"+total.addAndGet(accessLoglist.size()));
 		Connection conn =null;
         Statement stmt =null;
 		
@@ -250,15 +222,14 @@ public class StatementMgt {
 			// 准备查询
 			stmt = conn.createStatement();
 			for(AccessLog accessLog:accessLoglist) {
-				if(accessLog==null){
-					continue;
-				}
 				String phoenixSQL="";
 				phoenixSQL=AccessLogToSql.insertStr(accessLog);
 				//logger.info(phoenixSQL);
+			    //System.out.println(phoenixSQL);
 //				int ret = stmt.executeUpdate(phoenixSQL);
-				stmt.addBatch(phoenixSQL);
 //				counts=counts+ret;
+//				System.out.println(""+ret);
+				stmt.addBatch(phoenixSQL);
 			}
 			stmt.executeBatch();
 			conn.commit();
@@ -273,18 +244,7 @@ public class StatementMgt {
 			e.printStackTrace();
 			 
 		}finally{
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				conn.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-			
+        	 
         	stmt=null;
         	conn=null;
         }
@@ -313,12 +273,13 @@ public class StatementMgt {
 			for(EventLog accessLog:accessLoglist) {
 				String phoenixSQL="";
 				phoenixSQL=EventLogToSql.insertStr(accessLog);
-				logger.info(phoenixSQL);
-				int ret = stmt.executeUpdate(phoenixSQL);
-				counts=counts+ret;
-				System.out.println(""+ret);
+//				logger.info(phoenixSQL);
+//				int ret = stmt.executeUpdate(phoenixSQL);
+//				counts=counts+ret;
+//				System.out.println(""+ret);
+				stmt.addBatch(phoenixSQL);
 			}
-			
+			stmt.executeBatch();
 			conn.commit();
 			
             

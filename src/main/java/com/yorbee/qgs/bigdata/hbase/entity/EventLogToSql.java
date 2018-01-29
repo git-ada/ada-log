@@ -66,8 +66,14 @@ public class EventLogToSql {
 				continue;
 			}
 			// 因为是遍历所有的方法，所以有些方法是没有赋值的，也就是不需要查找，将其剔除
+//			if (columnValue.equals("id")) {
+//				sqlstr.append("NEXT VALUE FOR ADA_EVENT_LOG.ID_SEQ");
+//			}
 			if (columnValue.equals("id")) {
-				sqlstr.append("NEXT VALUE FOR ADA_EVENT_LOG.ID_SEQ");
+				sqlstr.append("'"+HashHelper.getHashValueOfSHA()+"'");
+			}
+			else if (columnValue.equals("createTime")) {
+				sqlstr.append("CURRENT_TIME()");
 			}
 			else {
 			// 判断字符串，多个中满足任何一个用IN，并使用''

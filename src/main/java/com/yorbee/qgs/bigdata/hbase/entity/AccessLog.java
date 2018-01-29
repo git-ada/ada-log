@@ -6,7 +6,7 @@ public class AccessLog implements java.io.Serializable{
 	@Column("serialVersionUID")
 	private static final long serialVersionUID = -3291838374333591320L;
 	@Column("id")  
-	private int id;
+	private String id;
 
 	@Column("siteId")
 	private Integer siteId;                    
@@ -66,13 +66,25 @@ public class AccessLog implements java.io.Serializable{
 	private Long requestTime;
 	
 	
+	@Column("createTime")
+	private Long createTime;
 	
-	public int getId() {
+	
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Long createTime) {
+		this.createTime = createTime;
 	}
 
 	public Integer getSiteId(){

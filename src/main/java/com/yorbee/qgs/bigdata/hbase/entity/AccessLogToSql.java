@@ -67,10 +67,12 @@ public class AccessLogToSql {
 			if (columnValue.equals("serialVersionUID")) {
 				continue;
 			}
-			
             
 			if (columnValue.equals("id")) {
-				sqlstr.append("NEXT VALUE FOR ADA_ACCESS_LOG.ID_SEQ");
+				sqlstr.append("'"+HashHelper.getHashValueOfSHA()+"'");
+			}
+			else if (columnValue.equals("createTime")) {
+				sqlstr.append("CURRENT_TIME()");
 			}
 			else {
 			// 判断字符串，多个中满足任何一个用IN，并使用''
