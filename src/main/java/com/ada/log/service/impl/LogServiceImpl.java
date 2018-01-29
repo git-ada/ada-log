@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,6 +83,9 @@ public class LogServiceImpl implements LogService{
 		}).start();;
 	}
 	
+	
+	private static AtomicInteger total = new AtomicInteger();
+	
 	public  void batchSave(){
 		try {
 			if(!cacheLogs.isEmpty()){
@@ -89,6 +93,7 @@ public class LogServiceImpl implements LogService{
 				if(!temp.isEmpty()){
 					cacheLogs = new ArrayList();
 					if(temp.size() <= numberOfBatchSave){
+						log.info("batch add " + temp.size() +",total->"+total.addAndGet(temp.size()));
 						accessLogDao.batchInsert(temp);
 					}else{
 						Integer maxBatch=  temp.size()/numberOfBatchSave + (temp.size()%numberOfBatchSave>0?1:0);
@@ -100,6 +105,7 @@ public class LogServiceImpl implements LogService{
 									tlist.add(al);
 								}
 							}
+							log.info("batch add " + tlist.size() +",total->"+total.addAndGet(tlist.size()));
 							accessLogDao.batchInsert(tlist);
 						}
 					}
