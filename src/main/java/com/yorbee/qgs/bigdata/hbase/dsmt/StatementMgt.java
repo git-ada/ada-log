@@ -10,15 +10,13 @@ import java.util.ArrayList;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.phoenix.jdbc.PhoenixResultSet;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.ada.log.service.impl.LogServiceImpl;
+
 import com.yorbee.qgs.bigdata.hbase.client.PhoenixClientConnection;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLogToSql;
@@ -28,9 +26,8 @@ import com.yorbee.qgs.bigdata.hbase.entity.EventLogToSql;
  
 
 
-public class StatementMgt {
-//	private final static Logger logger = Logger.getLogger(StatementMgt.class.getName());/
-	private final static Log logger = LogFactory.getLog(StatementMgt.class);
+public abstract class StatementMgt {
+	private final static Logger logger = Logger.getLogger(StatementMgt.class.getName());
 	public String host;
 	public String port;
 
@@ -92,11 +89,18 @@ public class StatementMgt {
             result = data.toString();
         } catch (SQLException e) {
             e.printStackTrace();
-            return "SQL执行出错：" + e.getMessage();
-        } catch (JSONException e) {
+            logger.info( "SQL执行出错：" + e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
-            return "JSON转换出错：" + e.getMessage();
-        }finally{
+            logger.info("出错：" + e.getMessage());
+		}finally{
+			try {
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	set=null;
         	stmt=null;
         	conn=null;
@@ -104,205 +108,45 @@ public class StatementMgt {
         return result;
     }
 
-	public String execUpdateSql(String phoenixSQL) {
+	public int execUpdateSql(String phoenixSQL) {
 		Connection conn =null;
         Statement stmt =null;
-		
-
-		String result = "";
+        int ret = -1;
 		try {
 			// 耗时监控：记录一个开始时间
 			long startTime = System.currentTimeMillis();
-			if (phoenixSQL == null || phoenixSQL.trim() == "") {
-				return "请指定合法的Phoenix SQL！";
-			}
 			// 获取一个Phoenix DB连接
 			conn = PhoenixClientConnection.getConnection(host, port);
-			if (conn == null) {
-				return "Phoenix DB连接超时！";
-			}
-
 			// 准备查询
-			stmt = conn.createStatement();
-			int ret = stmt.executeUpdate(phoenixSQL);
+			 stmt = conn.createStatement();
+			 ret = stmt.executeUpdate(phoenixSQL);
 			conn.commit();
-//            System.out.println(""+ret);
+            System.out.println(""+ret);
 			// 耗时监控：记录一个结束时间
 			long endTime = System.currentTimeMillis();
 			
-		} catch (SQLException e) {
-//			e.printStackTrace();
-			logger.error("SQL执行出错：" + e.getMessage());
-			return "SQL执行出错：" + e.getMessage();
-		} catch (Exception e) {
-//			e.printStackTrace();
-			logger.error("SQL执行出错：" + e.getMessage());
-			return "SQL执行出错：" + e.getMessage();
-		}finally{
-        	 
-        	stmt=null;
-        	conn=null;
-        }
-		return result;
-	}
-	
-	public List<AccessLog> queryAccesslog(Integer siteId,Integer pageSize,Integer pageNo) {
-
-		Connection conn = null;
-		Statement stmt = null;
-		PhoenixResultSet set = null;
-		List<AccessLog>  AccessLogList=new ArrayList<AccessLog> ();
-		try {
-			// 耗时监控：记录一个开始时间
-			long startTime = System.currentTimeMillis();
-			// 获取一个Phoenix DB连接
-			conn = PhoenixClientConnection.getConnection(host, port);
-			// 准备查询
-			stmt = conn.createStatement();
- 			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+"  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
-			System.out.println(phoenixSQL);
-			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
-
-			// 查询出来的列是不固定的，所以这里通过遍历的方式获取列名
-			ResultSetMetaData meta = set.getMetaData();
-			ArrayList<String> cols = new ArrayList<String>();
- 
-					
-			while (set.next()) {
-				
-				AccessLog accessLog = new AccessLog();
-				accessLog.setSiteId(set.getInt("siteId"));
-				accessLog.setDomainId(set.getInt("domainId"));
-				accessLog.setChannelId(set.getInt("channelId"));
-				accessLog.setAdId(set.getInt("adId"));
-				accessLog.setEntranceType(set.getInt("entranceType"));
-				accessLog.setIpAddress(set.getString("ipAddress"));
-				accessLog.setRegion(set.getString("region"));
-				accessLog.setUuid(set.getString("uuid"));
-				accessLog.setUrl(set.getString("url"));
-				accessLog.setUseragent(set.getString("useragent"));
-				accessLog.setOs(set.getString("os"));
-				accessLog.setBrowser(set.getString("browser"));
-				accessLog.setScreenSize(set.getString("screenSize"));
-				accessLog.setPageSize(set.getString("pageSize"));
-				accessLog.setReferer(set.getString("referer"));
-				accessLog.setIframe(set.getInt("iframe"));
-				accessLog.setFirstTime(set.getTimestamp("firstTime").getTime());
-				accessLog.setTodayTime(set.getTimestamp("todayTime").getTime());
-				accessLog.setRequestTime(set.getTimestamp("requestTime").getTime());
-				AccessLogList.add(accessLog);
-		 
-			}
-
-			long endTime = System.currentTimeMillis();
-            
 		} catch (SQLException e) {
 			e.printStackTrace();
-
+			logger.info("SQL执行出错：" + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-
-		} finally {
-			set = null;
-			stmt = null;
-			conn = null;
-		}
-		return AccessLogList;
-	}
-	
-	public int batchAddAccessLog(List<AccessLog> accessLoglist) {
-		Connection conn =null;
-        Statement stmt =null;
-		
-		int counts=0;
-		try {
-			// 耗时监控：记录一个开始时间
-			long startTime = System.currentTimeMillis();
-			// 获取一个Phoenix DB连接
-			conn = PhoenixClientConnection.getConnection(host, port);
-			if (conn == null) {
-				return -1;
-			}
-			// 准备查询
-			stmt = conn.createStatement();
-			for(AccessLog accessLog:accessLoglist) {
-				String phoenixSQL="";
-				phoenixSQL=AccessLogToSql.insertStr(accessLog);
-				//logger.info(phoenixSQL);
-			    //System.out.println(phoenixSQL);
-//				int ret = stmt.executeUpdate(phoenixSQL);
-//				counts=counts+ret;
-//				System.out.println(""+ret);
-				stmt.addBatch(phoenixSQL);
-			}
-			stmt.executeBatch();
-			conn.commit();
-            
-			// 耗时监控：记录一个结束时间
-			long endTime = System.currentTimeMillis();
-			
-		} catch (SQLException e) {
-			logger.error("SQL执行出错：" + e.getMessage(),e);
-			 
-		} catch (Exception e) {
-			logger.error("SQL执行出错：" + e.getMessage(),e);
-			 
+			logger.info("出错：" + e.getMessage());
 		}finally{
+			try {
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	 
         	stmt=null;
         	conn=null;
         }
-		return counts;
+		return ret;
 	}
 	
-	public int batchAddEventLog(List<EventLog> accessLoglist) {
-		Connection conn =null;
-        Statement stmt =null;
-		
+	
 
-		int counts=0;
-		
-		try {
-			// 耗时监控：记录一个开始时间
-			long startTime = System.currentTimeMillis();
-		 
-			// 获取一个Phoenix DB连接
-			conn = PhoenixClientConnection.getConnection(host, port);
-			if (conn == null) {
-				return -1;
-			}
-
-			// 准备查询
-			stmt = conn.createStatement();
-			for(EventLog accessLog:accessLoglist) {
-				String phoenixSQL="";
-				phoenixSQL=EventLogToSql.insertStr(accessLog);
-//				logger.info(phoenixSQL);
-//				int ret = stmt.executeUpdate(phoenixSQL);
-//				counts=counts+ret;
-//				System.out.println(""+ret);
-				stmt.addBatch(phoenixSQL);
-			}
-			stmt.executeBatch();
-			conn.commit();
-			
-            
-			// 耗时监控：记录一个结束时间
-			long endTime = System.currentTimeMillis();
-			
-		} catch (SQLException e) {
-			logger.error("SQL执行出错：" + e.getMessage(),e);
-			 
-		} catch (Exception e) {
-			logger.error("SQL执行出错：" + e.getMessage(),e);
-			 
-		}finally{
-        	 
-        	stmt=null;
-        	conn=null;
-        }
-		return counts;
-	}
 
 }

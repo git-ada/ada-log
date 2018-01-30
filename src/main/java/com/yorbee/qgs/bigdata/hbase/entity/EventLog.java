@@ -1,4 +1,7 @@
 package com.yorbee.qgs.bigdata.hbase.entity;
+
+import java.sql.Timestamp;
+
 @Table("ada_event_log")
 public class EventLog implements java.io.Serializable{
 	@Column("serialVersionUID")
@@ -40,7 +43,7 @@ public class EventLog implements java.io.Serializable{
 	private Long requestTime;
 	
 	@Column("createTime")
-	private Long createTime;
+	private Timestamp  createTime;
 	
 
 	public String getId() {
@@ -50,12 +53,14 @@ public class EventLog implements java.io.Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public Long getCreateTime() {
+ 
+	
+	
+	public Timestamp getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Long createTime) {
+	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
 
