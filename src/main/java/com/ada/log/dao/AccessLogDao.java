@@ -33,13 +33,13 @@ public interface AccessLogDao {
 	Integer countBySiteIdAndUrlLike(Integer siteId,String ipAddress);
 	Integer countByDomainIdAndUrlLike(Integer domainId,String ipAddress);
 	
-	Integer statSiteIP(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
-	Integer statSitePV(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
-	Integer statSiteUV(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
+	Integer statSiteIP(Integer siteId,Timestamp startTime, Timestamp endTime);
+	Integer statSitePV(Integer siteId,Timestamp startTime, Timestamp endTime);
+	Integer statSiteUV(Integer siteId,Timestamp startTime, Timestamp endTime);
 	
-	Integer statDomainIP(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
-	Integer statDomainPV(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
-	Integer statDomainUV(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
+	Integer statDomainIP(Integer domainId,Timestamp startTime, Timestamp endTime);
+	Integer statDomainPV(Integer domainId,Timestamp startTime, Timestamp endTime);
+	Integer statDomainUV(Integer domainId,Timestamp startTime, Timestamp endTime);
 	
 	Integer statSiteRegionIP(Integer siteId,String region,Timestamp startTime, Timestamp endTime);
 	Integer statSiteRegionPV(Integer siteId,String region,Timestamp startTime, Timestamp endTime);

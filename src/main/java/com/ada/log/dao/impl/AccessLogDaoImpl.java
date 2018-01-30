@@ -24,7 +24,7 @@ import com.ada.log.dao.AccessLogDao;
 import com.ada.log.util.Dates;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
-//@Service
+@Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
@@ -136,7 +136,6 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	}
 	
 	
-	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void batchInsertEventLog(final List<EventLog> logs) {
 		Long startTime = System.currentTimeMillis();
@@ -202,6 +201,144 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	public List<AccessLog> findBySiteId(Integer siteId, Integer pageSize, Integer pageNo) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<AccessLog> findByDomainId(Integer domainId, Integer pageSize, Integer pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccessLog> findBySiteIdAndIp(Integer siteId, String ipAddress, Integer pageSize, Integer pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccessLog> findByDomainIdAndIp(Integer domainId, String ipAddress, Integer pageSize, Integer pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccessLog> findBySiteIdAndUrlLike(Integer siteId, String url) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccessLog> findByDomainIdAndUrlLike(Integer domainId, String url) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer countBySiteIdAndIp(Integer siteId, String ipAddress) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer countByDomainIdAndIp(Integer domainId, String ipAddress) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer countBySiteIdAndUrlLike(Integer siteId, String ipAddress) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer countByDomainIdAndUrlLike(Integer domainId, String ipAddress) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSiteIP(Integer siteId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSitePV(Integer siteId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSiteUV(Integer siteId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainIP(Integer domainId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainPV(Integer domainId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainUV(Integer domainId, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSiteRegionIP(Integer siteId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSiteRegionPV(Integer siteId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statSiteRegionUV(Integer siteId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainRegionIP(Integer domainId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainRegionPV(Integer domainId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer statDomainRegionUV(Integer domainId, String region, Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccessLog> findByTime(Timestamp startTime, Timestamp endTime, Integer pageSize, Integer pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteByTime(Timestamp startTime, Timestamp endTime) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
