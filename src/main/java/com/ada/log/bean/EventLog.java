@@ -1,6 +1,6 @@
 package com.ada.log.bean;
 
-
+import java.sql.Timestamp;
 
 /**
  * 访问日志 Entity
@@ -29,7 +29,9 @@ public class EventLog  implements java.io.Serializable{
     /** 浏览页 */
 	private String url;                    
     /** 客户端请求时间 */
-	private Long requestTime;          
+	private Long requestTime;
+	/** 创建时间 **/
+	private Timestamp createTime;
 	
 	public Integer getSiteId(){
 		return this.siteId;
@@ -117,6 +119,14 @@ public class EventLog  implements java.io.Serializable{
 
 	public void setRequestTime(Long requestTime) {
 		this.requestTime = requestTime;
+	}
+
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 	
 	

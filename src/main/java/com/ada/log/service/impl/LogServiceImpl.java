@@ -128,7 +128,7 @@ public class LogServiceImpl implements LogService{
 			if(!eventLogs.isEmpty()){
 				List<EventLog> temp = this.eventLogs;
 				eventLogs =  new ArrayList<EventLog>();
-				accessLogDao.batchInsertEventLog(temp);
+				//accessLogDao.batchInsertEventLog(temp);
 				temp.clear();
 			}
 		} catch (Exception e) {

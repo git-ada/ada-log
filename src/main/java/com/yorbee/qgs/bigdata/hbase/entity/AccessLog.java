@@ -1,5 +1,7 @@
 package com.yorbee.qgs.bigdata.hbase.entity;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Table("ada_access_log")
 public class AccessLog implements java.io.Serializable{
@@ -65,9 +67,11 @@ public class AccessLog implements java.io.Serializable{
 	@Column("requestTime")
 	private Long requestTime;
 	
+	@Column("requestTime")
+	private Date date;
 	
 	@Column("createTime")
-	private Long createTime;
+	private Timestamp createTime;
 	
 	
 
@@ -79,11 +83,11 @@ public class AccessLog implements java.io.Serializable{
 		this.id = id;
 	}
 
-	public Long getCreateTime() {
+	public Timestamp getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Long createTime) {
+	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
 
