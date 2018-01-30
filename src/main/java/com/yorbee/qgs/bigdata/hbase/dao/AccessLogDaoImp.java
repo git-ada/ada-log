@@ -35,12 +35,6 @@ public class AccessLogDaoImp implements AccessLogDao{
 	}
 
 	@Override
-	public void batchInsertEventLog(List<EventLog> logs) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public List<AccessLog> findByDomainId(Integer domainId, Integer pageSize, Integer pageNo) {
 		// TODO Auto-generated method stub
 		return null;
