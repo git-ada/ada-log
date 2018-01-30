@@ -31,7 +31,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+"  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -98,7 +98,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where domainId="+domainId+"  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -165,7 +165,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+" and ipAddress="+ipAddress+" LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
  
@@ -232,7 +232,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where domainId="+domainId+" and ipAddress="+ipAddress+" LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -299,7 +299,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where siteId="+siteId+" and url="+url+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
  
@@ -366,7 +366,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where domainId="+domainId+" and url="+url+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL); 
 					
@@ -434,7 +434,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where siteId="+siteId+" and ipAddress="+ipAddress+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 					
@@ -479,7 +479,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where domainId="+domainId+" and ipAddress="+ipAddress+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -525,7 +525,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where siteId="+siteId+" and url like %"+url+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -571,7 +571,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where domainId="+domainId+" and url like %"+url+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -620,7 +620,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT ipAddress from ADA_ACCESS_LOG where siteId="+siteId+"   and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 					
@@ -668,7 +668,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT uuid from ADA_ACCESS_LOG where siteId="+siteId+"   and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 					
@@ -714,7 +714,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where siteId="+siteId+"   and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -762,7 +762,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT ipAddress from ADA_ACCESS_LOG where domainId="+domainId+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -810,7 +810,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT uuid from ADA_ACCESS_LOG where domainId="+domainId+"   and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 					
@@ -856,7 +856,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where domainId="+domainId+"   and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -904,7 +904,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT ipAddress from ADA_ACCESS_LOG where siteId="+siteId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 					
@@ -952,7 +952,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT uuid from ADA_ACCESS_LOG where siteId="+siteId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -999,7 +999,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where siteId="+siteId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -1049,7 +1049,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT ipAddress from ADA_ACCESS_LOG where domainId="+domainId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -1099,7 +1099,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			//select count(*) from ( SELECT DISTINCT ipAddress from ada_access_log where siteId = ? and createTime > ? and createTime < ?) a 
 
  			String phoenixSQL="select count(*) as sum_ct from ( SELECT DISTINCT uuid from ADA_ACCESS_LOG where domainId="+domainId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ) as TA";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -1147,7 +1147,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select count(siteId) as sum_ct from ADA_ACCESS_LOG where domainId="+domainId+" and  region="+region+"  and createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"') ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -1192,7 +1192,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			// 准备查询
 			stmt = conn.createStatement();
  			String phoenixSQL="select siteId,domainId,channelId,adId,entranceType,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime from ADA_ACCESS_LOG where  createTime BETWEEN  TO_TIMESTAMP('"+startTime+"') AND  TO_TIMESTAMP('"+endTime+"')  LIMIT "+pageSize+" OFFSET "+pageNo+" ";
-			logger.info(phoenixSQL);
+			//logger.info(phoenixSQL);
 			
 			set = (PhoenixResultSet) stmt.executeQuery(phoenixSQL);
 
@@ -1269,7 +1269,7 @@ public class AccessLogStateMentMgt extends StatementMgt{
 			for(AccessLog accessLog:accessLoglist) {
 				String phoenixSQL="";
 				phoenixSQL=AccessLogToSql.insertStr(accessLog);
-				logger.info(phoenixSQL);
+				//logger.info(phoenixSQL);
 //			    
 
 				stmt.addBatch(phoenixSQL);
