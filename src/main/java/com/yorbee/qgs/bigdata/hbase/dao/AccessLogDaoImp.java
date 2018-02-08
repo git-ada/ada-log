@@ -11,7 +11,7 @@ import com.ada.log.dao.AccessLogDao;
 import com.yorbee.qgs.bigdata.hbase.dsmt.AccessLogStateMentMgt;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
-@Service
+//@Service
 public class AccessLogDaoImp implements AccessLogDao{
 	@Value("${phoenix.host:}")
 	String _host;

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
 
 import redis.clients.jedis.Jedis;
 
-//@Service
+@Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
