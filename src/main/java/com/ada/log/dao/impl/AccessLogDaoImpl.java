@@ -47,8 +47,11 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	protected void resetSql() {
 		SimpleDateFormat df =new SimpleDateFormat("yyyyMMdd");
 		String date = df.format(Dates.now());
-		insertAcccessLogSql = "INSERT INTO `ada_access_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
-		insertEventLogSql = "INSERT INTO `ada_event_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+//		insertAcccessLogSql = "INSERT INTO `ada_access_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+//		insertEventLogSql = "INSERT INTO `ada_event_log_"+date+"`(siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+		insertAcccessLogSql = "INSERT INTO `ada_access_log` (siteId,domainId,channelId,adId,ipAddress,region,uuid,url,useragent,os,browser,screenSize,pageSize,referer,iframe,firstTime,todayTime,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+		insertEventLogSql = "INSERT INTO `ada_event_log` (siteId,domainId,channelId,adId,ipAddress,region,uuid,url,event,args,requestTime,createTime) values (?,?,?,?,?,?,?,?,?,?,?,now())";
+
 	}
 	
 	public void createAccessTable(String data){
