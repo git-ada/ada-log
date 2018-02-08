@@ -27,4 +27,20 @@
 		<property name="houseKeepingTestSql" value="select now()"></property>
 	</bean>
 	
+	<bean id="dataSource2" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver" value="${jdbc2.driver}"></property>
+		<property name="driverUrl" value="${jdbc2.url}"></property>
+		<property name="user" value="${jdbc2.username}"></property>
+		<property name="password" value="${jdbc2.password}"></property>
+		<property name="alias" value="ada-log2"></property>
+		<property name="minimumConnectionCount" value="10"></property>
+		<property name="maximumConnectionCount" value="20"></property>
+		<property name="maximumActiveTime" value="300000"></property>
+		<property name="simultaneousBuildThrottle" value="10"></property>
+		<property name="prototypeCount" value="3"></property>
+		<property name="trace" value="false"></property>
+		<property name="verbose" value="true"></property>
+		<property name="houseKeepingTestSql" value="select now()"></property>
+	</bean>
+	
 </beans>
