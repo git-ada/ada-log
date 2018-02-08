@@ -157,7 +157,7 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 			}
 		});
 		
-		if(log1.isDebugEnabled()){
+		if(log1.isInfoEnabled()){
 			Long endTime = System.currentTimeMillis();
 			Long cost = endTime -startTime;
 			log1.info("批量插入支持 ->"+logs.size()+",用时"+cost+"ms");
