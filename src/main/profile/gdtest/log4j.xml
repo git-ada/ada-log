@@ -74,10 +74,6 @@
 		<level value="ERROR" />
 	</logger>
 	
-	<logger name="com.ada.log">
-		<level value="ERROR" />
-	</logger>
-	
 	<logger name="com.yorbee.qgs">
 		<level value="INFO" />
 	</logger>
@@ -89,7 +85,6 @@
 	<logger name="com.ada.log.service.impl">
 		<level value="INFO" />
 	</logger>
-	
 	
 	<root>
 		<level value="INFO" /> 
