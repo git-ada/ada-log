@@ -53,7 +53,8 @@ public class EventLogToSql {
 			String type_className="";
 			try {
 				Method getMethod = c.getMethod(getMethodName);
-				types = getMethod.getAnnotatedReturnType().getType();
+				//types = getMethod.getAnnotatedReturnType().getType();
+				//临时修改
  
 				type_className = types.toString();
 				fieldValue = getMethod.invoke(u);

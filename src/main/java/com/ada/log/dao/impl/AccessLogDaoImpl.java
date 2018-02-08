@@ -15,14 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ada.log.bean.EventLog;
 import com.ada.log.dao.AccessLogDao;
+import com.ada.log.service.JedisPools;
 import com.ada.log.util.Dates;
 import com.yorbee.qgs.bigdata.hbase.entity.AccessLog;
+
+import redis.clients.jedis.Jedis;
 
 //@Service
 public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
@@ -53,10 +55,32 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	}
 	
 	private static AtomicInteger total = new AtomicInteger();
+	
+	public Long nextId(Integer batchSize){
+		Jedis jedis = getJedis();
+		try{
+			return jedis.incrBy("_LAST_ACCESS_LOG_ID", batchSize);
+		} finally{
+			jedisPools.returnResource(jedis);
+		}
+	}
+	
+	protected Jedis getJedis(){
+		return jedisPools.getResource();
+	}
+	
+	@Autowired
+    private  JedisPools jedisPools;
 
 	@Override
 	@Transactional(readOnly=false,propagation=Propagation.REQUIRED)
 	public void batchInsert(final List<AccessLog> logs) {
+		
+		Long lastId = nextId(logs.size());
+		Long startId = lastId - logs.size();
+		for(AccessLog log: logs){
+			log.setId(startId++);
+		}
 		
 		log1.info("batch add " + logs.size() +",total->"+total.addAndGet(logs.size()));
 		Long startTime = System.currentTimeMillis();
@@ -69,6 +93,7 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 					return;
 				}
 				Integer parameterIndex = 1;
+				ps.setLong(parameterIndex++, log.getId() );;
 				setInteger(ps, parameterIndex++,log.getSiteId());
 				setInteger(ps, parameterIndex++,log.getDomainId());
 				setInteger(ps, parameterIndex++,log.getChannelId());

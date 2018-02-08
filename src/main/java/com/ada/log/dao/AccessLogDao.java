@@ -13,16 +13,9 @@ public interface AccessLogDao {
 	 */
 	void batchInsert(List<AccessLog> logs);
 	
-	/**
-	 * 通过站点ID查询日志
-	 * @param siteId 站点ID
-	 * @param pageSize 单页条数
-	 * @param pageNo 页码,从0开始,
-	 * @return
-	 */
 	List<AccessLog> findBySiteId(Integer siteId,Integer pageSize,Integer pageNo);
-	List<AccessLog> findByDomainId(Integer domainId,Integer pageSize,Integer pageNo);
 	
+	List<AccessLog> findByDomainId(Integer domainId,Integer pageSize,Integer pageNo);
 	List<AccessLog> findBySiteIdAndIp(Integer siteId,String ipAddress,Integer pageSize,Integer pageNo);
 	List<AccessLog> findByDomainIdAndIp(Integer domainId,String ipAddress,Integer pageSize,Integer pageNo);
 	List<AccessLog> findBySiteIdAndUrlLike(Integer siteId,String url);
