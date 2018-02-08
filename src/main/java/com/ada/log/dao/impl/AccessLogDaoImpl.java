@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,7 +34,7 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	
 	private final static Log log1 = LogFactory.getLog(AccessLogDaoImpl.class);
 
-	@Autowired
+	@Resource(name="jdbcTemplate2")
 	private JdbcTemplate jdbcTemplate;
 	
 	private String insertAcccessLogSql;
