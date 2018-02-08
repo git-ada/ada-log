@@ -65,7 +65,7 @@ public class AccessLogDaoImpl implements AccessLogDao,InitializingBean {
 	public Long nextId(Integer batchSize){
 		Jedis jedis = getJedis();
 		try{
-			return jedis.incrBy("_LAST_ACCESS_LOG_ID_", batchSize);
+			return jedis.incrBy("_LAST_ACCESS_LOG_ID_1", batchSize);
 		} finally{
 			jedisPools.returnResource(jedis);
 		}
